@@ -30,20 +30,24 @@ epicsEnvSet("TRACE_LEN", "16384")
 # The search path for database files
 epicsEnvSet("EPICS_DB_INCLUDE_PATH", "$(ADCORE)/db")
 
-drvAsynIPPortConfigure("$(IP_PORT)", "gse-ketek1:3141", 0, 0, 1)
+drvAsynIPPortConfigure("$(IP_PORT)", "gse-ketek1:3141", 0, 0, 0)
 asynSetTraceIOMask($(IP_PORT), 0, HEX)
 #asynSetTraceMask($(IP_PORT), 0, ERROR|DRIVER)
-
 
 # KetekConfig(portName, ipPortName)
 KetekConfig("$(PORT)", $(IP_PORT))
 
-dbLoadRecords("$(KETEK)/db/ketek.template", "P=$(PREFIX),R=Ketek1:,PORT=$(PORT),TRACE_LEN=$(TRACE_LEN)")
+dbLoadRecords("$(KETEK)/db/ketek.template", "P=$(PREFIX),R=Ketek1:,M=mca1,PORT=$(PORT),TRACE_LEN=$(TRACE_LEN)")
 dbLoadRecords("$(MCA)/db/mca.db", "P=$(PREFIX),M=mca1,DTYP=asynMCA,INP=@asyn(KETEK1 0),NCHAN=$(MCA_CHANS)")
 
-# Load all other plugins using commonPlugins.cmd
-#< $(ADCORE)/iocBoot/commonPlugins.cmd
-
+save_restoreSet_IncompleteSetsOk(1)
+save_restoreSet_DatedBackupFiles(1)
+save_restoreSet_NumSeqFiles(3)
+save_restoreSet_SeqPeriodInSeconds(300)
+set_savefile_path(".", "autosave")
+set_pass0_restoreFile("auto_settings.sav")
+set_pass1_restoreFile("auto_settings.sav")
+set_requestfile_path(".")
 set_requestfile_path("$(KETEK)/db")
 set_requestfile_path("$(MCA)/db")
 
