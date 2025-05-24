@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Saved on 2025-05-24 18:36:49 by epics-->
+<display version="2.0.0">
+  <name>ketekTop</name>
+  <x>423</x>
+  <y>108</y>
+  <width>300</width>
+  <height>80</height>
+  <background_color>
+    <color red="187" green="187" blue="187">
+    </color>
+  </background_color>
+  <grid_visible>false</grid_visible>
+  <grid_step_x>5</grid_step_x>
+  <widget type="action_button" version="3.0.0">
+    <name>related display #6</name>
+    <actions>
+      <action type="open_display">
+        <file>ketek.opi</file>
+        <macros>
+          <M>mca1</M>
+          <P>KETEK1:</P>
+          <R>Ketek1:</R>
+        </macros>
+        <target>tab</target>
+        <description>Ketek AXAS</description>
+      </action>
+    </actions>
+    <text>Ketek</text>
+    <x>90</x>
+    <y>40</y>
+    <width>120</width>
+    <height>25</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #9</name>
+    <text>Ketek Top Level Control</text>
+    <x>12</x>
+    <y>9</y>
+    <width>276</width>
+    <height>22</height>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <horizontal_alignment>1</horizontal_alignment>
+  </widget>
+</display>
