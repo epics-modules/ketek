@@ -1,9 +1,7 @@
 #ifndef KETEK_H
 #define KETEK_H
 
-#include <vector>
 #include <epicsEvent.h>
-#include <epicsMessageQueue.h>
 
 typedef struct ketekRequest {
     char paramID;
@@ -28,7 +26,7 @@ typedef enum ketekPresetModes {
 #define KETEK_COMMAND_READ     0
 #define KETEK_COMMAND_WRITE    1
 #define KETEK_MAX_MCA_BINS     8192
-#define KETEK_MAX_REPLY_LEN    16
+#define KETEK_MAX_SCOPE_POINTS 8192
 
 typedef enum ketekParameters {
     pRunStart             = 0,
@@ -119,27 +117,26 @@ typedef enum ketekParameters {
 } ketekParameters_t;
 
 /* General parameters */
-#define KetekCollectModeString              "KetekCollectMode"
-#define KetekCurrentPixelString             "KetekCurrentPixel"
-#define KetekMaxEnergyString                "KetekMaxEnergy"
-#define KetekSpectrumXAxisString            "KetekSpectrumXAxis"
+#define KetekPortNameSelfString             "KetekPortNameSelf"
+#define KetekDriverVersionString            "KetekDriverVersion"
+#define KetekModelString                    "KetekModel"
+#define KetekFirmwareVersionString          "KetekFirmwareVersion"
 
 /* Internal asyn driver parameters */
 #define KetekErasedString                   "KetekErased"
 #define KetekAcquiringString                "KetekAcquiring"  /* Internal use only !!! */
 #define KetekPollTimeString                 "KetekPollTime"
 
-/* Diagnostic trace parameters */
-#define KetekTraceDataString                "KetekTraceData"
-#define KetekTraceTimeArrayString           "KetekTraceTimeArray"
-#define KetekTraceTimeString                "KetekTraceTime"
-#define KetekTraceTriggerInstantString      "KetekTraceTriggerInstant"
-#define KetekTraceTriggerRisingString       "KetekTraceTriggerRising"
-#define KetekTraceTriggerFallingString      "KetekTraceTriggerFalling"
-#define KetekTraceTriggerLevelString        "KetekTraceTriggerLevel"
-#define KetekTraceTriggerWaitString         "KetekTraceTriggerWait"
-#define KetekTraceLengthString              "KetekTraceLength"
-#define KetekReadTraceString                "KetekReadTrace"
+/* Event and scope parameters */
+#define KetekEventTriggerSourceString       "KetekEventTriggerSource"
+#define KetekEventTriggerValueString        "KetekEventTriggerValue"
+#define KetekEventRateCalculateString       "KetekEventRateCalculate"
+#define KetekEventRateString                "KetekEventRate"
+#define KetekScopeDataSourceString          "KetekScopeDataSource"
+#define KetekScopeTimeArrayString           "KetekScopeTimeArray"
+#define KetekScopeIntervalString            "KetekScopeInterval"
+#define KetekScopeTriggerTimeoutString      "KetekScopeTriggerTimeout"
+#define KetekScopeReadString                "KetekScopeRead"
 
 /* Runtime statistics */
 #define KetekInputCountRateString           "KetekInputCountRate"
@@ -178,7 +175,7 @@ typedef enum ketekParameters {
 #define KetekGatingModeString               "KetekGatingMode"
 #define KetekMappingPointsString            "KetekMappingPoints"
 
-class Ketek : public asynNDArrayDriver
+class Ketek : public asynPortDriver
 {
 public:
     Ketek(const char *portName, const char *ipAddress);
@@ -197,31 +194,25 @@ public:
 protected:
 
     /* General parameters */
-    int KetekCollectMode;                   /** < Change mapping mode (0=mca; 1=spectra mapping; 2=sca mapping) (int32 read/write) addr: all/any */
-    #define FIRST_KETEK_PARAM KetekCollectMode
-    int KetekCurrentPixel;                  /** < Mapping mode only: read the current pixel that is being acquired into (int) */
-    int KetekMaxEnergy;
-    int KetekSpectrumXAxis;
-
+    #define FIRST_KETEK_PARAM KetekPortNameSelf
     /* Internal asyn driver parameters */
+    int KetekPortNameSelf;
+    int KetekDriverVersion;
+    int KetekModel;
+    int KetekFirmwareVersion;
     int KetekErased;               /** < Erased flag. (0=not erased; 1=erased) */
-    int KetekAcquiring;            /** < Internal acquiring flag, not exposed via drvUser */
-    int KetekPollTime;             /** < Status/data polling time in seconds */
-    int KetekForceRead;            /** < Force reading MCA spectra - used for mcaData when addr=ALL */
-    int KetekEnableBoard;          /** < Enable/disable specific board */
-    int KetekEnableConfigure;      /** < Enable/disable calling configure() when a parameter changes */
 
-    /* Diagnostic trace parameters */
-    int KetekTraceData;            /** < The trace array data (read) int32 array */
-    int KetekTraceTimeArray;       /** < The trace timebase array (read) float64 array */
-    int KetekTraceTime;            /** < The trace time per point, float64 */
-    int KetekTraceTriggerInstant;  /** < Trigger instant int32 */
-    int KetekTraceTriggerRising;   /** < Trigger rising crossing of trigger level int32 */
-    int KetekTraceTriggerFalling;  /** < Trigger falling crossing of trigger level int32 */
-    int KetekTraceTriggerLevel;    /** < Trigger level (0 - 65535) int32 */
-    int KetekTraceTriggerWait;     /** < Time to wait for trigger float64 */
-    int KetekTraceLength;          /** < Length of trace, multiples of 16K int32 */
-    int KetekReadTrace;            /** < Command to read the trace data */
+    /* Event scope and rate parameters */
+    int KetekEventTriggerSource;   /** < Source of the event or scope data int32 */
+    int KetekEventTriggerValue;    /** < Event trigger value int32 */
+    int KetekEventRateCalculate;   /** < Time period to calculate rate int32 */
+    int KetekEventRate;            /** < Event rate int32 */
+    int KetekScopeDataSource;      /** < Source of scope data int32 array */
+    int KetekScopeData;            /** < Scope array data (read) int32 array */
+    int KetekScopeTimeArray;       /** < Scope timebase array (read) float64 array */
+    int KetekScopeInterval;        /** < Scope time per point, float64 */
+    int KetekScopeTriggerTimeout;  /** < Scope trigger timeout int32 */
+    int KetekScopeRead;            /** < Read the scope data int32 */
 
     /* Runtime statistics */
     int KetekInputCountRate;      /* float64 */
@@ -254,14 +245,6 @@ protected:
     int KetekEnergyOffset;                /* float64, bins */
     int KetekBoardTemperature;            /* float64, C */
 
-    /* Other parameters */
-    int KetekInputMode;                   /* int32 */
-    int KetekAnalogOffset;                /* int32, 8-bit DAC units */
-    int KetekGatingMode;                  /* int32 */
-    int KetekMappingPoints;               /* int32 */
-    int KetekListBufferSize;              /* int32 */
-    int KetekKeepAlive;                   /* int32 */
-
     /* Commands from MCA interface */
     int mcaData;                   /* int32Array, write/read */
     int mcaStartAcquire;           /* int32, write */
@@ -287,13 +270,12 @@ protected:
 
 
 private:
-    asynStatus setKetekConfiguration();
-    bool dataAcquiring();
-    bool waveformAcquiring();
+    asynStatus setPresets();
+    asynStatus getPresets();
+    asynStatus setConfiguration();
+    asynStatus getConfiguration();
     asynStatus getAcquisitionStatistics();
     asynStatus getMcaData();
-    asynStatus pollMCAMappingMode();
-    asynStatus pollListMode();
     asynStatus getTraces();
     asynStatus startAcquiring();
     asynStatus stopAcquiring();
@@ -304,28 +286,17 @@ private:
 
     /* Data */
     epicsInt32 mcaData_[KETEK_MAX_MCA_BINS];
-    uint16_t **pMappingMCAData_;
-    uint32_t **pMappingSpectrumId_;
+    epicsUInt8 mcaRaw_[KETEK_MAX_MCA_BINS*sizeof(epicsUInt32)];
+    epicsInt32 scopeData_[KETEK_MAX_SCOPE_POINTS];
+    epicsUInt8 scopeDataRaw_[KETEK_MAX_SCOPE_POINTS*sizeof(epicsUInt32)];
+    epicsFloat64 scopeTimeBuffer_[KETEK_MAX_SCOPE_POINTS];
 
-    int uniqueId_;
-    
     asynUser *pasynUserRemote_;
-    ketekRequest_t requestMsg_;
-    ketekResponse_t responseMsg_;
 
     epicsEvent *cmdStartEvent_;
     epicsEvent *cmdStopEvent_;
     epicsEvent *stoppedEvent_;
-    epicsMessageQueue *msgQ_;
 
-    uint32_t traceLength_;
-    bool newTraceTime_;
-    uint16_t *traceBuffer_;
-    int32_t *traceBufferInt32_;
-    epicsFloat64 *traceTimeBuffer_;
-    epicsFloat64 *spectrumXAxisBuffer_;
-
-    bool polling_;
 
 };
 #ifdef __cplusplus
