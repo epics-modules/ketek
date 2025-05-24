@@ -2,144 +2,77 @@
 # Mark Rivers
 # May 20, 2025
 
-
-include "NDArrayBase.template"
-
 ###########################
 # General parameters      #
 ###########################
 
-record(longin,"$(P)$(R)CurrentPixel") {
-    field(DESC,"Current pixel")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT))KetekCurrentPixel")
-    field(SCAN, "I/O Intr")
+record(stringin, "$(P)$(R)DriverVersion_RBV")
+{
+   field(DTYP, "asynOctetRead")
+   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekDriverVersion")
+   field(VAL,  "Unknown")
+   field(SCAN, "I/O Intr")
 }
 
-record(mbbo,"$(P)$(R)CollectMode") {
-    field(DESC,"Collection mode")
-    field(PINI,"YES")
-    field(ZRST,"MCA")
-    field(ZRVL,"0")
-    field(ONST,"MCA Mapping")
-    field(ONVL,"1")
-    field(TWST,"List")
-    field(TWVL,"2")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT),0)KetekCollectMode")
+record(stringin, "$(P)$(R)PortName_RBV")
+{
+   field(DTYP, "asynOctetRead")
+   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekPortNameSelf")
+   field(VAL,  "Unknown")
+   field(SCAN, "I/O Intr")
 }
 
-record(mbbi,"$(P)$(R)CollectMode_RBV") {
-    field(DESC,"Collection mode")
-    field(ZRST,"MCA")
-    field(ZRVL,"0")
-    field(ONST,"MCA Mapping")
-    field(ONVL,"1")
-    field(TWST,"List")
-    field(TWVL,"2")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT),0)KetekCollectMode")
-    field(SCAN, "I/O Intr")
+record(stringin, "$(P)$(R)Manufacturer_RBV")
+{
+   field(VAL,  "KETEK")
+}
+record(stringin, "$(P)$(R)Model_RBV")
+{
+   field(DTYP, "asynOctetRead")
+   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekModel")
+   field(VAL,  "Unknown")
+   field(SCAN, "I/O Intr")
 }
 
-record(ao,"$(P)$(R)PollTime") {
-    field(DESC,"Polling time")
-    field(PINI,"YES")
-    field(PREC,"3")
-    field(DTYP, "asynFloat64")
-    field(OUT,"@asyn($(PORT))KetekPollTime")
-}
-
-record(ai,"$(P)$(R)PollTime_RBV") {
-    field(DESC,"Polling time")
-    field(PREC,"3")
-    field(DTYP, "asynFloat64")
-    field(INP,"@asyn($(PORT))KetekPollTime")
-    field(SCAN, "I/O Intr")
+record(stringin, "$(P)$(R)FirmwareVersion_RBV")
+{
+   field(DTYP, "asynOctetRead")
+   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekFirmwareVersion")
+   field(VAL,  "Unknown")
+   field(SCAN, "I/O Intr")
 }
 
 record(mbbo,"$(P)$(R)NumMCAChannels") {
     field(DESC,"# of MCA channels")
     field(PINI,"YES")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT))MCA_NUM_CHANNELS")
-    field(ZRVL, "9")
+    field(ZRVL, "512")
     field(ZRST, "512")
-    field(ONVL, "10")
+    field(ONVL, "1024")
     field(ONST, "1024")
-    field(TWVL, "11")
+    field(TWVL, "2048")
     field(TWST, "2048")
-    field(THVL, "12")
-    field(FRST, "4096")
-    field(FRVL, "13")
-    field(THST, "8192")
-}
-
-record(mbbi,"$(P)$(R)NumMCAChannels_RBV") {
-    field(DESC,"# of MCA channels")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT))MCA_NUM_CHANNELS")
-    field(ZRVL, "9")
-    field(ZRST, "512")
-    field(ONVL, "10")
-    field(ONST, "1024")
-    field(TWVL, "11")
-    field(TWST, "2048")
-    field(THVL, "12")
+    field(THVL, "4096")
     field(THST, "4096")
-    field(FRVL, "13")
+    field(FRVL, "8192")
     field(FRST, "8192")
-    field(SCAN, "I/O Intr")
+    field(FLNK, "$(P)$(R)SetNuse")
 }
 
-record(busy,"$(P)$(R)EraseStart") {
-    field(ZNAM,"Done")
-    field(ONAM,"Start")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT))KetekEraseStart")
-}
-
-record(busy,"$(P)$(R)MCAAcquireBusy") {
-    field(ZNAM,"Done")
-    field(ONAM,"Collecting")
-}
-
-record(bi,"$(P)$(R)MCAAcquiring") {
-    field(DTYP, "asynInt32")
-    field(INP, "@asyn($(PORT))MCA_ACQUIRING")
-    field(ZNAM,"Done")
-    field(ONAM,"Acquiring")
-    field(SCAN, "I/O Intr")
-}
-
-record(bo,"$(P)$(R)StopAll") {
-    field(VAL,"1")
-    field(DTYP, "asynInt32")
-    field(OUT, "@asyn($(PORT))MCA_STOP_ACQUIRE")
-    field(ZNAM,"Done")
-    field(ONAM,"Stop")
-}
-
-record(ao,"$(P)$(R)PresetReal") {
-    field(DTYP, "asynFloat64")
-    field(OUT, "@asyn($(PORT))MCA_PRESET_REAL")
-    field(PREC, "3")
-}
-
-record(ao,"$(P)$(R)PresetLive") {
-    field(DTYP, "asynFloat64")
-    field(OUT, "@asyn($(PORT))MCA_PRESET_LIVE")
-    field(PREC, "3")
+record(longout, "$(P)$(R)SetNuse") {
+    field(DOL, "$(P)$(R)NumMCAChannels.RVAL")
+    field(OUT, "$(P)$(M).NUSE PP")
+    field(OMSL,"closed_loop")
 }
 
 record(longout,"$(P)$(R)PresetInputCounts") {
     field(DTYP, "asynInt32")
     field(OUT, "@asyn($(PORT))KetekPresetInputCounts")
-}
+    field(PINI,"YES")}
 
 record(longout,"$(P)$(R)PresetOutputCounts") {
+    field(PINI,"YES")
     field(DTYP, "asynInt32")
-    field(OUT, "@asyn($(PORT))KetekPresetInputCounts")
+    field(OUT, "@asyn($(PORT))KetekPresetOutputCounts")
 }
 
 record(mbbo,"$(P)$(R)PresetMode") {
@@ -176,66 +109,11 @@ record(mbbi,"$(P)$(R)PresetMode_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-record(ai,"$(P)$(R)ElapsedReal") {
-    field(SCAN,"I/O Intr")
-    field(DTYP, "asynFloat64")
-    field(INP, "@asyn($(PORT))MCA_ELAPSED_REAL")
-    field(PREC, "3")
-}
-
-record(ai,"$(P)$(R)ElapsedLive") {
-    field(SCAN,"I/O Intr")
-    field(DTYP, "asynFloat64")
-    field(INP, "@asyn($(PORT))MCA_ELAPSED_LIVE")
-    field(PREC, "3")
-}
-
-record(ai,"$(P)$(R)DeadTime") {
-    field(PREC, "2")
-    field(HIGH, "50")
-    field(HSV, "MINOR")
-    field(HIHI, "80")
-    field(HHSV, "MAJOR")
-}
-
-record(ai,"$(P)$(R)IDeadTime") {
-    field(PREC, "2")
-    field(HIGH, "50")
-    field(HSV, "MINOR")
-    field(HIHI, "80")
-    field(HHSV, "MAJOR")
-}
-
-record(bo,"$(P)$(R)ReadAll") {
-    field(SCAN,"1 second")
-    field(DISV,"0")
-    field(SDIS,"$(P)$(R)MCAAcquireBusy NPP NMS")
-    field(ZNAM,"Done")
-    field(ONAM,"Read")
-    field(DTYP, "asynInt32")
-    field(OUT, "@asyn($(PORT))MCA_READ_STATUS")
-}
-
 record(bo,"$(P)$(R)ReadTrace") {
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(PORT))KetekReadTrace")
     field(ZNAM, "Done")
     field(ONAM, "Read")
-}
-
-record(longout,"$(P)$(R)MappingPoints") {
-    field(DESC,"Mapping points")
-    field(PINI,"YES")
-    field(VAL, "100")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT))KetekMappingPoints")
-}
-
-record(longin,"$(P)$(R)MappingPoints_RBV") {
-    field(DESC,"Mapping points")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT))KetekMappingPoints")
-    field(SCAN, "I/O Intr")
 }
 
 #############################
@@ -373,42 +251,9 @@ record(longin,"$(P)$(R)TraceLength_RBV") {
     field(SCAN, "I/O Intr")
 }
 
-record(ao,"$(P)$(R)MaxEnergy") {
-    field(DESC,"Max energy")
-    field(PINI,"YES")
-    field(PREC,"2")
-    field(VAL,"40")
-    field(DTYP, "asynFloat64")
-    field(OUT,"@asyn($(PORT),0)KetekMaxEnergy")
-}
-
-record(ai,"$(P)$(R)MaxEnergy_RBV") {
-    field(DESC,"Max energy")
-    field(PREC,"2")
-    field(DTYP, "asynFloat64")
-    field(INP,"@asyn($(PORT),0)KetekMaxEnergy")
-    field(SCAN, "I/O Intr")
-}
-
 ######################
 # Runtime statistics #
 ######################
-
-record(ai,"$(P)$(R)ElapsedRealTime") {
-    field(DESC,"Elapsed real time")
-    field(PREC,"3")
-    field(DTYP, "asynFloat64")
-    field(INP,"@asyn($(PORT),0)MCA_ELAPSED_REAL")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai,"$(P)$(R)ElapsedLiveTime") {
-    field(DESC,"Elapsed live time")
-    field(PREC,"3")
-    field(DTYP, "asynFloat64")
-    field(INP,"@asyn($(PORT),0)MCA_ELAPSED_LIVE")
-    field(SCAN, "I/O Intr")
-}
 
 record(ai,"$(P)$(R)InputCountRate") {
     field(DESC,"ICR")
@@ -646,21 +491,21 @@ record(ai,"$(P)$(R)ResetInhibitTime_RBV") {
 record(mbbo,"$(P)$(R)BaselineAverageLen") {
     field(DESC,"Baseline average length")
     field(PINI,"YES")
-    field(ZRVL, "1")
+    field(ZRVL, "2")
     field(ZRST, "2")
-    field(ONVL, "2")
+    field(ONVL, "4")
     field(ONST, "4")
-    field(TWVL, "3")
+    field(TWVL, "8")
     field(TWST, "8")
-    field(THVL, "4")
+    field(THVL, "16")
     field(THST, "16")
-    field(FRVL, "5")
+    field(FRVL, "32")
     field(FRST, "32")
-    field(FVVL, "6")
+    field(FVVL, "64")
     field(FVST, "64")
-    field(SXVL, "7")
+    field(SXVL, "128")
     field(SXST, "128")
-    field(SVVL, "8")
+    field(SVVL, "256")
     field(SVST, "256")
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(PORT),0)KetekBaselineAverageLen")
@@ -668,21 +513,21 @@ record(mbbo,"$(P)$(R)BaselineAverageLen") {
 
 record(mbbi,"$(P)$(R)BaselineAverageLen_RBV") {
     field(DESC,"Baseline average length")
-    field(ZRVL, "1")
+    field(ZRVL, "2")
     field(ZRST, "2")
-    field(ONVL, "2")
+    field(ONVL, "4")
     field(ONST, "4")
-    field(TWVL, "3")
+    field(TWVL, "8")
     field(TWST, "8")
-    field(THVL, "4")
+    field(THVL, "16")
     field(THST, "16")
-    field(FRVL, "5")
+    field(FRVL, "32")
     field(FRST, "32")
-    field(FVVL, "6")
+    field(FVVL, "64")
     field(FVST, "64")
-    field(SXVL, "7")
+    field(SXVL, "128")
     field(SXST, "128")
-    field(SVVL, "8")
+    field(SVVL, "256")
     field(SVST, "256")
     field(DTYP, "asynInt32")
     field(INP,"@asyn($(PORT),0)KetekBaselineAverageLen")
