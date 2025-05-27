@@ -2,45 +2,7 @@
 # Mark Rivers
 # May 20, 2025
 
-###########################
-# General parameters      #
-###########################
-
-record(stringin, "$(P)$(R)DriverVersion_RBV")
-{
-   field(DTYP, "asynOctetRead")
-   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekDriverVersion")
-   field(VAL,  "Unknown")
-   field(SCAN, "I/O Intr")
-}
-
-record(stringin, "$(P)$(R)PortName_RBV")
-{
-   field(DTYP, "asynOctetRead")
-   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekPortNameSelf")
-   field(VAL,  "Unknown")
-   field(SCAN, "I/O Intr")
-}
-
-record(stringin, "$(P)$(R)Manufacturer_RBV")
-{
-   field(VAL,  "KETEK")
-}
-record(stringin, "$(P)$(R)Model_RBV")
-{
-   field(DTYP, "asynOctetRead")
-   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekModel")
-   field(VAL,  "Unknown")
-   field(SCAN, "I/O Intr")
-}
-
-record(stringin, "$(P)$(R)FirmwareVersion_RBV")
-{
-   field(DTYP, "asynOctetRead")
-   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))KetekFirmwareVersion")
-   field(VAL,  "Unknown")
-   field(SCAN, "I/O Intr")
-}
+include "NDArrayBase.template"
 
 record(mbbo,"$(P)$(R)NumMCAChannels") {
     field(DESC,"# of MCA channels")
@@ -106,148 +68,6 @@ record(mbbi,"$(P)$(R)PresetMode_RBV") {
     field(THST, "Input counts")
     field(FRVL, "4")
     field(FRST, "Output counts")
-    field(SCAN, "I/O Intr")
-}
-
-record(bo,"$(P)$(R)ReadTrace") {
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT))KetekReadTrace")
-    field(ZNAM, "Done")
-    field(ONAM, "Read")
-}
-
-#############################
-# Trace waveform parameters #
-#############################
-
-record(waveform, "$(P)$(R)TraceTimeArray") {
-    field(DESC, "Trace data")
-    field(DTYP, "asynFloat64ArrayIn")
-    field(PREC, "0")
-    field(INP, "@asyn($(PORT))KetekTraceTimeArray")
-    field(NELM, "$(TRACE_LEN)")
-    field(FTVL, "DOUBLE")
-    field(SCAN, "I/O Intr")
-}
-
-record(ao,"$(P)$(R)TraceTime") {
-    field(DESC,"Trace time/point")
-    field(PINI,"YES")
-    field(PREC, "3")
-    field(DRVL, "0.016")
-    field(DRVH, "0.512")
-    field(VAL,  "0.016")
-    field(DTYP, "asynFloat64")
-    field(OUT,"@asyn($(PORT))KetekTraceTime")
-}
-
-record(ai,"$(P)$(R)TraceTime_RBV") {
-    field(DESC,"Base offset")
-    field(DTYP, "asynFloat64")
-    field(PREC, "3")
-    field(INP,"@asyn($(PORT))KetekTraceTime")
-    field(SCAN, "I/O Intr")
-}
-
-record(bo,"$(P)$(R)TraceTriggerInstant") {
-    field(DESC,"Trace trigger instant")
-    field(PINI,"YES")
-    field(ZNAM,"No")
-    field(ONAM,"Yes")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT),0)KetekTraceTriggerInstant")
-}
-
-record(bi,"$(P)$(R)TraceTriggerInstant_RBV") {
-    field(DESC,"Trace trigger instant")
-    field(ZNAM,"No")
-    field(ONAM,"Yes")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT),0)KetekTraceTriggerInstant")
-    field(SCAN, "I/O Intr")
-}
-
-record(bo,"$(P)$(R)TraceTriggerRising") {
-    field(DESC,"Trace trigger rising")
-    field(PINI,"YES")
-    field(ZNAM,"No")
-    field(ONAM,"Yes")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT),0)KetekTraceTriggerRising")
-}
-
-record(bi,"$(P)$(R)TraceTriggerRising_RBV") {
-    field(DESC,"Trace trigger rising")
-    field(ZNAM,"No")
-    field(ONAM,"Yes")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT),0)KetekTraceTriggerRising")
-    field(SCAN, "I/O Intr")
-}
-
-record(bo,"$(P)$(R)TraceTriggerFalling") {
-    field(DESC,"Trace trigger falling")
-    field(PINI,"YES")
-    field(ZNAM,"No")
-    field(ONAM,"Yes")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT),0)KetekTraceTriggerFalling")
-}
-
-record(bi,"$(P)$(R)TraceTriggerFalling_RBV") {
-    field(DESC,"Trace trigger falling")
-    field(ZNAM,"No")
-    field(ONAM,"Yes")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT),0)KetekTraceTriggerFalling")
-    field(SCAN, "I/O Intr")
-}
-
-record(longout,"$(P)$(R)TraceTriggerLevel") {
-    field(DESC,"Trace trigger level")
-    field(PINI,"YES")
-    field(DRVL, "0")
-    field(DRVH, "65535")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT))KetekTraceTriggerLevel")
-}
-
-record(longin,"$(P)$(R)TraceTriggerLevel_RBV") {
-    field(DESC,"Trace trigger level")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT))KetekTraceTriggerLevel")
-    field(SCAN, "I/O Intr")
-}
-
-record(ao,"$(P)$(R)TraceTriggerWait") {
-    field(DESC,"Trigger wait time")
-    field(PINI,"YES")
-    field(DRVL, "0.001")
-    field(DRVH, "100")
-    field(PREC,"3")
-    field(DTYP, "asynFloat64")
-    field(OUT,"@asyn($(PORT))KetekTraceTriggerWait")
-}
-
-record(ai,"$(P)$(R)TraceTriggerWait_RBV") {
-    field(DESC,"Trigger wait time")
-    field(PREC,"3")
-    field(DTYP, "asynFloat64")
-    field(INP,"@asyn($(PORT))KetekTraceTriggerWait")
-    field(SCAN, "I/O Intr")
-}
-
-record(longout,"$(P)$(R)TraceLength") {
-    field(DESC,"Trace length")
-    field(PINI,"YES")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT))KetekTraceLength")
-}
-
-record(longin,"$(P)$(R)TraceLength_RBV") {
-    field(DESC,"Trace length")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT))KetekTraceLength")
     field(SCAN, "I/O Intr")
 }
 
@@ -542,7 +362,7 @@ record(mbbo,"$(P)$(R)BaselineTrim") {
     field(ONVL, "1")
     field(ONST, "Long")
     field(TWVL, "2")
-    field(TWST, "Intermediate")
+    field(TWST, "Medium")
     field(THVL, "3")
     field(THST, "Short")
     field(FRVL, "4")
@@ -558,7 +378,7 @@ record(mbbi,"$(P)$(R)BaselineTrim_RBV") {
     field(ONVL, "1")
     field(ONST, "Long")
     field(TWVL, "2")
-    field(TWST, "Intermediate")
+    field(TWST, "Medium")
     field(THVL, "3")
     field(THST, "Short")
     field(FRVL, "4")
@@ -628,23 +448,282 @@ record(ai,"$(P)$(R)EnergyOffset_RBV") {
 }
 
 record(ai,"$(P)$(R)BoardTemperature") {
-    field(DESC,"Board temperatature")
-    field(PREC,"3")
+    field(DESC,"Board temperature")
+    field(PREC,"1")
     field(DTYP, "asynFloat64")
     field(INP,"@asyn($(PORT),0)KetekBoardTemperature")
     field(SCAN, "I/O Intr")
 }
 
-#############################
-# Trace waveform parameters #
-#############################
+###################################
+# Event scope and rate parameters #
+###################################
 
-record(waveform, "$(P)$(R)TraceData") {
-    field(DESC, "Trace data")
+record(mbbo,"$(P)$(R)EventTriggerSource") {
+    field(DESC,"Event trigger source")
+    field(PINI,"YES")
+    field(ZRVL, "0")
+    field(ZRST, "Instant")
+    field(ONVL, "1")
+    field(ONST, "ADC value")
+    field(TWVL, "2")
+    field(TWST, "ADC out of range")
+    field(THVL, "3")
+    field(THST, "Fast trigger")
+    field(FRVL, "4")
+    field(FRST, "Fast reset")
+    field(FVVL, "5")
+    field(FVST, "Fast pileup")
+    field(SXVL, "6")
+    field(SXST, "Medium trigger")
+    field(SVVL, "7")
+    field(SVST, "Medium reset")
+    field(EIVL, "8")
+    field(EIST, "Medium pileup")
+    field(NIVL, "9")
+    field(NIST, "Output count")
+    field(TEVL, "10")
+    field(TEST, "Output energy")
+    field(ELVL, "11")
+    field(ELST, "Baseline sample")
+    field(TVVL, "12")
+    field(TVST, "Dynamic reset")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekEventTriggerSource")
+}
+
+record(mbbi,"$(P)$(R)EventTriggerSource_RBV") {
+    field(DESC,"Baseline trim")
+    field(ZRVL, "0")
+    field(ZRST, "Instant")
+    field(ONVL, "1")
+    field(ONST, "ADC value")
+    field(TWVL, "2")
+    field(TWST, "ADC out of range")
+    field(THVL, "3")
+    field(THST, "Fast trigger")
+    field(FRVL, "4")
+    field(FRST, "Fast reset")
+    field(FVVL, "5")
+    field(FVST, "Fast pileup")
+    field(SXVL, "6")
+    field(SXST, "Medium trigger")
+    field(SVVL, "7")
+    field(SVST, "Medium reset")
+    field(EIVL, "8")
+    field(EIST, "Medium pileup")
+    field(NIVL, "9")
+    field(NIST, "Output count")
+    field(TEVL, "10")
+    field(TEST, "Output energy")
+    field(ELVL, "11")
+    field(ELST, "Baseline sample")
+    field(TVVL, "12")
+    field(TVST, "Dynamic reset")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekEventTriggerSource")
+    field(SCAN, "I/O Intr")
+}
+
+record(longout,"$(P)$(R)EventTriggerValue") {
+    field(DESC,"Event trigger value")
+    field(PINI,"YES")
+    field(DRVL, "0")
+    field(DRVH, "65535")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekEventTriggerValue")
+}
+
+record(longin,"$(P)$(R)EventTriggerValue_RBV") {
+    field(DESC,"Event trigger value")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekEventTriggerValue")
+    field(SCAN, "I/O Intr")
+}
+
+record(mbbo,"$(P)$(R)EventRatePeriod") {
+    field(DESC,"Event rate period")
+    field(PINI,"YES")
+    field(ZRVL, "0")
+    field(ZRST, "1 second")
+    field(ONVL, "1")
+    field(ONST, "2 seconds")
+    field(TWVL, "4")
+    field(TWST, "4 seconds")
+    field(THVL, "8")
+    field(THST, "8 seconds")
+    field(FRVL, "16")
+    field(FRST, "16 seconds")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekEventRatePeriod")
+}
+
+record(mbbi,"$(P)$(R)EventRatePeriod_RBV") {
+    field(DESC,"Event rate period")
+    field(ZRVL, "0")
+    field(ZRST, "1 second")
+    field(ONVL, "1")
+    field(ONST, "2 seconds")
+    field(TWVL, "4")
+    field(TWST, "4 seconds")
+    field(THVL, "8")
+    field(THST, "8 seconds")
+    field(FRVL, "16")
+    field(FRST, "16 seconds")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekEventRatePeriod")
+    field(SCAN, "I/O Intr")
+}
+
+record(bo,"$(P)$(R)EventRateMeasure") {
+    field(DESC,"Event rate measure")
+    field(ZNAM, "Done")
+    field(ONAM, "Measure")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekEventRateMeasure")
+}
+
+record(bi,"$(P)$(R)EventRateMeasure_RBV") {
+    field(DESC,"Event rate period")
+    field(ZNAM, "Done")
+    field(ONAM, "Measure")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekEventRateMeasure")
+    field(SCAN, "I/O Intr")
+}
+
+record(ai,"$(P)$(R)EventRate") {
+    field(DESC,"Event rate")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekEventRate")
+    field(SCAN, "I/O Intr")
+}
+
+record(mbbo,"$(P)$(R)ScopeDataSource") {
+    field(DESC,"Scope data source")
+    field(PINI,"YES")
+    field(ZRVL, "0")
+    field(ZRST, "ADC data")
+    field(ONVL, "1")
+    field(ONST, "Fast filter")
+    field(TWVL, "2")
+    field(TWST, "Medium filter")
+    field(THVL, "3")
+    field(THST, "Slow filter")
+    field(FRVL, "4")
+    field(FRST, "Baseline average")
+    field(FVVL, "5")
+    field(FVST, "Baseline sample")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekScopeDataSource")
+}
+
+record(mbbi,"$(P)$(R)ScopeDataSource_RBV") {
+    field(DESC,"Event rate period")
+    field(ZRVL, "0")
+    field(ZRST, "ADC data")
+    field(ONVL, "1")
+    field(ONST, "Fast filter")
+    field(TWVL, "2")
+    field(TWST, "Medium filter")
+    field(THVL, "3")
+    field(THST, "Slow filter")
+    field(FRVL, "4")
+    field(FRST, "Baseline average")
+    field(FVVL, "5")
+    field(FVST, "Baseline sample")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekScopeDataSource")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao,"$(P)$(R)ScopeInterval") {
+    field(DESC,"Scope time/point")
+    field(EGU, "us")
+    field(PINI,"YES")
+    field(PREC, "3")
+    field(DRVL, "0.0125")
+    field(DRVH, "819.2")
+    field(VAL,  "0.0125")
+    field(DTYP, "asynFloat64")
+    field(OUT,"@asyn($(PORT))KetekScopeInterval")
+}
+
+record(ai,"$(P)$(R)ScopeInterval_RBV") {
+    field(DESC,"Scope time/point")
+    field(DTYP, "asynFloat64")
+    field(PREC, "3")
+    field(INP,"@asyn($(PORT))KetekScopeInterval")
+    field(SCAN, "I/O Intr")
+}
+
+record(waveform, "$(P)$(R)ScopeData") {
+    field(DESC, "Scope data")
     field(DTYP, "asynInt32ArrayIn")
     field(PREC, "0")
-    field(INP, "@asyn($(PORT),0)KetekTraceData")
-    field(NELM, "$(TRACE_LEN)")
+    field(INP, "@asyn($(PORT))KetekScopeData")
+    field(NELM, "8192")
     field(FTVL, "LONG")
+    field(SCAN, "I/O Intr")
+}
+
+record(waveform, "$(P)$(R)ScopeTimeArray") {
+    field(DESC, "Scope time array")
+    field(DTYP, "asynFloat64ArrayIn")
+    field(PREC, "0")
+    field(INP, "@asyn($(PORT))KetekScopeTimeArray")
+    field(NELM, "8192")
+    field(FTVL, "DOUBLE")
+    field(SCAN, "I/O Intr")
+}
+
+record(mbbo,"$(P)$(R)ScopeTriggerTimeout") {
+    field(DESC,"Scope trigger timeout")
+    field(PINI,"YES")
+    field(ZRVL, "0")
+    field(ZRST, "1 second")
+    field(ONVL, "1")
+    field(ONST, "2 seconds")
+    field(TWVL, "4")
+    field(TWST, "4 seconds")
+    field(THVL, "8")
+    field(THST, "8 seconds")
+    field(FRVL, "16")
+    field(FRST, "16 seconds")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekScopeTriggerTimeout")
+}
+
+record(mbbi,"$(P)$(R)ScopeTriggerTimeout_RBV") {
+    field(DESC,"Scope trigger timeout")
+    field(ZRVL, "0")
+    field(ZRST, "1 second")
+    field(ONVL, "1")
+    field(ONST, "2 seconds")
+    field(TWVL, "4")
+    field(TWST, "4 seconds")
+    field(THVL, "8")
+    field(THST, "8 seconds")
+    field(FRVL, "16")
+    field(FRST, "16 seconds")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekScopeTriggerTimeout")
+    field(SCAN, "I/O Intr")
+}
+
+record(bo,"$(P)$(R)ScopeRead") {
+    field(DESC,"Scope read")
+    field(ZNAM, "Done")
+    field(ONAM, "Read")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekScopeRead")
+}
+
+record(bi,"$(P)$(R)ScopeRead_RBV") {
+    field(DESC,"Event rate period")
+    field(ZNAM, "Done")
+    field(ONAM, "Read")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekScopeRead")
     field(SCAN, "I/O Intr")
 }
