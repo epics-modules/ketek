@@ -25,7 +25,7 @@
 #include <epicsExit.h>
 #include <envDefs.h>
 #include <iocsh.h>
-#include <asynPortDriver.h>
+#include <asynNDArrayDriver.h>
 #include <asynOctetSyncIO.h>
 
 /* MCA includes */
@@ -41,6 +41,8 @@
 #define KETEK_FILTER_TIME_UNITS 12.5e-9
 #define KETEK_USEC_TO_FILTER_UNITS (1.e-6/KETEK_FILTER_TIME_UNITS)
 #define KETEK_ELAPSED_TIME_UNITS 10e-6
+#define KETEK_EVENT_TIME_UNITS (1/80e6)
+#define KETEK_USEC_TO_EVENT_UNITS (1e-6/KETEK_EVENT_TIME_UNITS)
 
 /** Only used for debugging/error messages to identify where the message comes from*/
 static const char *driverName = "Ketek";
@@ -59,7 +61,7 @@ extern "C" int KetekConfig(const char *portName, const char *ipPortName)
 }
 
 Ketek::Ketek(const char *portName, const char *ipPortName)
-    : asynPortDriver(portName, 1,
+    : asynNDArrayDriver(portName, 1, 0, 0,
             asynInt32Mask | asynFloat64Mask | asynInt32ArrayMask | asynFloat64ArrayMask | asynOctetMask | asynDrvUserMask,
             asynInt32Mask | asynFloat64Mask | asynInt32ArrayMask | asynFloat64ArrayMask | asynOctetMask,
             ASYN_CANBLOCK, 1, 0, 0)
@@ -77,18 +79,16 @@ Ketek::Ketek(const char *portName, const char *ipPortName)
     }
 
     /* Internal asyn driver parameters */
-    createParam(KetekPortNameSelfString,           asynParamOctet,   &KetekPortNameSelf);
-    createParam(KetekDriverVersionString,          asynParamOctet,   &KetekDriverVersion);
-    createParam(KetekModelString,                  asynParamOctet,   &KetekModel);
-    createParam(KetekFirmwareVersionString,        asynParamOctet,   &KetekFirmwareVersion);
     createParam(KetekErasedString,                 asynParamInt32,   &KetekErased);
 
     /* Diagnostic trace parameters */
-    createParam(KetekEventTriggerSourceString,     asynParamInt32,       &KetekEventTriggerSource);
+    createParam(KetekEventTriggerSourceString,     asynParamInt32,        &KetekEventTriggerSource);
     createParam(KetekEventTriggerValueString,      asynParamInt32,        &KetekEventTriggerValue);
-    createParam(KetekEventRateCalculateString,     asynParamInt32,        &KetekEventRateCalculate);
+    createParam(KetekEventRatePeriodString,        asynParamInt32,        &KetekEventRatePeriod);
+    createParam(KetekEventRateMeasureString,       asynParamInt32,        &KetekEventRateMeasure);
     createParam(KetekEventRateString,              asynParamInt32,        &KetekEventRate);
     createParam(KetekScopeDataSourceString,        asynParamInt32,        &KetekScopeDataSource);
+    createParam(KetekScopeDataString,              asynParamInt32Array,   &KetekScopeData);
     createParam(KetekScopeTimeArrayString,         asynParamFloat64Array, &KetekScopeTimeArray);
     createParam(KetekScopeIntervalString,          asynParamFloat64,      &KetekScopeInterval);
     createParam(KetekScopeTriggerTimeoutString,    asynParamInt32,        &KetekScopeTriggerTimeout);
@@ -148,16 +148,16 @@ Ketek::Ketek(const char *portName, const char *ipPortName)
     createParam(mcaElapsedRealTimeString,          asynParamFloat64, &mcaElapsedRealTime);
     createParam(mcaElapsedCountsString,            asynParamFloat64, &mcaElapsedCounts);
 
-    setStringParam(KetekPortNameSelf, this->portName);
-    setStringParam(KetekModel, "AXAS-D 3.0");
-    setStringParam(KetekDriverVersion, DRIVER_VERSION);
+    setStringParam(ADManufacturer, "KETEK");
+    setStringParam(ADModel, "AXAS-D 3.0");
+    setStringParam(NDDriverVersion, DRIVER_VERSION);
     epicsUInt16 fwMajor, fwMinor, fwPatch;
     status = readSingleParam(pFirmwareMajor, &fwMajor);
     status = readSingleParam(pFirmwareMinor, &fwMinor);
     status = readSingleParam(pFirmwarePatch, &fwPatch);
     char firmwareString[32];
     sprintf(firmwareString, "%d.%d.%d", fwMajor, fwMinor, fwPatch);
-    setStringParam(KetekFirmwareVersion, firmwareString);
+    setStringParam(ADFirmwareVersion, firmwareString);
 
     /* Register the epics exit function to be called when the IOC exits... */
     epicsAtExit(c_shutdown, this);
@@ -298,7 +298,7 @@ asynStatus Ketek::writeInt32( asynUser *pasynUser, epicsInt32 value)
         if (acquiring) status = this->getAcquisitionStatistics();
     }
     else if (function == KetekScopeRead) {
-        status = this->getTraces();
+        status = this->getScopeTrace();
     }
     else if ((function == KetekMediumFilterEnable) ||
              (function == KetekBaselineAverageLen) ||
@@ -312,8 +312,16 @@ asynStatus Ketek::writeInt32( asynUser *pasynUser, epicsInt32 value)
              (function == KetekPresetOutputCounts)) {
         this->setPresets();
     }
-            
-    /* Call the callback */
+    else if ((function == KetekEventTriggerSource) ||
+             (function == KetekEventTriggerValue)  ||
+             (function == KetekScopeTriggerTimeout)) {
+        this->setEventScope();
+    }
+    else if (function == KetekEventRateMeasure) {
+        this->startEventRate();
+    }
+
+    /* Call the callbacks */
     callParamCallbacks();
     return status;
 }
@@ -342,6 +350,9 @@ asynStatus Ketek::writeFloat64( asynUser *pasynUser, epicsFloat64 value)
     else if ((function == mcaPresetRealTime) ||
              (function == mcaPresetLiveTime)) {
         this->setPresets();
+    }
+    else if (function == KetekScopeInterval) {
+        this->setEventScope();
     }
 
     /* Call the callback */
@@ -568,6 +579,41 @@ asynStatus Ketek::getConfiguration()
     return asynSuccess;
 }
 
+asynStatus Ketek::setEventScope()
+{
+    int triggerSource, triggerValue, scopeTriggerTimeout;
+    double scopeInterval;
+    //static const char *functionName = "setEventScope";
+
+    getIntegerParam(KetekEventTriggerSource,  &triggerSource);
+    getIntegerParam(KetekEventTriggerValue,   &triggerValue);
+    getIntegerParam(KetekScopeTriggerTimeout, &scopeTriggerTimeout);
+    getDoubleParam(KetekScopeInterval,        &scopeInterval);
+
+    writeSingleParam(pEventTriggerSource,  triggerSource);
+    writeSingleParam(pEventTriggerValue,   triggerValue);
+    writeSingleParam(pScopeTriggerTimeout, scopeTriggerTimeout);
+    writeSingleParam(pScopeSampInterval,   scopeInterval*KETEK_USEC_TO_EVENT_UNITS);
+    for (int i=0; i<KETEK_MAX_SCOPE_POINTS; i++) {
+        scopeTimeBuffer_[i] = i/KETEK_USEC_TO_EVENT_UNITS;
+    }
+    doCallbacksFloat64Array(scopeTimeBuffer_, KETEK_MAX_SCOPE_POINTS, KetekScopeTimeArray, 0);
+
+    return asynSuccess;
+}
+
+asynStatus Ketek::startEventRate()
+{
+    int eventRatePeriod;
+    epicsUInt16 eventRateLow, eventRateHigh;
+   
+    getIntegerParam(KetekEventRatePeriod, &eventRatePeriod);
+    writeSingleParam(pEventRateCalc, eventRatePeriod);
+    readSingleParam(pEventRateLow, &eventRateLow);
+    readSingleParam(pEventRateHigh, &eventRateHigh);
+    setIntegerParam(KetekEventRate, ntohs(eventRateLow) + ntohs(eventRateHigh)*65536);
+    return asynSuccess;
+}
 asynStatus Ketek::getAcquisitionStatistics()
 {
     double realTime, liveTime, icr, ocr;
@@ -610,6 +656,7 @@ asynStatus Ketek::getAcquisitionStatistics()
         setIntegerParam(KetekInputCounts,     inputCounts);
         setDoubleParam( KetekOutputCountRate, ocr);
         setDoubleParam( KetekInputCountRate,  icr);
+
 
         asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER,
             "%s::%s\n"
@@ -662,14 +709,20 @@ asynStatus Ketek::getMcaData()
 
 
 /* Get trace data */
-asynStatus Ketek::getTraces()
+asynStatus Ketek::getScopeTrace()
 {
-    //int iValue;
-    //uint16_t mode=0;
-    //uint32_t i;
-    //double traceTime;
-    //const char *functionName = "getTraces";
-
+    int scopeDataSource;
+    ketekRequest_t req;
+    
+    getIntegerParam(KetekScopeDataSource, &scopeDataSource);
+    req.paramID = pEventScopeGet;
+    req.command = KETEK_COMMAND_WRITE;
+    req.data = htons(scopeDataSource);
+    sendRcvMsg(&req, (char *)scopeDataRaw_, sizeof(scopeDataRaw_));
+    for (int i=0; i<KETEK_MAX_SCOPE_POINTS; i++) {
+       scopeData_[i] = scopeDataRaw_[i*3] + scopeDataRaw_[i*3+1]*256L + scopeDataRaw_[i*3+2]*65536L;
+    }
+    doCallbacksInt32Array(scopeData_, KETEK_MAX_SCOPE_POINTS, KetekScopeData, 0);
     return asynSuccess;
 }
 

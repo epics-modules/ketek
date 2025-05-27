@@ -86,8 +86,8 @@ typedef enum ketekParameters {
     pReadAllParams        = 79,
     pEventTriggerSource   = 80,
     pEventTriggerValue    = 81,
-    pEventSampInterval    = 82,
-    pEventTriggerTimeout  = 83,
+    pScopeSampInterval    = 82,
+    pScopeTriggerTimeout  = 83,
     pEventScopeGet        = 84,
     pEventRateCalc        = 85,
     pEventRateLow         = 86,
@@ -116,12 +116,6 @@ typedef enum ketekParameters {
     pSPIPowerdown         = 118
 } ketekParameters_t;
 
-/* General parameters */
-#define KetekPortNameSelfString             "KetekPortNameSelf"
-#define KetekDriverVersionString            "KetekDriverVersion"
-#define KetekModelString                    "KetekModel"
-#define KetekFirmwareVersionString          "KetekFirmwareVersion"
-
 /* Internal asyn driver parameters */
 #define KetekErasedString                   "KetekErased"
 #define KetekAcquiringString                "KetekAcquiring"  /* Internal use only !!! */
@@ -130,9 +124,11 @@ typedef enum ketekParameters {
 /* Event and scope parameters */
 #define KetekEventTriggerSourceString       "KetekEventTriggerSource"
 #define KetekEventTriggerValueString        "KetekEventTriggerValue"
-#define KetekEventRateCalculateString       "KetekEventRateCalculate"
+#define KetekEventRatePeriodString          "KetekEventRatePeriod"
+#define KetekEventRateMeasureString         "KetekEventRateMeasure"
 #define KetekEventRateString                "KetekEventRate"
 #define KetekScopeDataSourceString          "KetekScopeDataSource"
+#define KetekScopeDataString                "KetekScopeData"
 #define KetekScopeTimeArrayString           "KetekScopeTimeArray"
 #define KetekScopeIntervalString            "KetekScopeInterval"
 #define KetekScopeTriggerTimeoutString      "KetekScopeTriggerTimeout"
@@ -175,7 +171,7 @@ typedef enum ketekParameters {
 #define KetekGatingModeString               "KetekGatingMode"
 #define KetekMappingPointsString            "KetekMappingPoints"
 
-class Ketek : public asynPortDriver
+class Ketek : public asynNDArrayDriver
 {
 public:
     Ketek(const char *portName, const char *ipAddress);
@@ -205,7 +201,8 @@ protected:
     /* Event scope and rate parameters */
     int KetekEventTriggerSource;   /** < Source of the event or scope data int32 */
     int KetekEventTriggerValue;    /** < Event trigger value int32 */
-    int KetekEventRateCalculate;   /** < Time period to calculate rate int32 */
+    int KetekEventRatePeriod;      /** < Time period to calculate rate int32 */
+    int KetekEventRateMeasure;     /** < Measure the event rate int32 */
     int KetekEventRate;            /** < Event rate int32 */
     int KetekScopeDataSource;      /** < Source of scope data int32 array */
     int KetekScopeData;            /** < Scope array data (read) int32 array */
@@ -274,9 +271,11 @@ private:
     asynStatus getPresets();
     asynStatus setConfiguration();
     asynStatus getConfiguration();
+    asynStatus setEventScope();
+    asynStatus startEventRate();
     asynStatus getAcquisitionStatistics();
     asynStatus getMcaData();
-    asynStatus getTraces();
+    asynStatus getScopeTrace();
     asynStatus startAcquiring();
     asynStatus stopAcquiring();
     asynStatus readSingleParam(int paramID, unsigned short *value);
@@ -288,7 +287,7 @@ private:
     epicsInt32 mcaData_[KETEK_MAX_MCA_BINS];
     epicsUInt8 mcaRaw_[KETEK_MAX_MCA_BINS*sizeof(epicsUInt32)];
     epicsInt32 scopeData_[KETEK_MAX_SCOPE_POINTS];
-    epicsUInt8 scopeDataRaw_[KETEK_MAX_SCOPE_POINTS*sizeof(epicsUInt32)];
+    epicsUInt8 scopeDataRaw_[KETEK_MAX_SCOPE_POINTS*3];
     epicsFloat64 scopeTimeBuffer_[KETEK_MAX_SCOPE_POINTS];
 
     asynUser *pasynUserRemote_;
