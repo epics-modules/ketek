@@ -31,10 +31,22 @@ record(longout,"$(P)$(R)PresetInputCounts") {
     field(OUT, "@asyn($(PORT))KetekPresetInputCounts")
     field(PINI,"YES")}
 
+record(longin,"$(P)$(R)PresetInputCounts_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP, "@asyn($(PORT))KetekPresetInputCounts")
+    field(SCAN,"I/O Intr")
+}
+
 record(longout,"$(P)$(R)PresetOutputCounts") {
     field(PINI,"YES")
     field(DTYP, "asynInt32")
     field(OUT, "@asyn($(PORT))KetekPresetOutputCounts")
+}
+
+record(longin,"$(P)$(R)PresetOutputCounts_RBV") {
+    field(DTYP, "asynInt32")
+    field(INP, "@asyn($(PORT))KetekPresetOutputCounts")
+    field(SCAN,"I/O Intr")
 }
 
 record(mbbo,"$(P)$(R)PresetMode") {
@@ -684,11 +696,11 @@ record(mbbo,"$(P)$(R)ScopeTriggerTimeout") {
     field(ZRST, "1 second")
     field(ONVL, "1")
     field(ONST, "2 seconds")
-    field(TWVL, "4")
+    field(TWVL, "2")
     field(TWST, "4 seconds")
-    field(THVL, "8")
+    field(THVL, "3")
     field(THST, "8 seconds")
-    field(FRVL, "16")
+    field(FRVL, "4")
     field(FRST, "16 seconds")
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(PORT),0)KetekScopeTriggerTimeout")
@@ -700,11 +712,11 @@ record(mbbi,"$(P)$(R)ScopeTriggerTimeout_RBV") {
     field(ZRST, "1 second")
     field(ONVL, "1")
     field(ONST, "2 seconds")
-    field(TWVL, "4")
+    field(TWVL, "2")
     field(TWST, "4 seconds")
-    field(THVL, "8")
+    field(THVL, "3")
     field(THST, "8 seconds")
-    field(FRVL, "16")
+    field(FRVL, "4")
     field(FRST, "16 seconds")
     field(DTYP, "asynInt32")
     field(INP,"@asyn($(PORT),0)KetekScopeTriggerTimeout")
@@ -725,5 +737,82 @@ record(bi,"$(P)$(R)ScopeRead_RBV") {
     field(ONAM, "Read")
     field(DTYP, "asynInt32")
     field(INP,"@asyn($(PORT),0)KetekScopeRead")
+    field(SCAN, "I/O Intr")
+}
+
+###################################
+# Sync mode parameters            #
+###################################
+record(busy,"$(P)$(R)SyncAcquire") {
+    field(DESC,"Sync acquire")
+    field(ZNAM,"Stop")
+    field(ONAM,"Start")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekSyncAcquire")
+}
+
+record(bi,"$(P)$(R)SyncAcquire_RBV") {
+    field(DESC,"Sync acquire")
+    field(ZNAM,"Stop")
+    field(ONAM,"Start")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekSyncAcquire")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao,"$(P)$(R)SyncCycleTime") {
+    field(DESC,"Acquire time per cycle")
+    field(PINI,"YES")
+    field(DTYP, "asynFloat64")
+    field(OUT,"@asyn($(PORT))KetekSyncCycleTime")
+    field(PREC, "4")
+    field(VAL,"0.01")
+}
+
+record(ai,"$(P)$(R)SyncCycleTime_RBV") {
+    field(DESC,"Acquire time per cycle")
+    field(DTYP, "asynFloat64")
+    field(INP,"@asyn($(PORT))KetekSyncCycleTime")
+    field(SCAN, "I/O Intr")
+}
+
+record(longout,"$(P)$(R)SyncPoints") {
+    field(DESC,"Number of sync points")
+    field(PINI,"YES")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT))KetekSyncPoints")
+}
+
+record(longin,"$(P)$(R)SyncPoints_RBV") {
+    field(DESC,"Number of sync points")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT))KetekSyncPoints")
+    field(SCAN, "I/O Intr")
+}
+
+record(longin,"$(P)$(R)SyncCurrentPoint") {
+    field(DESC,"Current sync point")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT))KetekSyncCurrentPoint")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi,"$(P)$(R)SyncEnabled") {
+    field(DESC,"Sync enabled")
+    field(ZNAM,"Disabled")
+    field(ONAM,"Enabled")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekSyncEnabled")
+    field(SCAN, "I/O Intr")
+}
+
+record(bi,"$(P)$(R)SyncRunning") {
+    field(DESC,"Sync running")
+    field(ZNAM,"Done")
+    field(ONAM,"Running")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekSyncRunning")
+    field(ZSV, "NO_ALARM")
+    field(OSV, "MINOR")
     field(SCAN, "I/O Intr")
 }

@@ -21,3 +21,5 @@ $(P)$(R)BaselineCorrEnable
 $(P)$(R)EnergyGain
 $(P)$(R)EnergyOffset
 $(P)$(R)NumMCAChannels
+$(P)$(R)SyncCycleTime
+$(P)$(R)SyncPoints
