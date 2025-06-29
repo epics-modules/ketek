@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-05-27 17:45:33 by epics-->
+<!--Saved on 2025-05-28 11:52:12 by epics-->
 <display version="2.0.0">
   <name>ketekTrace</name>
-  <x>915</x>
-  <y>218</y>
+  <x>796</x>
+  <y>131</y>
   <width>900</width>
-  <height>470</height>
+  <height>465</height>
   <background_color>
     <color red="187" green="187" blue="187">
     </color>
@@ -106,23 +106,6 @@
   </widget>
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #18</name>
-    <x>10</x>
-    <y>355</y>
-    <width>880</width>
-    <height>110</height>
-    <line_width>1</line_width>
-    <line_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </line_color>
-    <background_color>
-      <color red="0" green="0" blue="0">
-      </color>
-    </background_color>
-    <transparent>true</transparent>
-  </widget>
-  <widget type="rectangle" version="2.0.0">
-    <name>rectangle #21</name>
     <x>390</x>
     <y>360</y>
     <width>120</width>
@@ -137,7 +120,7 @@
     </background_color>
   </widget>
   <widget type="label" version="2.0.0">
-    <name>text #24</name>
+    <name>text #21</name>
     <text>Scope Setup</text>
     <x>395</x>
     <y>360</y>
@@ -152,200 +135,205 @@
     </foreground_color>
     <horizontal_alignment>1</horizontal_alignment>
   </widget>
+  <widget type="rectangle" version="2.0.0">
+    <name>rectangle #24</name>
+    <x>5</x>
+    <y>355</y>
+    <width>890</width>
+    <height>105</height>
+    <line_width>1</line_width>
+    <line_color>
+      <color red="0" green="0" blue="0">
+      </color>
+    </line_color>
+    <background_color>
+      <color red="0" green="0" blue="0">
+      </color>
+    </background_color>
+    <transparent>true</transparent>
+  </widget>
   <widget type="group" version="2.0.0">
     <name>composite #27</name>
-    <x>20</x>
-    <y>385</y>
-    <width>860</width>
-    <height>70</height>
+    <x>50</x>
+    <y>410</y>
+    <width>340</width>
+    <height>20</height>
     <style>3</style>
     <transparent>true</transparent>
-    <widget type="group" version="2.0.0">
-      <name>composite #30</name>
-      <x>90</x>
-      <width>228</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #33</name>
-        <text>Length</text>
-        <width>60</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #36</name>
-        <pv_name>$(P)$(R)TraceLength_RBV</pv_name>
-        <x>148</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="200" green="200" blue="200">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #40</name>
-        <pv_name>$(P)$(R)TraceLength</pv_name>
-        <x>63</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #44</name>
-      <x>340</x>
-      <width>338</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #47</name>
-        <text>Time/point (usec)</text>
-        <width>170</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #50</name>
-        <pv_name>$(P)$(R)TraceTime_RBV</pv_name>
-        <x>258</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="200" green="200" blue="200">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #54</name>
-        <pv_name>$(P)$(R)TraceTime</pv_name>
-        <x>173</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #58</name>
-      <x>600</x>
-      <y>50</y>
-      <width>258</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #61</name>
-        <text>Read Rate</text>
-        <width>90</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <horizontal_alignment>2</horizontal_alignment>
-      </widget>
-      <widget type="combo" version="2.0.0">
-        <name>menu #64</name>
-        <pv_name>$(P)$(R)ReadTrace.SCAN</pv_name>
-        <x>93</x>
-        <y>1</y>
-        <width>80</width>
-        <height>18</height>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="action_button" version="3.0.0">
-        <name>message button #67</name>
-        <actions>
-          <action type="write_pv">
-            <pv_name>$(P)$(R)ReadTrace</pv_name>
-            <value>1</value>
-            <description>Write</description>
-          </action>
-        </actions>
-        <pv_name>$(P)$(R)ReadTrace</pv_name>
-        <text>Read Once</text>
-        <x>178</x>
-        <width>80</width>
-        <height>20</height>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-      </widget>
-    </widget>
     <widget type="label" version="2.0.0">
-      <name>text #70</name>
-      <text>Trigger:</text>
-      <y>25</y>
-      <width>80</width>
+      <name>text #30</name>
+      <text>Time/point (usec)</text>
+      <width>170</width>
       <font>
         <font family="Liberation Sans" style="REGULAR" size="16.0">
         </font>
       </font>
       <auto_size>true</auto_size>
     </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #73</name>
-      <x>90</x>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #33</name>
+      <pv_name>$(P)$(R)ScopeInterval</pv_name>
+      <x>175</x>
+      <width>80</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="textupdate" version="2.0.0">
+      <name>text update #37</name>
+      <pv_name>$(P)$(R)ScopeInterval_RBV</pv_name>
+      <x>260</x>
+      <width>80</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <foreground_color>
+        <color red="10" green="0" blue="184">
+        </color>
+      </foreground_color>
+      <background_color>
+        <color red="200" green="200" blue="200">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #41</name>
+    <x>130</x>
+    <y>435</y>
+    <width>260</width>
+    <height>20</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="label" version="2.0.0">
+      <name>text #44</name>
+      <text>Read Rate</text>
+      <width>90</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <horizontal_alignment>2</horizontal_alignment>
+    </widget>
+    <widget type="combo" version="2.0.0">
+      <name>menu #47</name>
+      <pv_name>$(P)$(R)ScopeRead.SCAN</pv_name>
+      <x>95</x>
+      <y>1</y>
+      <width>80</width>
+      <height>18</height>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="action_button" version="3.0.0">
+      <name>message button #50</name>
+      <actions>
+        <action type="write_pv">
+          <pv_name>$(P)$(R)ScopeRead</pv_name>
+          <value>1</value>
+          <description>Write</description>
+        </action>
+      </actions>
+      <pv_name>$(P)$(R)ScopeRead</pv_name>
+      <text>Read Once</text>
+      <x>180</x>
+      <width>80</width>
+      <height>20</height>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+    </widget>
+  </widget>
+  <widget type="combo" version="2.0.0">
+    <name>menu #53</name>
+    <pv_name>$(P)$(R)ScopeDataSource</pv_name>
+    <x>225</x>
+    <y>385</y>
+    <width>165</width>
+    <height>20</height>
+    <background_color>
+      <color red="115" green="223" blue="255">
+      </color>
+    </background_color>
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+  </widget>
+  <widget type="label" version="2.0.0">
+    <name>text #56</name>
+    <text>Data source</text>
+    <x>110</x>
+    <y>385</y>
+    <width>110</width>
+    <font>
+      <font family="Liberation Sans" style="REGULAR" size="16.0">
+      </font>
+    </font>
+    <auto_size>true</auto_size>
+  </widget>
+  <widget type="group" version="2.0.0">
+    <name>composite #59</name>
+    <x>550</x>
+    <y>385</y>
+    <width>285</width>
+    <height>70</height>
+    <style>3</style>
+    <transparent>true</transparent>
+    <widget type="label" version="2.0.0">
+      <name>text #62</name>
+      <text>Trigger value</text>
+      <x>20</x>
       <y>25</y>
-      <width>230</width>
+      <width>130</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <auto_size>true</auto_size>
+    </widget>
+    <widget type="textentry" version="3.0.0">
+      <name>text entry #65</name>
+      <pv_name>$(P)$(R)EventTriggerValue</pv_name>
+      <x>155</x>
+      <y>25</y>
+      <width>130</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
+        </font>
+      </font>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <format>1</format>
+      <show_units>false</show_units>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
+    </widget>
+    <widget type="group" version="2.0.0">
+      <name>composite #69</name>
+      <x>10</x>
+      <width>275</width>
       <height>20</height>
       <style>3</style>
       <transparent>true</transparent>
       <widget type="label" version="2.0.0">
-        <name>text #76</name>
-        <text>Rising</text>
-        <width>60</width>
+        <name>text #72</name>
+        <text>Trigger source</text>
+        <width>140</width>
         <font>
           <font family="Liberation Sans" style="REGULAR" size="16.0">
           </font>
@@ -353,10 +341,10 @@
         <auto_size>true</auto_size>
       </widget>
       <widget type="combo" version="2.0.0">
-        <name>menu #79</name>
-        <pv_name>$(P)$(R)TraceTriggerRising</pv_name>
-        <x>65</x>
-        <width>80</width>
+        <name>menu #75</name>
+        <pv_name>$(P)$(R)EventTriggerSource</pv_name>
+        <x>145</x>
+        <width>130</width>
         <height>20</height>
         <background_color>
           <color red="115" green="223" blue="255">
@@ -364,245 +352,30 @@
         </background_color>
         <border_alarm_sensitive>false</border_alarm_sensitive>
       </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #82</name>
-        <pv_name>$(P)$(R)TraceTriggerRising_RBV</pv_name>
-        <x>150</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="200" green="200" blue="200">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
     </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #86</name>
-      <x>340</x>
-      <y>25</y>
-      <width>240</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #89</name>
-        <text>Falling</text>
-        <width>70</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="combo" version="2.0.0">
-        <name>menu #92</name>
-        <pv_name>$(P)$(R)TraceTriggerFalling</pv_name>
-        <x>75</x>
-        <width>80</width>
-        <height>20</height>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #95</name>
-        <pv_name>$(P)$(R)TraceTriggerFalling_RBV</pv_name>
-        <x>160</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="200" green="200" blue="200">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #99</name>
-      <x>620</x>
-      <y>25</y>
-      <width>240</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #102</name>
-        <text>Instant</text>
-        <width>70</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="combo" version="2.0.0">
-        <name>menu #105</name>
-        <pv_name>$(P)$(R)TraceTriggerInstant</pv_name>
-        <x>75</x>
-        <width>80</width>
-        <height>20</height>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #108</name>
-        <pv_name>$(P)$(R)TraceTriggerInstant_RBV</pv_name>
-        <x>160</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="200" green="200" blue="200">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-    </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #112</name>
-      <x>360</x>
+    <widget type="label" version="2.0.0">
+      <name>text #78</name>
+      <text>Trigger timeout</text>
       <y>50</y>
-      <width>220</width>
-      <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #115</name>
-        <text>Level</text>
-        <width>50</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
+      <width>150</width>
+      <font>
+        <font family="Liberation Sans" style="REGULAR" size="16.0">
         </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #118</name>
-        <pv_name>$(P)$(R)TraceTriggerLevel</pv_name>
-        <x>55</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #122</name>
-        <pv_name>$(P)$(R)TraceTriggerLevel_RBV</pv_name>
-        <x>140</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="200" green="200" blue="200">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
+      </font>
+      <auto_size>true</auto_size>
     </widget>
-    <widget type="group" version="2.0.0">
-      <name>composite #126</name>
-      <x>110</x>
+    <widget type="combo" version="2.0.0">
+      <name>menu #81</name>
+      <pv_name>$(P)$(R)ScopeTriggerTimeout</pv_name>
+      <x>155</x>
       <y>50</y>
-      <width>210</width>
+      <width>130</width>
       <height>20</height>
-      <style>3</style>
-      <transparent>true</transparent>
-      <widget type="label" version="2.0.0">
-        <name>text #129</name>
-        <text>Wait</text>
-        <width>40</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <auto_size>true</auto_size>
-      </widget>
-      <widget type="textentry" version="3.0.0">
-        <name>text entry #132</name>
-        <pv_name>$(P)$(R)TraceTriggerWait</pv_name>
-        <x>45</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <background_color>
-          <color red="115" green="223" blue="255">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
-      <widget type="textupdate" version="2.0.0">
-        <name>text update #136</name>
-        <pv_name>$(P)$(R)TraceTriggerWait_RBV</pv_name>
-        <x>130</x>
-        <width>80</width>
-        <font>
-          <font family="Liberation Sans" style="REGULAR" size="16.0">
-          </font>
-        </font>
-        <foreground_color>
-          <color red="10" green="0" blue="184">
-          </color>
-        </foreground_color>
-        <background_color>
-          <color red="200" green="200" blue="200">
-          </color>
-        </background_color>
-        <format>1</format>
-        <show_units>false</show_units>
-        <border_alarm_sensitive>false</border_alarm_sensitive>
-      </widget>
+      <background_color>
+        <color red="115" green="223" blue="255">
+        </color>
+      </background_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
     </widget>
   </widget>
 </display>
