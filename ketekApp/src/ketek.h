@@ -23,10 +23,40 @@ typedef enum ketekPresetModes {
     KetekPresetOutputCts
 } ketekPresetModes_t;
 
+typedef enum ketekSyncModes {
+    KetekSyncNone,
+    KetekSyncMXMaster,
+    KetekSyncMXSlave,
+    KetekSyncSortFreeSlave,
+    KetekSyncMappingMode
+} ketekSyncModes_t;
+
 #define KETEK_COMMAND_READ     0
 #define KETEK_COMMAND_WRITE    1
 #define KETEK_MAX_MCA_BINS     8192
 #define KETEK_MAX_SCOPE_POINTS 8192
+#define KETEK_MAX_UDP_LEN      1460
+#define KETEK_MAX_BYTES_PER_BIN 3
+
+#define STATUS_DATA_CHANNEL_INDEX   0x01
+#define STATUS_DATA_FIRMWARE_INFO   0x02
+#define STATUS_DATA_SYNC_MODE       0x04
+#define STATUS_DATA_SYNC_TIME       0x08
+#define STATUS_DATA_MCU_STATUS      0x10
+#define STATUS_DATA_BOARD_TEMP      0x20
+
+#define RUN_DATA_SYNC_RUN_ACTIVE    0x01
+#define RUN_DATA_REAL_TIME          0x02
+#define RUN_DATA_LIVE_TIME          0x04
+#define RUN_DATA_OUTPUT_COUNTS      0x08
+#define RUN_DATA_INPUT_COUNTS       0x10
+#define RUN_DATA_OCR                0x20
+#define RUN_DATA_ICR                0x40
+#define RUN_DATA_COUNTER_INTERNAL   0x80
+#define RUN_DATA_COUNTER_MASTER     0x100
+#define RUN_DATA_CYCLE_ERROR_COUNT  0x200
+#define RUN_DATA_SYNC_COM_ERROR     0x400
+
 
 typedef enum ketekParameters {
     pRunStart             = 0,
@@ -113,7 +143,31 @@ typedef enum ketekParameters {
     pMACAddr45            = 109,
     pEthernetReconfig     = 110,
     pUSBPowerdown         = 115,
-    pSPIPowerdown         = 118
+    pSPIPowerdown         = 118,
+    pSyncStart            = 128,
+    pSyncStop             = 129,
+    pSyncStopConditionLow = 130,
+    pSyncStopConditionHigh  = 131,
+    pSyncRunActive        = 132,
+    pSyncEtherHigh        = 133,
+    pSyncEtherLow         = 134,
+    pSyncEtherPort        = 135,
+    pSyncSegSize          = 138,
+    pSyncSegNumber        = 139,
+    pSyncStatusData       = 140,
+    pSyncRuntimeData      = 141,
+    pSyncSpectrumData     = 142,
+    pSyncChannelIndex     = 143,
+    pSyncMode             = 144,
+    pSyncCycleTimeLow     = 145,
+    pSyncCycleTimeHigh    = 146,
+    pSyncCycleErrorCount  = 147,
+    pSyncComError         = 148,
+    pSyncCycleInternal    = 149,
+    pSyncCycleMaster      = 150,
+    pSyncReset            = 151,
+    pSyncAutoStart        = 152,
+    pSyncTestPattern      = 153
 } ketekParameters_t;
 
 /* Internal asyn driver parameters */
@@ -164,17 +218,20 @@ typedef enum ketekParameters {
 #define KetekEnergyGainString               "KetekEnergyGain"
 #define KetekEnergyOffsetString             "KetekEnergyOffset"
 #define KetekBoardTemperatureString         "KetekBoardTemperature"
+#define KetekCollectModeString              "KetekCollectMode"
 
-/* Other parameters */
-#define KetekInputModeString                "KetekInputMode"
-#define KetekAnalogOffsetString             "KetekAnalogOffset"
-#define KetekGatingModeString               "KetekGatingMode"
-#define KetekMappingPointsString            "KetekMappingPoints"
+/* Sync parameters */
+#define KetekSyncAcquireString              "KetekSyncAcquire"
+#define KetekSyncCycleTimeString            "KetekSyncCycleTime"
+#define KetekSyncPointsString               "KetekSyncPoints"
+#define KetekSyncCurrentPointString         "KetekSyncCurrentPoint"
+#define KetekSyncEnabledString              "KetekSyncEnabled"
+#define KetekSyncRunningString              "KetekSyncRunning"
 
 class Ketek : public asynNDArrayDriver
 {
 public:
-    Ketek(const char *portName, const char *ipAddress);
+    Ketek(const char *portName, const char *ipPortName, const char* hostIPAddress, int hostUDPPort);
 
     /* virtual methods to override from asynNDArrayDriver */
     virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
@@ -242,6 +299,14 @@ protected:
     int KetekEnergyOffset;                /* float64, bins */
     int KetekBoardTemperature;            /* float64, C */
 
+    /* Sync parameters */
+    int KetekSyncAcquire;                 /* int32, write */
+    int KetekSyncCycleTime;               /* float64, write */
+    int KetekSyncPoints;                  /* int32, write */
+    int KetekSyncCurrentPoint;            /* int32, read */
+    int KetekSyncEnabled;                 /* int32 read */
+    int KetekSyncRunning;                 /* int32 read */
+
     /* Commands from MCA interface */
     int mcaData;                   /* int32Array, write/read */
     int mcaStartAcquire;           /* int32, write */
@@ -278,10 +343,13 @@ private:
     asynStatus getScopeTrace();
     asynStatus startAcquiring();
     asynStatus stopAcquiring();
+    asynStatus startSyncAcquire();
+    asynStatus stopSyncAcquire();
     asynStatus readSingleParam(int paramID, unsigned short *value);
     asynStatus writeSingleParam(int paramID, int value);
     asynStatus writeStopValue(epicsUInt32 value);
-    asynStatus sendRcvMsg(ketekRequest_t *request, void *response, size_t responseSize);
+    asynStatus sendRcvMsg(ketekRequest_t *request, void *response, size_t responseSize, double timout);
+    asynStatus extractSyncParam(int offset, int paramID, epicsUInt16 *value);
 
     /* Data */
     epicsInt32 mcaData_[KETEK_MAX_MCA_BINS];
@@ -289,12 +357,17 @@ private:
     epicsInt32 scopeData_[KETEK_MAX_SCOPE_POINTS];
     epicsUInt8 scopeDataRaw_[KETEK_MAX_SCOPE_POINTS*3];
     epicsFloat64 scopeTimeBuffer_[KETEK_MAX_SCOPE_POINTS];
+    epicsUInt8 syncMsgBuffer_[KETEK_MAX_UDP_LEN];
+    epicsUInt8 syncRawMCABuffer_[KETEK_MAX_MCA_BINS*KETEK_MAX_BYTES_PER_BIN];
 
     asynUser *pasynUserRemote_;
+    asynUser *pasynUserSync_;
 
     epicsEvent *cmdStartEvent_;
     epicsEvent *cmdStopEvent_;
     epicsEvent *stoppedEvent_;
+    
+    bool polling_;
 
 
 };
