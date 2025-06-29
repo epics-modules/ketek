@@ -26,6 +26,7 @@
 #include <envDefs.h>
 #include <iocsh.h>
 #include <asynNDArrayDriver.h>
+#include <drvAsynIPPort.h>
 #include <asynOctetSyncIO.h>
 
 /* MCA includes */
@@ -43,9 +44,17 @@
 #define KETEK_ELAPSED_TIME_UNITS 10e-6
 #define KETEK_EVENT_TIME_UNITS (1/80e6)
 #define KETEK_USEC_TO_EVENT_UNITS (1e-6/KETEK_EVENT_TIME_UNITS)
+#define KETEK_UDP_TIMEOUT 2
+#define KETEK_UDP_PORT_NAME "KETEK_UDP_SYNC"
 
 /** Only used for debugging/error messages to identify where the message comes from*/
 static const char *driverName = "Ketek";
+
+static void acquisitionTaskC(void *drvPvt)
+{
+    Ketek *pKetek = (Ketek *)drvPvt;
+    pKetek->acquisitionTask();
+}
 
 static void c_shutdown(void* arg)
 {
@@ -54,13 +63,13 @@ static void c_shutdown(void* arg)
     //delete pKetek;
 }
 
-extern "C" int KetekConfig(const char *portName, const char *ipPortName)
+extern "C" int KetekConfig(const char *portName, const char *ipPortName, const char* hostIPAddress, int hostUDPPort)
 {
-    new Ketek(portName, ipPortName);
+    new Ketek(portName, ipPortName, hostIPAddress, hostUDPPort);
     return 0;
 }
 
-Ketek::Ketek(const char *portName, const char *ipPortName)
+Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAddress, int hostUDPPort)
     : asynNDArrayDriver(portName, 1, 0, 0,
             asynInt32Mask | asynFloat64Mask | asynInt32ArrayMask | asynFloat64ArrayMask | asynOctetMask | asynDrvUserMask,
             asynInt32Mask | asynFloat64Mask | asynInt32ArrayMask | asynFloat64ArrayMask | asynOctetMask,
@@ -73,7 +82,7 @@ Ketek::Ketek(const char *portName, const char *ipPortName)
     status = pasynOctetSyncIO->connect(ipPortName, 0, &pasynUserRemote_, 0);
     if (status) {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-          "%s::%s cannot connect to Ketek devices, status=%d\n",
+          "%s::%s cannot connect to Ketek device, status=%d\n",
           driverName, functionName, status);
         return;
     }
@@ -125,6 +134,14 @@ Ketek::Ketek(const char *portName, const char *ipPortName)
     createParam(KetekEnergyOffsetString,                asynParamFloat64, &KetekEnergyOffset);
     createParam(KetekBoardTemperatureString,            asynParamFloat64, &KetekBoardTemperature);
 
+    /* Sync parameters */
+    createParam(KetekSyncAcquireString,                 asynParamInt32,   &KetekSyncAcquire);
+    createParam(KetekSyncCycleTimeString,             asynParamFloat64,   &KetekSyncCycleTime);
+    createParam(KetekSyncPointsString,                  asynParamInt32,   &KetekSyncPoints);
+    createParam(KetekSyncCurrentPointString,            asynParamInt32,   &KetekSyncCurrentPoint);
+    createParam(KetekSyncEnabledString,                 asynParamInt32,   &KetekSyncEnabled);
+    createParam(KetekSyncRunningString,                 asynParamInt32,   &KetekSyncRunning);
+
     /* Commands from MCA interface */
     createParam(mcaDataString,                     asynParamInt32Array, &mcaData);
     createParam(mcaStartAcquireString,             asynParamInt32,   &mcaStartAcquire);
@@ -148,6 +165,34 @@ Ketek::Ketek(const char *portName, const char *ipPortName)
     createParam(mcaElapsedRealTimeString,          asynParamFloat64, &mcaElapsedRealTime);
     createParam(mcaElapsedCountsString,            asynParamFloat64, &mcaElapsedCounts);
 
+    int syncEnabled = 0;
+    if (hostIPAddress && strlen(hostIPAddress) > 0) {
+        int ip1, ip2, ip3, ip4;
+        sscanf(hostIPAddress, "%d.%d.%d.%d", &ip1, &ip2, &ip3, &ip4);
+        writeSingleParam(pSyncEtherHigh, (ip1*256 + ip2));
+        writeSingleParam(pSyncEtherLow,  (ip3*256 + ip4));
+        writeSingleParam(pSyncEtherPort, hostUDPPort);
+        char portString[256];
+        sprintf(portString, "%s:%d:%d UDP", hostIPAddress, hostUDPPort, hostUDPPort);
+        status = (asynStatus)drvAsynIPPortConfigure(KETEK_UDP_PORT_NAME, portString, 0, 0, 1);
+        if (status) {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+              "%s::%s cannot create local UDP port, status=%d\n",
+              driverName, functionName, status);
+            return;
+        }
+        status = pasynOctetSyncIO->connect(KETEK_UDP_PORT_NAME, 0, &pasynUserSync_, 0);
+        if (status) {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+              "%s::%s cannot connect to local UDP port, status=%d\n",
+              driverName, functionName, status);
+            return;
+        }
+        syncEnabled = 1;
+        
+    }
+    setIntegerParam(KetekSyncEnabled, syncEnabled);
+
     setStringParam(ADManufacturer, "KETEK");
     setStringParam(ADModel, "AXAS-D 3.0");
     setStringParam(NDDriverVersion, DRIVER_VERSION);
@@ -159,6 +204,7 @@ Ketek::Ketek(const char *portName, const char *ipPortName)
     sprintf(firmwareString, "%d.%d.%d", fwMajor, fwMinor, fwPatch);
     setStringParam(ADFirmwareVersion, firmwareString);
 
+    
     /* Register the epics exit function to be called when the IOC exits... */
     epicsAtExit(c_shutdown, this);
 
@@ -170,6 +216,17 @@ Ketek::Ketek(const char *portName, const char *ipPortName)
     cmdStartEvent_ = new epicsEvent();
     cmdStopEvent_ = new epicsEvent();
     stoppedEvent_ = new epicsEvent();
+
+    polling_ = true;
+    status = (epicsThreadCreate("acquisitionTask",
+              epicsThreadPriorityMedium,
+              epicsThreadGetStackSize(epicsThreadStackMedium),
+              (EPICSTHREADFUNC)acquisitionTaskC, this) == NULL) ? asynError:asynSuccess;
+    if (status) {
+        printf("%s:%s epicsThreadCreate failure\n",
+                driverName, functionName);
+        return;
+    }
 
     // Stop acquisition in case it is running, since we can't change settings if it is
     this->stopAcquiring();
@@ -183,25 +240,25 @@ asynStatus Ketek::readSingleParam(int paramID, unsigned short *value)
     asynStatus status;
     size_t nWrite, nRead;
     int eomReason;
-    ketekRequest_t req;
-    ketekResponse_t resp;
+    ketekRequest_t req = {0};
+    ketekResponse_t resp = {0};
     static const char *functionName = "readSingleParam";
     
     req.paramID = paramID;
     req.command = KETEK_COMMAND_READ;
-    status = pasynOctetSyncIO->writeRead(pasynUserRemote_, (const char *)&req, sizeof(req), 
-                                        (char *)&resp, sizeof(resp), 
-                                         1, &nWrite, &nRead, &eomReason);
+        status = pasynOctetSyncIO->writeRead(pasynUserRemote_, (const char *)&req, sizeof(req), 
+                                             (char *)&resp, sizeof(resp), 
+                                             KETEK_UDP_TIMEOUT, &nWrite, &nRead, &eomReason);
     if (status) {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                  "%s::%s error in writeRead, status=%d\n",
-                  driverName, functionName, status);
+                  "%s::%s paramID=%d, error in writeRead status=%d\n",
+                  driverName, functionName, paramID, status);
         return status;
     }
     if (resp.status != 0) {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                  "%s::%s device returned error status=%d\n",
-                  driverName, functionName, status);
+                  "%s::%s paramID=%d, device returned error status=%d\n",
+                  driverName, functionName, paramID, status);
         return status;
     }
     *value = ntohs(resp.data);
@@ -224,11 +281,11 @@ asynStatus Ketek::writeSingleParam(int paramID, int value)
     req.data = htons(sval);
     status = pasynOctetSyncIO->writeRead(pasynUserRemote_, (const char *)&req, sizeof(req), 
                                          (char *)&resp, sizeof(resp), 
-                                         1, &nWrite, &nRead, &eomReason);
+                                         KETEK_UDP_TIMEOUT, &nWrite, &nRead, &eomReason);
     if (status) {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                  "%s::%s error in writeRead, status=%d\n",
-                  driverName, functionName, status);
+                  "%s::%s paramID=%d, error in writeRead, status=%d\n",
+                  driverName, functionName, paramID, status);
         return status;
     }
     if (resp.status != 0) {
@@ -250,7 +307,7 @@ asynStatus Ketek::writeStopValue(epicsUInt32 value)
     return status;
 }
 
-asynStatus Ketek::sendRcvMsg(ketekRequest_t *request, void *response, size_t responseSize)
+asynStatus Ketek::sendRcvMsg(ketekRequest_t *request, void *response, size_t responseSize, double timeout)
 {
     size_t nWrite, nRead;
     int eomReason;
@@ -259,11 +316,11 @@ asynStatus Ketek::sendRcvMsg(ketekRequest_t *request, void *response, size_t res
 
     status = pasynOctetSyncIO->writeRead(pasynUserRemote_, (const char *)request, sizeof(*request), 
                                         (char *)response, responseSize, 
-                                        1.0, &nWrite, &nRead, &eomReason);
+                                        timeout, &nWrite, &nRead, &eomReason);
     if (status || (nRead != responseSize)) {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                  "%s::%s error in writeRead, status=%d, nWrite=%d, nRequested=%d, nRead=%d, eomReason=%d\n",
-                  driverName, functionName, status, (int)nWrite, (int)responseSize, (int)nRead, eomReason);
+                  "%s::%s error in writeRead, status=%d, nWrite=%d, nRequested=%d, nRead=%d, eomReason=%d, timeout=%f\n",
+                  driverName, functionName, status, (int)nWrite, (int)responseSize, (int)nRead, eomReason, timeout);
         ketekResponse_t *resp = (ketekResponse_t *)response;
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
                   "%s::%s paramID=%d, status=%d, data=%d\n",
@@ -296,6 +353,13 @@ asynStatus Ketek::writeInt32( asynUser *pasynUser, epicsInt32 value)
         getIntegerParam(mcaAcquiring, &acquiring);
         /* If we are acquiring then read the statistics, else we use the cached values */
         if (acquiring) status = this->getAcquisitionStatistics();
+    }
+    else if (function == KetekSyncAcquire) {
+        if (value) {
+            this->startSyncAcquire();
+        } else {
+            this->stopSyncAcquire();
+        }
     }
     else if (function == KetekScopeRead) {
         status = this->getScopeTrace();
@@ -583,6 +647,7 @@ asynStatus Ketek::setEventScope()
 {
     int triggerSource, triggerValue, scopeTriggerTimeout;
     double scopeInterval;
+    int iValue;
     //static const char *functionName = "setEventScope";
 
     getIntegerParam(KetekEventTriggerSource,  &triggerSource);
@@ -593,9 +658,14 @@ asynStatus Ketek::setEventScope()
     writeSingleParam(pEventTriggerSource,  triggerSource);
     writeSingleParam(pEventTriggerValue,   triggerValue);
     writeSingleParam(pScopeTriggerTimeout, scopeTriggerTimeout);
-    writeSingleParam(pScopeSampInterval,   scopeInterval*KETEK_USEC_TO_EVENT_UNITS);
+    iValue = round(scopeInterval*KETEK_USEC_TO_EVENT_UNITS);
+    if (iValue < 1) iValue = 1;
+    if (iValue > 65535) iValue = 65535;
+    scopeInterval = iValue / KETEK_USEC_TO_EVENT_UNITS;
+    writeSingleParam(pScopeSampInterval, iValue);
+    setDoubleParam(KetekScopeInterval, scopeInterval);
     for (int i=0; i<KETEK_MAX_SCOPE_POINTS; i++) {
-        scopeTimeBuffer_[i] = i/KETEK_USEC_TO_EVENT_UNITS;
+        scopeTimeBuffer_[i] = i*scopeInterval;
     }
     doCallbacksFloat64Array(scopeTimeBuffer_, KETEK_MAX_SCOPE_POINTS, KetekScopeTimeArray, 0);
 
@@ -640,7 +710,7 @@ asynStatus Ketek::getAcquisitionStatistics()
     } else {
         req.paramID = pRunStatistics;
         req.command = KETEK_COMMAND_READ;
-        sendRcvMsg(&req, (char *)allStats, sizeof(allStats));
+        sendRcvMsg(&req, (char *)allStats, sizeof(allStats), 1.0);  // 1 second timeout should be fine
         active       = ntohs(allStats[0].data);
         realTime     = (ntohs(allStats[1].data)  + ntohs(allStats[2].data)*65536.)*KETEK_ELAPSED_TIME_UNITS;
         liveTime     = (ntohs(allStats[3].data)  + ntohs(allStats[4].data)*65536.)*KETEK_ELAPSED_TIME_UNITS;
@@ -700,7 +770,7 @@ asynStatus Ketek::getMcaData()
     req.paramID = pMCARead;
     req.command = KETEK_COMMAND_READ;
     req.data = 0;
-    status = sendRcvMsg(&req, (char *)mcaRaw_, numBins*bytesPerBin);
+    status = sendRcvMsg(&req, (char *)mcaRaw_, numBins*bytesPerBin, 1.0); // 1 second timeout is enough
     for (int i=0; i<numBins; i++) {
        mcaData_[i] = mcaRaw_[i*3] + mcaRaw_[i*3+1]*256L + mcaRaw_[i*3+2]*65536L;
     }
@@ -718,7 +788,7 @@ asynStatus Ketek::getScopeTrace()
     req.paramID = pEventScopeGet;
     req.command = KETEK_COMMAND_WRITE;
     req.data = htons(scopeDataSource);
-    sendRcvMsg(&req, (char *)scopeDataRaw_, sizeof(scopeDataRaw_));
+    sendRcvMsg(&req, (char *)scopeDataRaw_, sizeof(scopeDataRaw_), 10.);  // Need 10 second timeout for long interval times
     for (int i=0; i<KETEK_MAX_SCOPE_POINTS; i++) {
        scopeData_[i] = scopeDataRaw_[i*3] + scopeDataRaw_[i*3+1]*256L + scopeDataRaw_[i*3+2]*65536L;
     }
@@ -758,6 +828,360 @@ asynStatus Ketek::stopAcquiring() {
     return status;
 }
 
+asynStatus Ketek::startSyncAcquire()
+{
+    asynStatus status = asynSuccess;
+    double syncCycleTime;
+    //const char *functionName = "startSyncAcquire";
+
+    // Sync cycle time
+    getDoubleParam(KetekSyncCycleTime, &syncCycleTime);
+    int itemp = round(syncCycleTime / KETEK_ELAPSED_TIME_UNITS);
+    status = writeSingleParam(pSyncCycleTimeLow, itemp & 0x0000FFFF);
+    status = writeSingleParam(pSyncCycleTimeHigh, (itemp & 0xFFFF0000) >> 16);
+
+    // Number of sync points
+/*    getIntegerParam(KetekSyncPoints, &syncPoints);
+    status = writeSingleParam(pSyncStopConditionLow, syncPoints & 0x0000FFFF);
+    status = writeSingleParam(pSyncStopConditionHigh, (syncPoints & 0xFFFF0000) >> 16);
+*/
+    // Sync status data to be sent.  Enable all for now.
+    status = writeSingleParam(pSyncStatusData, 0x3F);
+
+    // Sync runtime data to be sent.  Enable all for now.
+    status = writeSingleParam(pSyncRuntimeData, 0x7FF);
+    
+    // Sync spectrum data to be sent.  Enable.
+    status = writeSingleParam(pSyncSpectrumData, 1);
+
+    // Sync mode.  Only Mapping Mode supported for now
+    status = writeSingleParam(pSyncMode, 4);
+    
+    // Flush any stale UDP data
+    pasynOctetSyncIO->flush(pasynUserSync_);
+    
+    // Set the current point
+    setIntegerParam(KetekSyncCurrentPoint, 0);
+
+    // Reset counters and errors
+    status = writeSingleParam(pSyncReset, 1);
+    // Start sync run
+    status = writeSingleParam(pSyncStart, 1);
+
+    callParamCallbacks();
+
+    // signal cmdStartEvent to start the polling thread
+    cmdStartEvent_->signal();
+    return status;
+}
+
+
+asynStatus Ketek::stopSyncAcquire() {
+    asynStatus status;
+printf("Stopping sync run\n");
+    status = writeSingleParam(pSyncStop, 0);
+    return status;
+}
+
+/** Thread used to poll the hardware for status and data.
+ *
+ */
+void Ketek::acquisitionTask()
+{
+    asynStatus status;
+    int currentPoint;
+    int syncPoints;
+    epicsUInt16 bytesPerBin;
+    int mcaRawOffset;
+    int requestedSize;
+    epicsUInt16 syncRunActive;
+    epicsUInt16 syncChannelIndex;
+    epicsUInt16 syncSegmentNumber;
+    epicsUInt16 syncCycleCounterInternal;
+    epicsUInt16 syncCycleCounterMaster;
+    epicsUInt16 syncCycleErrorCounter;
+    epicsUInt16 syncSegmentQuantity;
+    epicsUInt16 syncMode;
+    epicsUInt16 usTemp;
+    epicsUInt16 realTimeLow, realTimeHigh;
+    epicsUInt16 liveTimeLow, liveTimeHigh;
+    epicsUInt16 numBins;
+    int finalSegmentLen;
+    int mcaBytesInBuffer;
+    epicsUInt8 *pRawIn;
+    epicsUInt8 *pRawOut;
+    epicsFloat64 realTime, liveTime;
+    epicsFloat64 boardTemp;
+    //epicsFloat64 pollTime, sleepTime;
+    size_t nRead;
+    int eomReason;
+    epicsTimeStamp start;
+    //epicsTimeStamp now;
+    const char* functionName = "acquisitionTask";
+
+    asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+        "%s:%s acquisition task started!\n",
+        driverName, functionName);
+
+    lock();
+
+    while (polling_) /* ... round and round and round we go until the IOC is shut down */
+    {
+
+        status = readSingleParam(pSyncRunActive, &syncRunActive);
+        setIntegerParam(KetekSyncRunning, syncRunActive);
+        if (!syncRunActive)
+        {
+            /* Release the lock while we wait for an event that says acquire has started, then lock again */
+            unlock();
+            /* Wait for someone to signal the cmdStartEvent */
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s Waiting for sync acquisition to start!\n",
+                driverName, functionName);
+            cmdStartEvent_->wait();
+            lock();
+        }
+        epicsTimeGetCurrent(&start);
+        requestedSize = KETEK_MAX_UDP_LEN;
+        status = pasynOctetSyncIO->read(pasynUserSync_, (char *)syncMsgBuffer_, requestedSize, 
+                                        KETEK_UDP_TIMEOUT, &nRead, &eomReason);
+        asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
+                  driverName, functionName, status, requestedSize, (int)nRead, eomReason);
+        // syncChannelIndex should be 1.  If not there is an error, skip
+        extractSyncParam(20, 139, &syncSegmentNumber);
+        if (syncSegmentNumber != 1) {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s syncSegmentNumber should be 1 but is %d\n",
+                      driverName, functionName, syncSegmentNumber);
+            goto skip;
+        }
+        extractSyncParam(0, 143, &syncChannelIndex);
+        extractSyncParam(4, 149, &syncCycleCounterInternal);
+        extractSyncParam(8, 150, &syncCycleCounterMaster);
+        extractSyncParam(12, 147, &syncCycleErrorCounter);
+        if (syncCycleErrorCounter != 0) {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s syncCycleErrorCounter=%d\n",
+                      driverName, functionName, syncCycleErrorCounter);
+        }
+        extractSyncParam(16, 138, &syncSegmentQuantity);
+        extractSyncParam(48, 144, &syncMode);
+        extractSyncParam(64, 73, &usTemp);
+        boardTemp = usTemp/16.0 - 273.15;
+        extractSyncParam(72, 6, &realTimeLow);
+        extractSyncParam(76, 7, &realTimeHigh);
+        realTime = (realTimeHigh*65536 + realTimeLow)*KETEK_ELAPSED_TIME_UNITS;
+        extractSyncParam(80, 8, &liveTimeLow);
+        extractSyncParam(84, 9, &liveTimeHigh);
+        liveTime = (liveTimeHigh*65536 + liveTimeLow)*KETEK_ELAPSED_TIME_UNITS;
+        extractSyncParam(136, 20, &numBins);
+        numBins = 1<<numBins;
+        extractSyncParam(140, 21, &bytesPerBin);
+
+        mcaRawOffset = 144;
+        mcaBytesInBuffer = nRead - mcaRawOffset;
+        pRawIn = syncMsgBuffer_ + mcaRawOffset;
+        pRawOut = syncRawMCABuffer_;
+        memcpy(pRawOut, pRawIn, mcaBytesInBuffer);
+        pRawOut += mcaBytesInBuffer;
+        finalSegmentLen = (numBins*bytesPerBin) - (KETEK_MAX_UDP_LEN-144) - (syncSegmentQuantity-2)*(KETEK_MAX_UDP_LEN-24) + 24;
+        for (int segment=2; segment<=syncSegmentQuantity; segment++) {
+            requestedSize = KETEK_MAX_UDP_LEN;
+            if (segment == syncSegmentQuantity) requestedSize = finalSegmentLen;
+            status = pasynOctetSyncIO->read(pasynUserSync_, (char *)syncMsgBuffer_, requestedSize, 
+                                            KETEK_UDP_TIMEOUT, &nRead, &eomReason);
+            asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
+                      driverName, functionName, status, requestedSize, (int)nRead, eomReason);
+            // syncChannelIndex should be segment.  If not there is an error, skip
+            extractSyncParam(20, 139, &syncSegmentNumber);
+            if (syncSegmentNumber != segment) {
+                asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s syncSegmentNumber should be %d but is %d\n",
+                          driverName, functionName, segment, syncSegmentNumber);
+                goto skip;
+            }
+            mcaRawOffset = 24;
+            mcaBytesInBuffer = nRead - mcaRawOffset;
+            pRawIn = syncMsgBuffer_ + mcaRawOffset;
+            memcpy(pRawOut, pRawIn, mcaBytesInBuffer);
+            pRawOut += mcaBytesInBuffer;
+        }
+        getIntegerParam(KetekSyncCurrentPoint, &currentPoint);
+        currentPoint++;
+        setIntegerParam(KetekSyncCurrentPoint, currentPoint);
+
+        getIntegerParam(KetekSyncPoints, &syncPoints);
+        if (currentPoint >= syncPoints) {
+            this->stopSyncAcquire();
+        }
+
+
+        /* Do callbacks for all boards for everything except mcaAcquiring*/
+/*
+        setIntegerParam(ADAcquire, acquiring);
+
+        paramStatus |= getDoubleParam(DantePollTime, &pollTime);
+        epicsTimeGetCurrent(&now);
+        dtmp = epicsTimeDiffInSeconds(&now, &start);
+        sleepTime = pollTime - dtmp;
+        if (sleepTime < 0) sleepTime = 0.001;
+*/
+        skip:
+        callParamCallbacks();
+        this->unlock();
+        epicsThreadSleep(.01);
+        this->lock();
+    }
+}
+
+asynStatus Ketek::extractSyncParam(int offset, int paramID, epicsUInt16 *value)
+{
+    static const char *functionName = "extractSyncParam";
+    if (syncMsgBuffer_[offset] != paramID) {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, 
+                  "%s::%s unexpected paramID, should be %d actual=%d\n",
+                  driverName, functionName, paramID, syncMsgBuffer_[offset]);
+        return asynError;
+    }
+    if (syncMsgBuffer_[offset+1] != 0) {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, 
+                  "%s::%s paramID=%d bad status=%d\n",
+                  driverName, functionName, paramID, syncMsgBuffer_[offset+1]);
+        return asynError;
+    }
+    *value = syncMsgBuffer_[offset+2]*256 + syncMsgBuffer_[offset+3];
+    return asynSuccess;
+}
+
+/** Check if there are any spectra to be read and read them */
+/*
+asynStatus Dante::pollMCAMappingMode()
+{
+    int collectMode;
+    asynStatus status = asynSuccess;
+    uint32_t numAvailable=0;
+    int numMCAChannels;
+    int arrayCallbacks;
+    const char* functionName = "pollMCAMappingMode";
+
+    getIntegerParam(DanteCollectMode, &collectMode);
+    getIntegerParam(mcaNumChannels, &numMCAChannels);
+    getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+
+    // First see which board has fewest spectra available
+    for (const auto& board: activeBoards_) {
+        uint32_t itemp;
+        if (!getAvailableData(danteIdentifier_, board, itemp)) {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s error calling getAvailableData\n", driverName, functionName);
+            return asynError;
+        }
+asynPrint(pasynUserSelf, ASYN_TRACE_WARNING, "%s::%s::getAvailableData(): board=%d, numSpectra=%d\n", driverName, functionName, board, itemp);
+        if (board == activeBoards_[0]) {
+            numAvailable = itemp;
+        } else if (itemp < numAvailable) {
+            numAvailable = itemp;
+        }
+    }
+    if (numAvailable == 0) return asynSuccess;
+
+    epicsTimeStamp now;
+    epicsTimeGetCurrent(&now);
+    uint32_t spectraSize = numMCAChannels;
+
+    // Now read the same number of spectra from each board
+    for (const auto& board: activeBoards_) {
+        pMappingMCAData_   [board] = (uint16_t *)       malloc(numAvailable * numMCAChannels * sizeof(uint16_t));
+        pMappingSpectrumId_[board] = (uint32_t *)       malloc(numAvailable * sizeof(uint32_t));
+        pMappingStats_     [board] = (mappingStats *)   malloc(numAvailable * sizeof(mappingStats));
+        pMappingAdvStats_  [board] = (mappingAdvStats *)malloc(numAvailable * sizeof(mappingAdvStats));
+        if (!getAllData(danteIdentifier_, board, pMappingMCAData_[board], pMappingSpectrumId_[board],
+                        (double *)pMappingStats_[board], (uint64_t*)pMappingAdvStats_[board], spectraSize, numAvailable)) {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s error calling getAllData\n", driverName, functionName);
+            status = asynError;
+            goto done;
+        }
+    }
+    if (arrayCallbacks) {
+        size_t dims[2];
+        dims[0] = numMCAChannels;
+        dims[1] = activeBoards_.size();
+        NDArray *pArray;
+        for (uint32_t pixel=0; pixel<numAvailable; pixel++) {
+            pArray = this->pNDArrayPool->alloc(2, dims, NDUInt16, 0, NULL );
+            epicsUInt16 *pOut = (epicsUInt16 *)pArray->pData;
+            for (const auto& board: activeBoards_) {
+                char tempString[20];
+                uint16_t *pIn = pMappingMCAData_[board] + numMCAChannels * pixel;
+                memcpy(pOut, pIn, numMCAChannels * sizeof(epicsUInt16));
+                pOut += numMCAChannels;
+                mappingStats *pStats = pMappingStats_[board] + pixel;
+                double realTime = pStats->real_time/1.e6;
+                sprintf(tempString, "RealTime_%d", board);
+                pArray->pAttributeList->add(tempString, "Real time",         NDAttrFloat64, &realTime);
+                double liveTime = pStats->live_time/1.e6;
+                sprintf(tempString, "LiveTime_%d", board);
+                pArray->pAttributeList->add(tempString, "Live time",         NDAttrFloat64, &liveTime);
+                double ICR = pStats->ICR;
+                sprintf(tempString, "ICR_%d", board);
+                pArray->pAttributeList->add(tempString, "Input count rate",  NDAttrFloat64, &ICR);
+                double OCR = pStats->OCR;
+                sprintf(tempString, "OCR_%d", board);
+                pArray->pAttributeList->add(tempString, "Output count rate", NDAttrFloat64, &OCR);
+            }
+            pArray->timeStamp = now.secPastEpoch + now.nsec / 1.e9;
+            updateTimeStamp(&pArray->epicsTS);
+            pArray->uniqueId = uniqueId_;
+            uniqueId_++;
+            int arrayCounter;
+            getIntegerParam(NDArrayCounter, &arrayCounter);
+            arrayCounter++;
+            setIntegerParam(NDArrayCounter, arrayCounter);
+            getAttributes(pArray->pAttributeList);
+            doCallbacksGenericPointer(pArray, NDArrayData, 0);
+            pArray->release();
+        }
+    }
+
+    // Copy the spectral data for the first pixel in this buffer to the mcaRaw buffers.
+    // This provides an update of the spectra and statistics while mapping is in progress
+    // if the user sets the MCA spectra to periodically read.
+    for (const auto& board: activeBoards_) {
+        uint16_t *pIn = pMappingMCAData_[board];
+        uint64_t *pOut = pMcaRaw_[board];
+        for (int chan=0; chan<numMCAChannels; chan++) {
+            pOut[chan] = pIn[chan];
+        }
+        mappingStats *pStats = pMappingStats_[board];
+        mappingAdvStats *pAdvStats = pMappingAdvStats_[board];
+        setDoubleParam(board, mcaElapsedRealTime,   pStats->real_time/1.e6);
+        setDoubleParam(board, mcaElapsedLiveTime,   pStats->live_time/1.e6);
+        setDoubleParam(board, DanteInputCountRate,  pStats->ICR);
+        setDoubleParam(board, DanteOutputCountRate, pStats->OCR);
+        setDoubleParam(board, DanteLastTimeStamp,   (double)pAdvStats->last_timestamp);
+        setIntegerParam(board, DanteEvents,         (int)pAdvStats->detected);
+        setIntegerParam(board, DanteTriggers,       (int)pAdvStats->measured);
+        setIntegerParam(board, DanteFastDT,         (int)pAdvStats->edge_dt);
+        setIntegerParam(board, DanteFilt1DT,        (int)pAdvStats->filt1_dt);
+        setIntegerParam(board, DanteZeroCounts,     (int)pAdvStats->zerocounts);
+        setIntegerParam(board, DanteBaselinesValue, (int)pAdvStats->baselines_value);
+        setIntegerParam(board, DantePupValue,       (int)pAdvStats->pup_value);
+        setIntegerParam(board, DantePupF1Value,     (int)pAdvStats->pup_f1_value);
+        setIntegerParam(board, DantePupNotF1Value,  (int)pAdvStats->pup_notf1_value);
+        setIntegerParam(board, DanteResetCounterValue, (int)pAdvStats->reset_counter_value);
+        callParamCallbacks(board);
+    }
+    done:
+    int currentPixel;
+    getIntegerParam(DanteCurrentPixel, &currentPixel);
+    currentPixel += numAvailable;
+    setIntegerParam(DanteCurrentPixel, currentPixel);
+    for (const auto& board: activeBoards_) {
+        free(pMappingMCAData_[board]);
+        free(pMappingSpectrumId_[board]);
+        free(pMappingStats_[board]);
+        free(pMappingAdvStats_[board]);
+    }
+    return status;
+}
+*/
+
 void Ketek::report(FILE *fp, int details)
 {
     if (details > 0) {
@@ -769,17 +1193,22 @@ void Ketek::report(FILE *fp, int details)
 void Ketek::shutdown()
 {
     //static const char *functionName = "shutdown";
+    polling_ = false;
 }
 
 
 static const iocshArg KetekConfigArg0 = {"Asyn port name", iocshArgString};
 static const iocshArg KetekConfigArg1 = {"IP port name", iocshArgString};
+static const iocshArg KetekConfigArg2 = {"Host IP address", iocshArgString};
+static const iocshArg KetekConfigArg3 = {"Host UDP port", iocshArgInt};
 static const iocshArg * const KetekConfigArgs[] =  {&KetekConfigArg0,
-                                                    &KetekConfigArg1};
-static const iocshFuncDef configKetek = {"KetekConfig", 2, KetekConfigArgs};
+                                                    &KetekConfigArg1,
+                                                    &KetekConfigArg2,
+                                                    &KetekConfigArg3};
+static const iocshFuncDef configKetek = {"KetekConfig", 4, KetekConfigArgs};
 static void configKetekCallFunc(const iocshArgBuf *args)
 {
-    KetekConfig(args[0].sval, args[1].sval);
+    KetekConfig(args[0].sval, args[1].sval, args[2].sval, args[3].ival);
 }
 
 static void ketekRegister(void)
