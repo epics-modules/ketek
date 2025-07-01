@@ -73,7 +73,9 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
     : asynNDArrayDriver(portName, 1, 0, 0,
             asynInt32Mask | asynFloat64Mask | asynInt32ArrayMask | asynFloat64ArrayMask | asynOctetMask | asynDrvUserMask,
             asynInt32Mask | asynFloat64Mask | asynInt32ArrayMask | asynFloat64ArrayMask | asynOctetMask,
-            ASYN_CANBLOCK, 1, 0, 0)
+            ASYN_CANBLOCK, 1, 0, 0),
+    uniqueId_(0),
+    polling_(0)
 
 {
     const char *functionName = "Ketek";
@@ -192,6 +194,7 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
         
     }
     setIntegerParam(KetekSyncEnabled, syncEnabled);
+    setIntegerParam(NDArrayCallbacks, 1);
 
     setStringParam(ADManufacturer, "KETEK");
     setStringParam(ADModel, "AXAS-D 3.0");
@@ -891,32 +894,31 @@ void Ketek::acquisitionTask()
     asynStatus status;
     int currentPoint;
     int syncPoints;
-    epicsUInt16 bytesPerBin;
     int mcaRawOffset;
     int requestedSize;
     epicsUInt16 syncRunActive;
-    epicsUInt16 syncChannelIndex;
     epicsUInt16 syncSegmentNumber;
-    epicsUInt16 syncCycleCounterInternal;
-    epicsUInt16 syncCycleCounterMaster;
+    //epicsUInt16 syncChannelIndex;
+    //epicsUInt16 syncCycleCounterInternal;
+    //epicsUInt16 syncCycleCounterMaster;
+    //epicsUInt16 syncMode;
     epicsUInt16 syncCycleErrorCounter;
     epicsUInt16 syncSegmentQuantity;
-    epicsUInt16 syncMode;
-    epicsUInt16 usTemp;
-    epicsUInt16 realTimeLow, realTimeHigh;
-    epicsUInt16 liveTimeLow, liveTimeHigh;
     epicsUInt16 numBins;
+    epicsUInt16 bytesPerBin;
+    epicsUInt16 usTemp;
     int finalSegmentLen;
     int mcaBytesInBuffer;
     epicsUInt8 *pRawIn;
     epicsUInt8 *pRawOut;
-    epicsFloat64 realTime, liveTime;
+    epicsFloat64 realTime, liveTime, outputCounts, inputCounts, ocr, icr;
     epicsFloat64 boardTemp;
     //epicsFloat64 pollTime, sleepTime;
     size_t nRead;
     int eomReason;
+    int arrayCallbacks;
     epicsTimeStamp start;
-    //epicsTimeStamp now;
+    epicsTimeStamp now;
     const char* functionName = "acquisitionTask";
 
     asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
@@ -943,38 +945,41 @@ void Ketek::acquisitionTask()
         }
         epicsTimeGetCurrent(&start);
         requestedSize = KETEK_MAX_UDP_LEN;
+        unlock();
         status = pasynOctetSyncIO->read(pasynUserSync_, (char *)syncMsgBuffer_, requestedSize, 
                                         KETEK_UDP_TIMEOUT, &nRead, &eomReason);
-        asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
+        lock();
+        int reason = status ? ASYN_TRACE_ERROR : ASYN_TRACEIO_DRIVER;
+        asynPrint(pasynUserSelf, reason, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
                   driverName, functionName, status, requestedSize, (int)nRead, eomReason);
         // syncChannelIndex should be 1.  If not there is an error, skip
-        extractSyncParam(20, 139, &syncSegmentNumber);
+        syncSegmentNumber = extractSyncParam(20, 139);
         if (syncSegmentNumber != 1) {
             asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s syncSegmentNumber should be 1 but is %d\n",
                       driverName, functionName, syncSegmentNumber);
             goto skip;
         }
-        extractSyncParam(0, 143, &syncChannelIndex);
-        extractSyncParam(4, 149, &syncCycleCounterInternal);
-        extractSyncParam(8, 150, &syncCycleCounterMaster);
-        extractSyncParam(12, 147, &syncCycleErrorCounter);
+        //syncChannelIndex         = extractSyncParam(0,  143);
+        //syncCycleCounterInternal = extractSyncParam(4,  149);
+        //syncCycleCounterMaster   = extractSyncParam(8,  150);
+        syncCycleErrorCounter    = extractSyncParam(12, 147);
         if (syncCycleErrorCounter != 0) {
             asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s syncCycleErrorCounter=%d\n",
                       driverName, functionName, syncCycleErrorCounter);
         }
-        extractSyncParam(16, 138, &syncSegmentQuantity);
-        extractSyncParam(48, 144, &syncMode);
-        extractSyncParam(64, 73, &usTemp);
+        syncSegmentQuantity = extractSyncParam(16, 138);
+        //syncMode            = extractSyncParam(48, 144);
+        usTemp              = extractSyncParam(64, 73);
         boardTemp = usTemp/16.0 - 273.15;
-        extractSyncParam(72, 6, &realTimeLow);
-        extractSyncParam(76, 7, &realTimeHigh);
-        realTime = (realTimeHigh*65536 + realTimeLow)*KETEK_ELAPSED_TIME_UNITS;
-        extractSyncParam(80, 8, &liveTimeLow);
-        extractSyncParam(84, 9, &liveTimeHigh);
-        liveTime = (liveTimeHigh*65536 + liveTimeLow)*KETEK_ELAPSED_TIME_UNITS;
-        extractSyncParam(136, 20, &numBins);
+        numBins             = extractSyncParam(136, 20);
         numBins = 1<<numBins;
-        extractSyncParam(140, 21, &bytesPerBin);
+        bytesPerBin         = extractSyncParam(140, 21);
+        realTime     = extractDoubleSyncParam(72, 6) * KETEK_ELAPSED_TIME_UNITS;
+        liveTime     = extractDoubleSyncParam(80, 8) * KETEK_ELAPSED_TIME_UNITS;
+        outputCounts = extractDoubleSyncParam(88, 10);
+        inputCounts  = extractDoubleSyncParam(96, 12);
+        ocr          = extractDoubleSyncParam(104, 14);
+        icr          = extractDoubleSyncParam(112, 16);
 
         mcaRawOffset = 144;
         mcaBytesInBuffer = nRead - mcaRawOffset;
@@ -986,12 +991,15 @@ void Ketek::acquisitionTask()
         for (int segment=2; segment<=syncSegmentQuantity; segment++) {
             requestedSize = KETEK_MAX_UDP_LEN;
             if (segment == syncSegmentQuantity) requestedSize = finalSegmentLen;
+            unlock();
             status = pasynOctetSyncIO->read(pasynUserSync_, (char *)syncMsgBuffer_, requestedSize, 
                                             KETEK_UDP_TIMEOUT, &nRead, &eomReason);
-            asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
+            lock();
+            int reason = status ? ASYN_TRACE_ERROR : ASYN_TRACEIO_DRIVER;
+            asynPrint(pasynUserSelf, reason, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
                       driverName, functionName, status, requestedSize, (int)nRead, eomReason);
             // syncChannelIndex should be segment.  If not there is an error, skip
-            extractSyncParam(20, 139, &syncSegmentNumber);
+            syncSegmentNumber = extractSyncParam(20, 139);
             if (syncSegmentNumber != segment) {
                 asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s syncSegmentNumber should be %d but is %d\n",
                           driverName, functionName, segment, syncSegmentNumber);
@@ -1003,128 +1011,45 @@ void Ketek::acquisitionTask()
             memcpy(pRawOut, pRawIn, mcaBytesInBuffer);
             pRawOut += mcaBytesInBuffer;
         }
-        getIntegerParam(KetekSyncCurrentPoint, &currentPoint);
-        currentPoint++;
-        setIntegerParam(KetekSyncCurrentPoint, currentPoint);
-
-        getIntegerParam(KetekSyncPoints, &syncPoints);
-        if (currentPoint >= syncPoints) {
-            this->stopSyncAcquire();
-        }
-
-
-        /* Do callbacks for all boards for everything except mcaAcquiring*/
-/*
-        setIntegerParam(ADAcquire, acquiring);
-
-        paramStatus |= getDoubleParam(DantePollTime, &pollTime);
-        epicsTimeGetCurrent(&now);
-        dtmp = epicsTimeDiffInSeconds(&now, &start);
-        sleepTime = pollTime - dtmp;
-        if (sleepTime < 0) sleepTime = 0.001;
-*/
-        skip:
-        callParamCallbacks();
-        this->unlock();
-        epicsThreadSleep(.01);
-        this->lock();
-    }
-}
-
-asynStatus Ketek::extractSyncParam(int offset, int paramID, epicsUInt16 *value)
-{
-    static const char *functionName = "extractSyncParam";
-    if (syncMsgBuffer_[offset] != paramID) {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, 
-                  "%s::%s unexpected paramID, should be %d actual=%d\n",
-                  driverName, functionName, paramID, syncMsgBuffer_[offset]);
-        return asynError;
-    }
-    if (syncMsgBuffer_[offset+1] != 0) {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, 
-                  "%s::%s paramID=%d bad status=%d\n",
-                  driverName, functionName, paramID, syncMsgBuffer_[offset+1]);
-        return asynError;
-    }
-    *value = syncMsgBuffer_[offset+2]*256 + syncMsgBuffer_[offset+3];
-    return asynSuccess;
-}
-
-/** Check if there are any spectra to be read and read them */
-/*
-asynStatus Dante::pollMCAMappingMode()
-{
-    int collectMode;
-    asynStatus status = asynSuccess;
-    uint32_t numAvailable=0;
-    int numMCAChannels;
-    int arrayCallbacks;
-    const char* functionName = "pollMCAMappingMode";
-
-    getIntegerParam(DanteCollectMode, &collectMode);
-    getIntegerParam(mcaNumChannels, &numMCAChannels);
-    getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
-
-    // First see which board has fewest spectra available
-    for (const auto& board: activeBoards_) {
-        uint32_t itemp;
-        if (!getAvailableData(danteIdentifier_, board, itemp)) {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s error calling getAvailableData\n", driverName, functionName);
-            return asynError;
-        }
-asynPrint(pasynUserSelf, ASYN_TRACE_WARNING, "%s::%s::getAvailableData(): board=%d, numSpectra=%d\n", driverName, functionName, board, itemp);
-        if (board == activeBoards_[0]) {
-            numAvailable = itemp;
-        } else if (itemp < numAvailable) {
-            numAvailable = itemp;
-        }
-    }
-    if (numAvailable == 0) return asynSuccess;
-
-    epicsTimeStamp now;
-    epicsTimeGetCurrent(&now);
-    uint32_t spectraSize = numMCAChannels;
-
-    // Now read the same number of spectra from each board
-    for (const auto& board: activeBoards_) {
-        pMappingMCAData_   [board] = (uint16_t *)       malloc(numAvailable * numMCAChannels * sizeof(uint16_t));
-        pMappingSpectrumId_[board] = (uint32_t *)       malloc(numAvailable * sizeof(uint32_t));
-        pMappingStats_     [board] = (mappingStats *)   malloc(numAvailable * sizeof(mappingStats));
-        pMappingAdvStats_  [board] = (mappingAdvStats *)malloc(numAvailable * sizeof(mappingAdvStats));
-        if (!getAllData(danteIdentifier_, board, pMappingMCAData_[board], pMappingSpectrumId_[board],
-                        (double *)pMappingStats_[board], (uint64_t*)pMappingAdvStats_[board], spectraSize, numAvailable)) {
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s error calling getAllData\n", driverName, functionName);
-            status = asynError;
-            goto done;
-        }
-    }
-    if (arrayCallbacks) {
-        size_t dims[2];
-        dims[0] = numMCAChannels;
-        dims[1] = activeBoards_.size();
-        NDArray *pArray;
-        for (uint32_t pixel=0; pixel<numAvailable; pixel++) {
-            pArray = this->pNDArrayPool->alloc(2, dims, NDUInt16, 0, NULL );
-            epicsUInt16 *pOut = (epicsUInt16 *)pArray->pData;
-            for (const auto& board: activeBoards_) {
-                char tempString[20];
-                uint16_t *pIn = pMappingMCAData_[board] + numMCAChannels * pixel;
-                memcpy(pOut, pIn, numMCAChannels * sizeof(epicsUInt16));
-                pOut += numMCAChannels;
-                mappingStats *pStats = pMappingStats_[board] + pixel;
-                double realTime = pStats->real_time/1.e6;
-                sprintf(tempString, "RealTime_%d", board);
-                pArray->pAttributeList->add(tempString, "Real time",         NDAttrFloat64, &realTime);
-                double liveTime = pStats->live_time/1.e6;
-                sprintf(tempString, "LiveTime_%d", board);
-                pArray->pAttributeList->add(tempString, "Live time",         NDAttrFloat64, &liveTime);
-                double ICR = pStats->ICR;
-                sprintf(tempString, "ICR_%d", board);
-                pArray->pAttributeList->add(tempString, "Input count rate",  NDAttrFloat64, &ICR);
-                double OCR = pStats->OCR;
-                sprintf(tempString, "OCR_%d", board);
-                pArray->pAttributeList->add(tempString, "Output count rate", NDAttrFloat64, &OCR);
+        getIntegerParam(NDArrayCallbacks, &arrayCallbacks);
+        if (arrayCallbacks) {
+            size_t dims[1];
+            dims[0] = numBins;
+            NDArray *pArray;
+            NDDataType_t dataType = NDUInt32;
+            switch (bytesPerBin) {
+                case 1: dataType = NDUInt8; break;
+                case 2: dataType = NDUInt16; break;
+                case 3: dataType = NDUInt32; break;
+                default:
+                    asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s unexpected bytesPerBin=%d\n",
+                              driverName, functionName, bytesPerBin);
+                    break;
             }
+            pArray = this->pNDArrayPool->alloc(1, dims, dataType, 0, NULL );
+            pRawIn = syncRawMCABuffer_;
+            switch (bytesPerBin) {
+                case 1:
+                    memcpy(pArray->pData, pRawIn, numBins);
+                    break;
+                case 2:
+                    memcpy(pArray->pData, pRawIn, numBins*2);
+                    break;
+                case 3:
+                    epicsUInt32 *pOut = (epicsUInt32 *)pArray->pData;
+                    for (int i=0; i<numBins; i++) {
+                        pOut[i] = pRawIn[i*3] + pRawIn[i*3+1]*256L + pRawIn[i*3+2]*65536L;
+                    }
+                    break;
+            }
+            pArray->pAttributeList->add("RealTime",     "Real time",         NDAttrFloat64, &realTime);
+            pArray->pAttributeList->add("LiveTime",     "Live time",         NDAttrFloat64, &liveTime);
+            pArray->pAttributeList->add("InputCounts",  "Input counts",      NDAttrFloat64, &inputCounts);
+            pArray->pAttributeList->add("OutputCounts", "Output counts",     NDAttrFloat64, &outputCounts);
+            pArray->pAttributeList->add("ICR",          "Input count rate",  NDAttrFloat64, &icr);
+            pArray->pAttributeList->add("OCR",          "Output count rate", NDAttrFloat64, &ocr);
+
+            epicsTimeGetCurrent(&now);
             pArray->timeStamp = now.secPastEpoch + now.nsec / 1.e9;
             updateTimeStamp(&pArray->epicsTS);
             pArray->uniqueId = uniqueId_;
@@ -1137,50 +1062,71 @@ asynPrint(pasynUserSelf, ASYN_TRACE_WARNING, "%s::%s::getAvailableData(): board=
             doCallbacksGenericPointer(pArray, NDArrayData, 0);
             pArray->release();
         }
-    }
-
-    // Copy the spectral data for the first pixel in this buffer to the mcaRaw buffers.
-    // This provides an update of the spectra and statistics while mapping is in progress
-    // if the user sets the MCA spectra to periodically read.
-    for (const auto& board: activeBoards_) {
-        uint16_t *pIn = pMappingMCAData_[board];
-        uint64_t *pOut = pMcaRaw_[board];
-        for (int chan=0; chan<numMCAChannels; chan++) {
-            pOut[chan] = pIn[chan];
+    
+        // Copy the spectral data for the first pixel in this buffer to the mcaRaw buffers.
+        // This provides an update of the spectra and statistics while mapping is in progress
+        // if the user sets the MCA spectra to periodically read.
+        for (int i=0; i<numBins; i++) {
+            switch (bytesPerBin) {
+                case 1:
+                    mcaData_[i] = syncRawMCABuffer_[i];
+                    break;
+                case 2:
+                    mcaData_[i] = syncRawMCABuffer_[i*2] + syncRawMCABuffer_[i*2+1]*256L;
+                    break;
+                case 3:
+                    mcaData_[i] = syncRawMCABuffer_[i*3] + syncRawMCABuffer_[i*3+1]*256L + syncRawMCABuffer_[i*3+2]*65536L;
+                    break;
+            }
         }
-        mappingStats *pStats = pMappingStats_[board];
-        mappingAdvStats *pAdvStats = pMappingAdvStats_[board];
-        setDoubleParam(board, mcaElapsedRealTime,   pStats->real_time/1.e6);
-        setDoubleParam(board, mcaElapsedLiveTime,   pStats->live_time/1.e6);
-        setDoubleParam(board, DanteInputCountRate,  pStats->ICR);
-        setDoubleParam(board, DanteOutputCountRate, pStats->OCR);
-        setDoubleParam(board, DanteLastTimeStamp,   (double)pAdvStats->last_timestamp);
-        setIntegerParam(board, DanteEvents,         (int)pAdvStats->detected);
-        setIntegerParam(board, DanteTriggers,       (int)pAdvStats->measured);
-        setIntegerParam(board, DanteFastDT,         (int)pAdvStats->edge_dt);
-        setIntegerParam(board, DanteFilt1DT,        (int)pAdvStats->filt1_dt);
-        setIntegerParam(board, DanteZeroCounts,     (int)pAdvStats->zerocounts);
-        setIntegerParam(board, DanteBaselinesValue, (int)pAdvStats->baselines_value);
-        setIntegerParam(board, DantePupValue,       (int)pAdvStats->pup_value);
-        setIntegerParam(board, DantePupF1Value,     (int)pAdvStats->pup_f1_value);
-        setIntegerParam(board, DantePupNotF1Value,  (int)pAdvStats->pup_notf1_value);
-        setIntegerParam(board, DanteResetCounterValue, (int)pAdvStats->reset_counter_value);
-        callParamCallbacks(board);
+        setDoubleParam(mcaElapsedRealTime,   realTime);
+        setDoubleParam(mcaElapsedLiveTime,   liveTime);
+        setIntegerParam(KetekInputCounts,    (int)inputCounts);
+        setIntegerParam(KetekOutputCounts,   (int)outputCounts);
+        setDoubleParam(KetekInputCountRate,  icr);
+        setDoubleParam(KetekOutputCountRate, ocr);
+        setDoubleParam(KetekBoardTemperature,boardTemp);
+        getIntegerParam(KetekSyncCurrentPoint, &currentPoint);
+        currentPoint++;
+        setIntegerParam(KetekSyncCurrentPoint, currentPoint);
+
+        getIntegerParam(KetekSyncPoints, &syncPoints);
+        if (currentPoint >= syncPoints) {
+            this->stopSyncAcquire();
+        }
+
+        skip:
+        callParamCallbacks();
     }
-    done:
-    int currentPixel;
-    getIntegerParam(DanteCurrentPixel, &currentPixel);
-    currentPixel += numAvailable;
-    setIntegerParam(DanteCurrentPixel, currentPixel);
-    for (const auto& board: activeBoards_) {
-        free(pMappingMCAData_[board]);
-        free(pMappingSpectrumId_[board]);
-        free(pMappingStats_[board]);
-        free(pMappingAdvStats_[board]);
-    }
-    return status;
 }
-*/
+
+epicsUInt16 Ketek::extractSyncParam(int offset, int paramID)
+{
+    static const char *functionName = "extractSyncParam";
+    if (syncMsgBuffer_[offset] != paramID) {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, 
+                  "%s::%s unexpected paramID, should be %d actual=%d\n",
+                  driverName, functionName, paramID, syncMsgBuffer_[offset]);
+        return 65535;
+    }
+    if (syncMsgBuffer_[offset+1] != 0) {
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, 
+                  "%s::%s paramID=%d bad status=%d\n",
+                  driverName, functionName, paramID, syncMsgBuffer_[offset+1]);
+        return 65535;
+    }
+    return syncMsgBuffer_[offset+2]*256 + syncMsgBuffer_[offset+3];
+}
+
+epicsFloat64 Ketek::extractDoubleSyncParam(int offset, int paramID)
+{
+    //static const char *functionName = "extractDoubleSyncParam";
+    epicsUInt16 t1, t2;
+    t1 = extractSyncParam(offset,   paramID);
+    t2 = extractSyncParam(offset+4, paramID+1);
+    return t1 + t2*65536;
+}
+
 
 void Ketek::report(FILE *fp, int details)
 {
