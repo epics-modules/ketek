@@ -52,6 +52,8 @@ KetekConfig("$(PORT)", $(IP_PORT), $(HOST_IP_ADDRESS), $(HOST_UDP_PORT))
 dbLoadRecords("$(KETEK)/db/ketek.template", "P=$(PREFIX),R=Ketek1:,M=mca1,PORT=$(PORT),TRACE_LEN=$(TRACE_LEN)")
 dbLoadRecords("$(MCA)/db/mca.db", "P=$(PREFIX),M=mca1,DTYP=asynMCA,INP=@asyn($(PORT) 0),NCHAN=$(MCA_CHANS)")
 dbLoadRecords("$(ASYN)/db/asynRecord.db", "P=$(PREFIX),R=Ketek1:AsynIO,PORT=$(PORT),ADDR=0,IMAX=256,OMAX=256")
+# Load all other plugins using commonPlugins.cmd
+< $(ADCORE)/iocBoot/commonPlugins.cmd
 
 save_restoreSet_IncompleteSetsOk(1)
 save_restoreSet_DatedBackupFiles(1)
