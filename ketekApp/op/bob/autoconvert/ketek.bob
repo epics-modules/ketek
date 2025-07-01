@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-06-27 17:23:12 by epics-->
+<!--Saved on 2025-07-01 13:35:46 by epics-->
 <display version="2.0.0">
   <name>ketek</name>
-  <x>215</x>
-  <y>128</y>
   <width>1210</width>
   <height>650</height>
   <background_color>
@@ -2221,5 +2219,13 @@
     </background_color>
     <format>6</format>
     <show_units>false</show_units>
+  </widget>
+  <widget type="embedded" version="2.0.0">
+    <name>composite #480</name>
+    <file>ADPlugins.bob</file>
+    <x>389</x>
+    <y>514</y>
+    <width>350</width>
+    <height>80</height>
   </widget>
 </display>
