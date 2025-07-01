@@ -5,8 +5,8 @@ file {
 }
 display {
 	object {
-		x=215
-		y=128
+		x=0
+		y=0
 		width=1210
 		height=650
 	}
@@ -1993,4 +1993,14 @@ text {
 	format="string"
 	limits {
 	}
+}
+composite {
+	object {
+		x=389
+		y=514
+		width=350
+		height=80
+	}
+	"composite name"=""
+	"composite file"="ADPlugins.adl"
 }
