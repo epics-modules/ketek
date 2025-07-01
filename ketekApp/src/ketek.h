@@ -349,7 +349,8 @@ private:
     asynStatus writeSingleParam(int paramID, int value);
     asynStatus writeStopValue(epicsUInt32 value);
     asynStatus sendRcvMsg(ketekRequest_t *request, void *response, size_t responseSize, double timout);
-    asynStatus extractSyncParam(int offset, int paramID, epicsUInt16 *value);
+    epicsUInt16 extractSyncParam(int offset, int paramID);
+    epicsFloat64 extractDoubleSyncParam(int offset, int paramID);
 
     /* Data */
     epicsInt32 mcaData_[KETEK_MAX_MCA_BINS];
@@ -367,6 +368,7 @@ private:
     epicsEvent *cmdStopEvent_;
     epicsEvent *stoppedEvent_;
     
+    int uniqueId_;
     bool polling_;
 
 
