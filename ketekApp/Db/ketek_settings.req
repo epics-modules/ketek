@@ -15,11 +15,17 @@ $(P)$(R)MediumFilterEnable
 $(P)$(R)FastMaxWidth
 $(P)$(R)MediumMaxWidth
 $(P)$(R)ResetInhibitTime
+$(P)$(R)DynResetEnable
+$(P)$(R)DynResetThreshold
+$(P)$(R)DynResetDuration
 $(P)$(R)BaselineAverageLen
 $(P)$(R)BaselineTrim
 $(P)$(R)BaselineCorrEnable
 $(P)$(R)EnergyGain
 $(P)$(R)EnergyOffset
 $(P)$(R)NumMCAChannels
+$(P)$(R)BytesPerBin
 $(P)$(R)SyncCycleTime
 $(P)$(R)SyncPoints
+$(P)$(R)SyncReadMCA.SCAN
+file "NDArrayBase_settings.req", P=$(P), R=$(R)
