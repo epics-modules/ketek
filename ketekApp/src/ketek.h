@@ -178,9 +178,6 @@ typedef enum ketekParameters {
 /* Event and scope parameters */
 #define KetekEventTriggerSourceString       "KetekEventTriggerSource"
 #define KetekEventTriggerValueString        "KetekEventTriggerValue"
-#define KetekEventRatePeriodString          "KetekEventRatePeriod"
-#define KetekEventRateMeasureString         "KetekEventRateMeasure"
-#define KetekEventRateString                "KetekEventRate"
 #define KetekScopeDataSourceString          "KetekScopeDataSource"
 #define KetekScopeDataString                "KetekScopeData"
 #define KetekScopeTimeArrayString           "KetekScopeTimeArray"
@@ -217,8 +214,12 @@ typedef enum ketekParameters {
 #define KetekBaselineCorrEnableString       "KetekBaselineCorrEnable"
 #define KetekEnergyGainString               "KetekEnergyGain"
 #define KetekEnergyOffsetString             "KetekEnergyOffset"
+#define KetekDynResetEnableString           "KetekDynResetEnable"
+#define KetekDynResetThresholdString        "KetekDynResetThreshold"
+#define KetekDynResetDurationString         "KetekDynResetDuration"
 #define KetekBoardTemperatureString         "KetekBoardTemperature"
 #define KetekCollectModeString              "KetekCollectMode"
+#define KetekBytesPerBinString              "KetekBytesPerBin"
 
 /* Sync parameters */
 #define KetekSyncAcquireString              "KetekSyncAcquire"
@@ -258,9 +259,6 @@ protected:
     /* Event scope and rate parameters */
     int KetekEventTriggerSource;   /** < Source of the event or scope data int32 */
     int KetekEventTriggerValue;    /** < Event trigger value int32 */
-    int KetekEventRatePeriod;      /** < Time period to calculate rate int32 */
-    int KetekEventRateMeasure;     /** < Measure the event rate int32 */
-    int KetekEventRate;            /** < Event rate int32 */
     int KetekScopeDataSource;      /** < Source of scope data int32 array */
     int KetekScopeData;            /** < Scope array data (read) int32 array */
     int KetekScopeTimeArray;       /** < Scope timebase array (read) float64 array */
@@ -297,7 +295,11 @@ protected:
     int KetekBaselineCorrEnable;          /* uint32 */
     int KetekEnergyGain;                  /* float64, % */
     int KetekEnergyOffset;                /* float64, bins */
+    int KetekDynResetEnable;              /* int32 */
+    int KetekDynResetThreshold;           /* float64,V */
+    int KetekDynResetDuration;            /* float64,usec */
     int KetekBoardTemperature;            /* float64, C */
+    int KetekBytesPerBin;                 /* uint32 */
 
     /* Sync parameters */
     int KetekSyncAcquire;                 /* int32, write */
@@ -337,7 +339,6 @@ private:
     asynStatus setConfiguration();
     asynStatus getConfiguration();
     asynStatus setEventScope();
-    asynStatus startEventRate();
     asynStatus getAcquisitionStatistics();
     asynStatus getMcaData();
     asynStatus getScopeTrace();
@@ -364,9 +365,7 @@ private:
     asynUser *pasynUserRemote_;
     asynUser *pasynUserSync_;
 
-    epicsEvent *cmdStartEvent_;
-    epicsEvent *cmdStopEvent_;
-    epicsEvent *stoppedEvent_;
+    epicsEvent *syncStartEvent_;
     
     int uniqueId_;
     bool polling_;
