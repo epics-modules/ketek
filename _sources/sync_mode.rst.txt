@@ -78,7 +78,7 @@ The following is the MEDM screen mca.adl when the Ketek is collecting in sync mo
 .. figure:: ketek_sync_mca.png
     :align: center
 
-
+|
 
 Performance
 ===========
