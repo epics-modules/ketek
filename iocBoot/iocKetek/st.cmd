@@ -36,7 +36,7 @@ epicsEnvSet("CBUFFS", "500")
 # The maximum number of threads for plugins which can run in multiple threads
 epicsEnvSet("MAX_THREADS", "8")
 # The maximum number of channels in the MCA records
-epicsEnvSet("MCA_CHANS", "4096")
+epicsEnvSet("MCA_CHANS", "8192")
 # The maximum number of points in the ADC trace waveform records
 epicsEnvSet("TRACE_LEN", "16384")
 # The search path for database files
