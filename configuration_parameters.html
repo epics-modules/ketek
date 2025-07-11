@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration parameters &mdash; EPICS support for Ketek X-ray spectrometers</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/my_theme.css?v=254ed751" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Run-time statistics" href="run_time_statistics.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Ketek
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_time_statistics.html">Run-time statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mca_mode.html">MCA mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sync_mode.html">Sync or MCA mapping mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagnostic_traces.html">Diagnostic scope traces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ioc_startup_script.html">IOC startup script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Ketek</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Configuration parameters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/configuration_parameters.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configuration-parameters">
+<h1>Configuration parameters<a class="headerlink" href="#configuration-parameters" title="Link to this heading"></a></h1>
+<p>These records control the configuration of the digital signal processing. The readback (_RBV) values may differ slightly
+from the output values because of the discrete nature of the system clocks and MCA bins.</p>
+<p>These parameters are contained in ketek.template.</p>
+<table class="table-bordered table-striped table-hover docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>EPICS record names</p></th>
+<th class="head"><p>Record types</p></th>
+<th class="head"><p>drvInfo string</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NumMCAChannels, NumMCAChannels_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><p>MCA_NUM_CHANNELS</p></td>
+<td><p>The number of MCA channels to use.  Choices are 512, 1024, 2048, 4096, and 8192.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BytesPerBin, BytesPerBin_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><p>KetekBytesPerBin</p></td>
+<td><p>The number of bytes per MCA bin.  Choices are 1, 2, or 3.</p></td>
+</tr>
+<tr class="row-even"><td><p>EnergyGain, EnergyGain_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekEnergyGain</p></td>
+<td><p>The gain which controls the number of ADC units per MCA bin. Range is 0 to 100%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>EnergyOffset, EnergyOffset_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekEnergyOffset</p></td>
+<td><p>Offset for the energy to MCA bin calibration. Range is +-256 bins.</p></td>
+</tr>
+<tr class="row-even"><td><p>FastPeakingTime, FastPeakingTime_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekFastPeakingTime</p></td>
+<td><p>The peaking time of the fast filter in microseconds.</p></td>
+</tr>
+<tr class="row-odd"><td><p>FastGapTime, FastGapTime_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekFastGapTime</p></td>
+<td><p>The gap time of the fast filter in microseconds.</p></td>
+</tr>
+<tr class="row-even"><td><p>FastThreshold, FastThreshold_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekFastFilterThreshold</p></td>
+<td><p>The fast filter threshold in arbiratry units in the range 0-16384.</p></td>
+</tr>
+<tr class="row-odd"><td><p>FastMaxWidth, FastMaxWidth_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekFastFilterMaxWidth</p></td>
+<td><p>The maximum width of the fast filter in microseconds.</p></td>
+</tr>
+<tr class="row-even"><td><p>MediumPeakingTime_RBV</p></td>
+<td><p>ai</p></td>
+<td><p>KetekMediumPeakingTime</p></td>
+<td><p>The peaking time of the medium filter in microseconds.</p></td>
+</tr>
+<tr class="row-odd"><td><p>MediumGapTime_RBV</p></td>
+<td><p>ai</p></td>
+<td><p>KetekMediumGapTime</p></td>
+<td><p>The gap time of the medium filter in microseconds.</p></td>
+</tr>
+<tr class="row-even"><td><p>MediumThreshold, MediumThreshold_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekMediumFilterThreshold</p></td>
+<td><p>The medium filter threshold in arbiratry units in the range 0-16384.</p></td>
+</tr>
+<tr class="row-odd"><td><p>MediumFilterEnable, MediumFilterEnable_RBV</p></td>
+<td><p>bo, bi</p></td>
+<td><p>KetekMediumFilterEnable</p></td>
+<td><p>Disable (0) or Enable (1) the medium filter.</p></td>
+</tr>
+<tr class="row-even"><td><p>MediumMaxWidth, MediumMaxWidth_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekMediumFilterMaxWidth</p></td>
+<td><p>The maximum width of the medium filter in microseconds.</p></td>
+</tr>
+<tr class="row-odd"><td><p>SlowPeakingTime, SlowPeakingTime_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekSlowPeakingTime</p></td>
+<td><p>The peaking time of the slow filter in microseconds.</p></td>
+</tr>
+<tr class="row-even"><td><p>SlowGapTime, SlowGapTime_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekSlowGapTime</p></td>
+<td><p>The gap time of the slow filter in microseconds.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ResetInhibitTime, ResetInhibitTime_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekResetInhibitTime</p></td>
+<td><p>The time to wait after a reset event, range is 0-3.1875 microseconds.</p></td>
+</tr>
+<tr class="row-even"><td><p>DynResetEnable, DynResetEnable_RBV</p></td>
+<td><p>bo, bi</p></td>
+<td><p>KetekDynResetEnable</p></td>
+<td><p>Disable (0) or Enable (1) the dynamic reset.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DynResetThreshold, DynResetThreshold_RBV</p></td>
+<td><p>longout, longin</p></td>
+<td><p>KetekDynResetThreshold</p></td>
+<td><p>Dynamic reset threshold, range is 0-65535 ADC units.</p></td>
+</tr>
+<tr class="row-even"><td><p>DynResetDuration, DynResetDuration_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>KetekDynResetDuration</p></td>
+<td><p>Dynamic reset duration, range is 0-819.19 microseconds.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BaselineAverageLen, BaselineAverageLen_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><p>KetekBaselineAverageLen</p></td>
+<td><p>The number of baseline samples. Choices are 2, 4, 8, 16, 32, 64, 128, and 256.</p></td>
+</tr>
+<tr class="row-even"><td><p>BaselineTrim, BaselineTrim_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><p>KetekBaselineTrim</p></td>
+<td><p>The number of baseline trim. Choices are Longest, Long, Medium, Short, and Shortest.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BaselineCorrEnable, BaselineCorrEnable_RBV</p></td>
+<td><p>bo, bi</p></td>
+<td><p>KetekMediumFilterEnable</p></td>
+<td><p>Disable (0) or Enable (1) the baseline correction.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="run_time_statistics.html" class="btn btn-neutral float-right" title="Run-time statistics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Mark Rivers.
+      <span class="lastupdated">Last updated on 2025-July-11.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
