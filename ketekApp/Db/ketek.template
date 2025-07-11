@@ -26,6 +26,31 @@ record(longout, "$(P)$(R)SetNuse") {
     field(OMSL,"closed_loop")
 }
 
+record(mbbo,"$(P)$(R)BytesPerBin") {
+    field(DESC,"Bytes per MCA bin")
+    field(DTYP, "asynInt32")
+    field(OUT, "@asyn($(PORT))KetekBytesPerBin")
+    field(ZRVL, "1")
+    field(ZRST, "1")
+    field(ONVL, "2")
+    field(ONST, "2")
+    field(TWVL, "3")
+    field(TWST, "3")
+}
+
+record(mbbi,"$(P)$(R)BytesPerBin_RBV") {
+    field(DESC,"Bytes per MCA bin")
+    field(DTYP, "asynInt32")
+    field(INP, "@asyn($(PORT))KetekBytesPerBin")
+    field(ZRVL, "1")
+    field(ZRST, "1")
+    field(ONVL, "2")
+    field(ONST, "2")
+    field(TWVL, "3")
+    field(TWST, "3")
+    field(SCAN,"I/O Intr")
+}
+
 record(longout,"$(P)$(R)PresetInputCounts") {
     field(DTYP, "asynInt32")
     field(OUT, "@asyn($(PORT))KetekPresetInputCounts")
@@ -323,21 +348,21 @@ record(ai,"$(P)$(R)ResetInhibitTime_RBV") {
 record(mbbo,"$(P)$(R)BaselineAverageLen") {
     field(DESC,"Baseline average length")
     field(PINI,"YES")
-    field(ZRVL, "2")
+    field(ZRVL, "1")
     field(ZRST, "2")
-    field(ONVL, "4")
+    field(ONVL, "2")
     field(ONST, "4")
-    field(TWVL, "8")
+    field(TWVL, "3")
     field(TWST, "8")
-    field(THVL, "16")
+    field(THVL, "4")
     field(THST, "16")
-    field(FRVL, "32")
+    field(FRVL, "5")
     field(FRST, "32")
-    field(FVVL, "64")
+    field(FVVL, "6")
     field(FVST, "64")
-    field(SXVL, "128")
+    field(SXVL, "7")
     field(SXST, "128")
-    field(SVVL, "256")
+    field(SVVL, "8")
     field(SVST, "256")
     field(DTYP, "asynInt32")
     field(OUT,"@asyn($(PORT),0)KetekBaselineAverageLen")
@@ -345,21 +370,21 @@ record(mbbo,"$(P)$(R)BaselineAverageLen") {
 
 record(mbbi,"$(P)$(R)BaselineAverageLen_RBV") {
     field(DESC,"Baseline average length")
-    field(ZRVL, "2")
+    field(ZRVL, "1")
     field(ZRST, "2")
-    field(ONVL, "4")
+    field(ONVL, "2")
     field(ONST, "4")
-    field(TWVL, "8")
+    field(TWVL, "3")
     field(TWST, "8")
-    field(THVL, "16")
+    field(THVL, "4")
     field(THST, "16")
-    field(FRVL, "32")
+    field(FRVL, "5")
     field(FRST, "32")
-    field(FVVL, "64")
+    field(FVVL, "6")
     field(FVST, "64")
-    field(SXVL, "128")
+    field(SXVL, "7")
     field(SXST, "128")
-    field(SVVL, "256")
+    field(SVVL, "8")
     field(SVST, "256")
     field(DTYP, "asynInt32")
     field(INP,"@asyn($(PORT),0)KetekBaselineAverageLen")
@@ -459,6 +484,63 @@ record(ai,"$(P)$(R)EnergyOffset_RBV") {
     field(SCAN, "I/O Intr")
 }
 
+record(bo,"$(P)$(R)DynResetEnable") {
+    field(DESC,"Dynamic reset enable")
+    field(PINI,"YES")
+    field(VAL,"0")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekDynResetEnable")
+}
+
+record(bi,"$(P)$(R)DynResetEnable_RBV") {
+    field(DESC,"Dynamic reset enable")
+    field(ZNAM, "Disable")
+    field(ONAM, "Enable")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekDynResetEnable")
+    field(SCAN, "I/O Intr")
+}
+
+record(longout,"$(P)$(R)DynResetThreshold") {
+    field(DESC,"Dynamic reset threshold")
+    field(EGU, "ADU")
+    field(PINI,"YES")
+    field(VAL,"0")
+    field(DRVL, "0")
+    field(DRVH, "65535")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT),0)KetekDynResetThreshold")
+}
+
+record(longin,"$(P)$(R)DynResetThreshold_RBV") {
+    field(DESC,"Dynamic reset threshold")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekDynResetThreshold")
+    field(SCAN, "I/O Intr")
+}
+
+record(ao,"$(P)$(R)DynResetDuration") {
+    field(DESC,"Dynamic reset duration")
+    field(EGU, "usec")
+    field(PINI,"YES")
+    field(PREC,"3")
+    field(VAL,"0")
+    field(DRVL, "0")
+    field(DRVH, "819.19")
+    field(DTYP, "asynFloat64")
+    field(OUT,"@asyn($(PORT),0)KetekDynResetDuration")
+}
+
+record(ai,"$(P)$(R)DynResetDuration_RBV") {
+    field(DESC,"Dynamic reset durtation")
+    field(PREC,"3")
+    field(DTYP, "asynFloat64")
+    field(INP,"@asyn($(PORT),0)KetekDynResetDuration")
+    field(SCAN, "I/O Intr")
+}
+
 record(ai,"$(P)$(R)BoardTemperature") {
     field(DESC,"Board temperature")
     field(PREC,"1")
@@ -467,8 +549,9 @@ record(ai,"$(P)$(R)BoardTemperature") {
     field(SCAN, "I/O Intr")
 }
 
+
 ###################################
-# Event scope and rate parameters #
+# Event scope parameters          #
 ###################################
 
 record(mbbo,"$(P)$(R)EventTriggerSource") {
@@ -550,64 +633,6 @@ record(longin,"$(P)$(R)EventTriggerValue_RBV") {
     field(DESC,"Event trigger value")
     field(DTYP, "asynInt32")
     field(INP,"@asyn($(PORT),0)KetekEventTriggerValue")
-    field(SCAN, "I/O Intr")
-}
-
-record(mbbo,"$(P)$(R)EventRatePeriod") {
-    field(DESC,"Event rate period")
-    field(PINI,"YES")
-    field(ZRVL, "0")
-    field(ZRST, "1 second")
-    field(ONVL, "1")
-    field(ONST, "2 seconds")
-    field(TWVL, "4")
-    field(TWST, "4 seconds")
-    field(THVL, "8")
-    field(THST, "8 seconds")
-    field(FRVL, "16")
-    field(FRST, "16 seconds")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT),0)KetekEventRatePeriod")
-}
-
-record(mbbi,"$(P)$(R)EventRatePeriod_RBV") {
-    field(DESC,"Event rate period")
-    field(ZRVL, "0")
-    field(ZRST, "1 second")
-    field(ONVL, "1")
-    field(ONST, "2 seconds")
-    field(TWVL, "4")
-    field(TWST, "4 seconds")
-    field(THVL, "8")
-    field(THST, "8 seconds")
-    field(FRVL, "16")
-    field(FRST, "16 seconds")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT),0)KetekEventRatePeriod")
-    field(SCAN, "I/O Intr")
-}
-
-record(bo,"$(P)$(R)EventRateMeasure") {
-    field(DESC,"Event rate measure")
-    field(ZNAM, "Done")
-    field(ONAM, "Measure")
-    field(DTYP, "asynInt32")
-    field(OUT,"@asyn($(PORT),0)KetekEventRateMeasure")
-}
-
-record(bi,"$(P)$(R)EventRateMeasure_RBV") {
-    field(DESC,"Event rate period")
-    field(ZNAM, "Done")
-    field(ONAM, "Measure")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT),0)KetekEventRateMeasure")
-    field(SCAN, "I/O Intr")
-}
-
-record(ai,"$(P)$(R)EventRate") {
-    field(DESC,"Event rate")
-    field(DTYP, "asynInt32")
-    field(INP,"@asyn($(PORT),0)KetekEventRate")
     field(SCAN, "I/O Intr")
 }
 
@@ -773,6 +798,7 @@ record(ai,"$(P)$(R)SyncCycleTime_RBV") {
     field(DESC,"Acquire time per cycle")
     field(DTYP, "asynFloat64")
     field(INP,"@asyn($(PORT))KetekSyncCycleTime")
+    field(PREC, "4")
     field(SCAN, "I/O Intr")
 }
 
@@ -815,4 +841,13 @@ record(bi,"$(P)$(R)SyncRunning") {
     field(ZSV, "NO_ALARM")
     field(OSV, "MINOR")
     field(SCAN, "I/O Intr")
+}
+
+record(bo,"$(P)$(R)SyncReadMCA") {
+    field(DESC,"Read MCA record when sync scan running")
+    field(OUT, "$(P)$(M).READ PP")
+    field(VAL, "1")
+    field(SDIS,"$(P)$(R)SyncRunning")
+    field(DISV,"0")
+    field(SCAN,"1 second")
 }
