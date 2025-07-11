@@ -95,9 +95,6 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
     /* Diagnostic trace parameters */
     createParam(KetekEventTriggerSourceString,     asynParamInt32,        &KetekEventTriggerSource);
     createParam(KetekEventTriggerValueString,      asynParamInt32,        &KetekEventTriggerValue);
-    createParam(KetekEventRatePeriodString,        asynParamInt32,        &KetekEventRatePeriod);
-    createParam(KetekEventRateMeasureString,       asynParamInt32,        &KetekEventRateMeasure);
-    createParam(KetekEventRateString,              asynParamInt32,        &KetekEventRate);
     createParam(KetekScopeDataSourceString,        asynParamInt32,        &KetekScopeDataSource);
     createParam(KetekScopeDataString,              asynParamInt32Array,   &KetekScopeData);
     createParam(KetekScopeTimeArrayString,         asynParamFloat64Array, &KetekScopeTimeArray);
@@ -134,7 +131,11 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
     createParam(KetekBaselineCorrEnableString,          asynParamInt32,   &KetekBaselineCorrEnable);
     createParam(KetekEnergyGainString,                  asynParamFloat64, &KetekEnergyGain);
     createParam(KetekEnergyOffsetString,                asynParamFloat64, &KetekEnergyOffset);
+    createParam(KetekDynResetEnableString,              asynParamInt32,   &KetekDynResetEnable);
+    createParam(KetekDynResetThresholdString,           asynParamInt32,   &KetekDynResetThreshold);
+    createParam(KetekDynResetDurationString,            asynParamFloat64, &KetekDynResetDuration);
     createParam(KetekBoardTemperatureString,            asynParamFloat64, &KetekBoardTemperature);
+    createParam(KetekBytesPerBinString,                 asynParamInt32,   &KetekBytesPerBin);
 
     /* Sync parameters */
     createParam(KetekSyncAcquireString,                 asynParamInt32,   &KetekSyncAcquire);
@@ -194,6 +195,8 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
         
     }
     setIntegerParam(KetekSyncEnabled, syncEnabled);
+    setIntegerParam(KetekBaselineAverageLen, 8);
+    setIntegerParam(KetekBytesPerBin, 3);
     setIntegerParam(NDArrayCallbacks, 1);
 
     setStringParam(ADManufacturer, "KETEK");
@@ -214,11 +217,8 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
     /* Set the parameters in param lib */
     setIntegerParam(mcaAcquiring, 0);
 
-    /* Create the start and stop events that will be used to signal our
-     * acquisitionTask when to start/stop polling the HW     */
-    cmdStartEvent_ = new epicsEvent();
-    cmdStopEvent_ = new epicsEvent();
-    stoppedEvent_ = new epicsEvent();
+    /* Create the syncStartEvent used to signal our acquisitionTask to read sync mode data */
+    syncStartEvent_ = new epicsEvent();
 
     polling_ = true;
     status = (epicsThreadCreate("acquisitionTask",
@@ -371,7 +371,10 @@ asynStatus Ketek::writeInt32( asynUser *pasynUser, epicsInt32 value)
              (function == KetekBaselineAverageLen) ||
              (function == KetekBaselineTrim)       ||
              (function == KetekBaselineCorrEnable) ||
-             (function == mcaNumChannels)) {
+             (function == KetekDynResetEnable)     ||
+             (function == mcaNumChannels)          ||
+             (function == KetekDynResetThreshold) ||
+             (function == KetekBytesPerBin)) {
         this->setConfiguration();
     }
     else if ((function == KetekPresetMode) ||
@@ -383,9 +386,6 @@ asynStatus Ketek::writeInt32( asynUser *pasynUser, epicsInt32 value)
              (function == KetekEventTriggerValue)  ||
              (function == KetekScopeTriggerTimeout)) {
         this->setEventScope();
-    }
-    else if (function == KetekEventRateMeasure) {
-        this->startEventRate();
     }
 
     /* Call the callbacks */
@@ -410,7 +410,8 @@ asynStatus Ketek::writeFloat64( asynUser *pasynUser, epicsFloat64 value)
         (function == KetekMediumFilterMaxWidth) ||
         (function == KetekResetInhibitTime) ||
         (function == KetekEnergyGain) ||
-        (function == KetekEnergyOffset))
+        (function == KetekEnergyOffset) ||
+        (function == KetekDynResetDuration))
     {
         this->setConfiguration();
     }
@@ -434,6 +435,7 @@ asynStatus Ketek::readInt32Array(asynUser *pasynUser, epicsInt32 *value, size_t 
     int function = pasynUser->reason;
     int nBins;
     int i;
+    int syncRunning;
     const char *functionName = "readInt32Array";
 
     asynPrint(pasynUser, ASYN_TRACE_FLOW,
@@ -443,7 +445,11 @@ asynStatus Ketek::readInt32Array(asynUser *pasynUser, epicsInt32 *value, size_t 
         getIntegerParam(mcaNumChannels, &nBins);
         if (nBins > (int)nElements) nBins = (int)nElements;
         *nIn = nBins;
-        this->getMcaData();
+        getIntegerParam(KetekSyncRunning, &syncRunning);
+        // If a sync mode run is active then mcaData_ will be updated in acquisitionTask.
+        if (!syncRunning) {
+            this->getMcaData();
+        }
         for (i=0; i<nBins; i++) {
             value[i] = mcaData_[i];
         }
@@ -564,6 +570,19 @@ asynStatus Ketek::setConfiguration()
     }
     writeSingleParam(pMCANumBins, i);
     
+    getIntegerParam(KetekBytesPerBin, &iValue);
+    writeSingleParam(pMCABytesPerBin, iValue);
+    
+    getIntegerParam(KetekDynResetEnable, &iValue);
+    writeSingleParam(pDynResetEnable, iValue);
+
+    getIntegerParam(KetekDynResetThreshold, &iValue);
+    writeSingleParam(pDynResetThreshold, iValue);
+
+    getDoubleParam(KetekDynResetDuration, &dValue);
+    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    writeSingleParam(pDynResetDuration, iValue);
+
     getConfiguration();
 
     return asynSuccess;
@@ -643,6 +662,19 @@ asynStatus Ketek::getConfiguration()
     readSingleParam(pBoardTemperature, &iValue);
     setDoubleParam(KetekBoardTemperature, iValue/16.0 - 273.15);
 
+    readSingleParam(pMCABytesPerBin, &iValue);
+    setIntegerParam(KetekBytesPerBin, iValue);
+    
+    readSingleParam(pDynResetEnable, &iValue);
+    setIntegerParam(KetekDynResetEnable, iValue);
+
+    readSingleParam(pDynResetThreshold, &iValue);
+    setIntegerParam(KetekDynResetThreshold, iValue);
+
+    readSingleParam(pDynResetDuration, &iValue);
+    dValue = iValue / KETEK_USEC_TO_FILTER_UNITS;
+    setDoubleParam(KetekDynResetDuration, dValue);
+
     return asynSuccess;
 }
 
@@ -675,18 +707,6 @@ asynStatus Ketek::setEventScope()
     return asynSuccess;
 }
 
-asynStatus Ketek::startEventRate()
-{
-    int eventRatePeriod;
-    epicsUInt16 eventRateLow, eventRateHigh;
-   
-    getIntegerParam(KetekEventRatePeriod, &eventRatePeriod);
-    writeSingleParam(pEventRateCalc, eventRatePeriod);
-    readSingleParam(pEventRateLow, &eventRateLow);
-    readSingleParam(pEventRateHigh, &eventRateHigh);
-    setIntegerParam(KetekEventRate, ntohs(eventRateLow) + ntohs(eventRateHigh)*65536);
-    return asynSuccess;
-}
 asynStatus Ketek::getAcquisitionStatistics()
 {
     double realTime, liveTime, icr, ocr;
@@ -775,7 +795,17 @@ asynStatus Ketek::getMcaData()
     req.data = 0;
     status = sendRcvMsg(&req, (char *)mcaRaw_, numBins*bytesPerBin, 1.0); // 1 second timeout is enough
     for (int i=0; i<numBins; i++) {
-       mcaData_[i] = mcaRaw_[i*3] + mcaRaw_[i*3+1]*256L + mcaRaw_[i*3+2]*65536L;
+        switch (bytesPerBin) {
+            case 1:
+                mcaData_[i] = mcaRaw_[i];
+                break;
+            case 2:
+                mcaData_[i] = mcaRaw_[i*2] + mcaRaw_[i*2+1]*256L;
+                break;
+            case 3:
+                mcaData_[i] = mcaRaw_[i*3] + mcaRaw_[i*3+1]*256L + mcaRaw_[i*3+2]*65536L;
+                break;
+        }
     }
     return status;
 }
@@ -818,9 +848,6 @@ asynStatus Ketek::startAcquiring()
     setIntegerParam(mcaAcquiring, 1); /* Set the acquiring flag */
 
     callParamCallbacks();
-
-    // signal cmdStartEvent to start the polling thread
-    cmdStartEvent_->signal();
     return status;
 }
 
@@ -835,6 +862,7 @@ asynStatus Ketek::startSyncAcquire()
 {
     asynStatus status = asynSuccess;
     double syncCycleTime;
+    //int syncPoints;
     //const char *functionName = "startSyncAcquire";
 
     // Sync cycle time
@@ -844,10 +872,12 @@ asynStatus Ketek::startSyncAcquire()
     status = writeSingleParam(pSyncCycleTimeHigh, (itemp & 0xFFFF0000) >> 16);
 
     // Number of sync points
-/*    getIntegerParam(KetekSyncPoints, &syncPoints);
+/* I can't get this to work, acquisition stops but reads then timeout and I cannot restart sync acquisition.
+    getIntegerParam(KetekSyncPoints, &syncPoints);
     status = writeSingleParam(pSyncStopConditionLow, syncPoints & 0x0000FFFF);
     status = writeSingleParam(pSyncStopConditionHigh, (syncPoints & 0xFFFF0000) >> 16);
 */
+
     // Sync status data to be sent.  Enable all for now.
     status = writeSingleParam(pSyncStatusData, 0x3F);
 
@@ -874,14 +904,13 @@ asynStatus Ketek::startSyncAcquire()
     callParamCallbacks();
 
     // signal cmdStartEvent to start the polling thread
-    cmdStartEvent_->signal();
+    syncStartEvent_->signal();
     return status;
 }
 
 
 asynStatus Ketek::stopSyncAcquire() {
     asynStatus status;
-printf("Stopping sync run\n");
     status = writeSingleParam(pSyncStop, 0);
     return status;
 }
@@ -936,11 +965,8 @@ void Ketek::acquisitionTask()
         {
             /* Release the lock while we wait for an event that says acquire has started, then lock again */
             unlock();
-            /* Wait for someone to signal the cmdStartEvent */
-            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s Waiting for sync acquisition to start!\n",
-                driverName, functionName);
-            cmdStartEvent_->wait();
+            /* Wait for syncStartEvent */
+            syncStartEvent_->wait();
             lock();
         }
         epicsTimeGetCurrent(&start);
@@ -949,9 +975,14 @@ void Ketek::acquisitionTask()
         status = pasynOctetSyncIO->read(pasynUserSync_, (char *)syncMsgBuffer_, requestedSize, 
                                         KETEK_UDP_TIMEOUT, &nRead, &eomReason);
         lock();
-        int reason = status ? ASYN_TRACE_ERROR : ASYN_TRACEIO_DRIVER;
-        asynPrint(pasynUserSelf, reason, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
-                  driverName, functionName, status, requestedSize, (int)nRead, eomReason);
+        if (status) {
+            asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s error reading UDP packet, status=%d, requestedSize=%d\n",
+                      driverName, functionName, status, requestedSize);
+            goto skip;
+        } else {
+            asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER, "%s::%s received UDP packet, requestedSize=%d, nRead=%d, eomReason=%d\n",
+                      driverName, functionName, requestedSize, (int)nRead, eomReason);
+        }
         // syncChannelIndex should be 1.  If not there is an error, skip
         syncSegmentNumber = extractSyncParam(20, 139);
         if (syncSegmentNumber != 1) {
@@ -995,9 +1026,14 @@ void Ketek::acquisitionTask()
             status = pasynOctetSyncIO->read(pasynUserSync_, (char *)syncMsgBuffer_, requestedSize, 
                                             KETEK_UDP_TIMEOUT, &nRead, &eomReason);
             lock();
-            int reason = status ? ASYN_TRACE_ERROR : ASYN_TRACEIO_DRIVER;
-            asynPrint(pasynUserSelf, reason, "%s::%s received UDP packet, status=%d, requestedSize=%d, nRead=%d, eomReason=%d\n",
-                      driverName, functionName, status, requestedSize, (int)nRead, eomReason);
+            if (status) {
+                asynPrint(pasynUserSelf, ASYN_TRACE_ERROR, "%s::%s error reading UDP packet, status=%d, requestedSize=%d\n",
+                          driverName, functionName, status, requestedSize);
+                goto skip;
+            } else {
+                asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER, "%s::%s received UDP packet, requestedSize=%d, nRead=%d, eomReason=%d\n",
+                          driverName, functionName, requestedSize, (int)nRead, eomReason);
+            }
             // syncChannelIndex should be segment.  If not there is an error, skip
             syncSegmentNumber = extractSyncParam(20, 139);
             if (syncSegmentNumber != segment) {
