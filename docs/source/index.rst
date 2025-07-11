@@ -16,4 +16,3 @@ Table of Contents
   sync_mode
   diagnostic_traces
   ioc_startup_script
-  performance
