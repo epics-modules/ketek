@@ -37,7 +37,7 @@ of the many configuration parameters for the digital pulse processing.  The user
 
 - :download:`KETEK DPP3 Manual <KETEK DPP3 Manual rev._0.9.pdf>`
 - :download:`Basic Communication <DPP3_Basic_Communication_rev._1.0.pdf>`
-- :download:`Complete Parameter Set <DPP3_Complete_Parameter_Set_Overview.pdf>`
+- :download:`Complete Parameter Set <DPP3_Complete_Parameter_Set_Overview_09-Apr-2025.pdf>`
 - :download:`Sync Parameter Overview <DPP3_Sync_Parameter_Overview_27-July-2023.pdf>`
 - :download:`Sync Mode UDP Packet Structure <Sync_Mode_UDP_Packet_Structure_6-Sept-2024.pdf>`
 
