@@ -549,6 +549,16 @@ record(ai,"$(P)$(R)BoardTemperature") {
     field(SCAN, "I/O Intr")
 }
 
+record(bi,"$(P)$(R)MCUReady") {
+    field(DESC,"MCU ready")
+    field(ZNAM, "Not ready")
+    field(ONAM, "Ready")
+    field(ZSV, "MINOR")
+    field(OSV, "NO_ALARM")
+    field(DTYP, "asynInt32")
+    field(INP,"@asyn($(PORT),0)KetekMCUReady")
+    field(SCAN, "I/O Intr")
+}
 
 ###################################
 # Event scope parameters          #
@@ -850,4 +860,13 @@ record(bo,"$(P)$(R)SyncReadMCA") {
     field(SDIS,"$(P)$(R)SyncRunning")
     field(DISV,"0")
     field(SCAN,"1 second")
+}
+
+record(bo,"$(P)$(R)ReadStatus") {
+    field(DESC,"Read board and MCA status")
+    field(DTYP, "asynInt32")
+    field(OUT,"@asyn($(PORT))KetekReadStatus")
+    field(VAL, "1")
+    field(SCAN,"1 second")
+    field(FLNK, "$(P)$(M)Status.PROC")
 }
