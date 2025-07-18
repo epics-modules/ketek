@@ -1,6 +1,6 @@
-Run-time statistics
--------------------
-These are the records for run-time statistics.
+Run-time status and statistics
+------------------------------
+These are the records for run-time status and statistics.
 
 These parameters are contained in ketek.template.
 
@@ -37,3 +37,12 @@ These parameters are contained in ketek.template.
      - longin
      - KetekOutputCounts
      - The number of counts in the MCA spectrum.
+   * - BoardTemperature
+     - ai
+     - KetekBoardTemperature
+     - The temperature of the DPP3 board.
+   * - MCUReady
+     - bi
+     - KetekMCUReady
+     - The status of the MCU, "Ready" or "Not ready. 
+       It will be "Not ready" for up to 1 minute after a powering on.

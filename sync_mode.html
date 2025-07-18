@@ -45,7 +45,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_parameters.html">Configuration parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_time_statistics.html">Run-time statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_time_statistics.html">Run-time status and statistics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mca_mode.html">MCA mode</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Sync or MCA mapping mode</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#performance">Performance</a></li>
@@ -82,7 +82,7 @@
   <section id="sync-or-mca-mapping-mode">
 <h1>Sync or MCA mapping mode<a class="headerlink" href="#sync-or-mca-mapping-mode" title="Link to this heading"></a></h1>
 <p>The Ketek can collect spectra in what they call “sync” mode.  For other detectors this is generally called MCA Mapping Mode.
-It is used to rapidly collect spectra in response to an external trigger signal that is provided to the TRIG input on the AXAS 3.0.</p>
+It is used to rapidly collect spectra in response to an external trigger signal that is provided to the TRIG input on the DPP3 based hardware.</p>
 <p>In sync mode the Ketek streams data to a UDP port on the IOC computer.  The IP address of the IOC and the UDP port to use are parameters
 to the KetekConfigure command in the startup script.</p>
 <p>The driver reads the spectra and metadata from the UDP port and copies it into NDArrays of dimensions [NumMCAChannels].
@@ -223,7 +223,7 @@ The pulse generator was programmed to output 1000 pulses.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, Mark Rivers.
-      <span class="lastupdated">Last updated on 2025-July-11.
+      <span class="lastupdated">Last updated on 2025-July-18.
       </span></p>
   </div>
 

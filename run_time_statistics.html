@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Run-time statistics &mdash; EPICS support for Ketek X-ray spectrometers</title>
+  <title>Run-time status and statistics &mdash; EPICS support for Ketek X-ray spectrometers</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/my_theme.css?v=254ed751" />
 
@@ -45,7 +45,7 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_parameters.html">Configuration parameters</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Run-time statistics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Run-time status and statistics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mca_mode.html">MCA mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sync_mode.html">Sync or MCA mapping mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="diagnostic_traces.html">Diagnostic scope traces</a></li>
@@ -66,7 +66,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Run-time statistics</li>
+      <li class="breadcrumb-item active">Run-time status and statistics</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/run_time_statistics.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -76,9 +76,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="run-time-statistics">
-<h1>Run-time statistics<a class="headerlink" href="#run-time-statistics" title="Link to this heading"></a></h1>
-<p>These are the records for run-time statistics.</p>
+  <section id="run-time-status-and-statistics">
+<h1>Run-time status and statistics<a class="headerlink" href="#run-time-status-and-statistics" title="Link to this heading"></a></h1>
+<p>These are the records for run-time status and statistics.</p>
 <p>These parameters are contained in ketek.template.</p>
 <table class="table-bordered table-striped table-hover docutils align-default">
 <thead>
@@ -119,6 +119,17 @@
 <td><p>KetekOutputCounts</p></td>
 <td><p>The number of counts in the MCA spectrum.</p></td>
 </tr>
+<tr class="row-even"><td><p>BoardTemperature</p></td>
+<td><p>ai</p></td>
+<td><p>KetekBoardTemperature</p></td>
+<td><p>The temperature of the DPP3 board.</p></td>
+</tr>
+<tr class="row-odd"><td><p>MCUReady</p></td>
+<td><p>bi</p></td>
+<td><p>KetekMCUReady</p></td>
+<td><p>The status of the MCU, “Ready” or “Not ready.
+It will be “Not ready” for up to 1 minute after a powering on.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -135,7 +146,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, Mark Rivers.
-      <span class="lastupdated">Last updated on 2025-July-11.
+      <span class="lastupdated">Last updated on 2025-July-18.
       </span></p>
   </div>
 

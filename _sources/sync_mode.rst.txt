@@ -1,7 +1,7 @@
 Sync or MCA mapping mode
 ------------------------
 The Ketek can collect spectra in what they call "sync" mode.  For other detectors this is generally called MCA Mapping Mode.
-It is used to rapidly collect spectra in response to an external trigger signal that is provided to the TRIG input on the AXAS 3.0.
+It is used to rapidly collect spectra in response to an external trigger signal that is provided to the TRIG input on the DPP3 based hardware.
 
 In sync mode the Ketek streams data to a UDP port on the IOC computer.  The IP address of the IOC and the UDP port to use are parameters
 to the KetekConfigure command in the startup script.

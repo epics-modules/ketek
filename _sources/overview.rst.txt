@@ -9,10 +9,10 @@
 Overview
 --------
 
-This is an EPICS driver for the Ketek_ AXAS 3.0 digital x-ray spectroscopy system.
+This is an EPICS driver for the KETEK_ digital x-ray spectroscopy systems equippped with KETEK digital pulse process DPP3.
 The source code is in the ketek_module_ repository in the Github epics-modules project.
-These detectors are available in single channel (AXAS 3.0) and multichannel (ARRAY 3.0) versions.
-This module currently only supports the single channel version.
+These detectors are available in single channel (AXAS-D 3.0 or VICO-DB 3.0) and multichannel (ARRAY) versions.
+This module currently only supports the single channel versions.
 
 The Ketek can collect data in 3 different modes:
 
@@ -29,15 +29,15 @@ to display the spectra and control the basic operation including Regions-of-Inte
 The Ketek driver is derived from the base class asynNDArrayDriver_, which is part of the EPICS areaDetector_ package.
 The allows the Ketek driver to use all of the areaDetector plugins for file saving in sync mode,
 and for other purposes. 
-The Ketek driver can be used on both Windows and Linux. A Windows machine is required
-to load new firmware using the vendor's VICOScope sofware.  Otherwise the module can be used from either Linux or Windows over Ethernet. 
+The Ketek driver can be used on both Windows and Linux. 
+New firmware can be uploaded using the vendor's VICOUpdate tool which is part of the KETEK software installation package for Windows and Linux.
 
 This document does not attempt to give an explanation of the principles of operation of the Ketek, or a detailed explanation
 of the many configuration parameters for the digital pulse processing.  The user should consult the following documents for this information:
 
 - :download:`KETEK DPP3 Manual <KETEK DPP3 Manual rev._0.9.pdf>`
 - :download:`Basic Communication <DPP3_Basic_Communication_rev._1.0.pdf>`
-- :download:`Complete Parameter Set <DPP3_Complete_Parameter_Set_Overview.pdf>`
+- :download:`Complete Parameter Set <DPP3_Complete_Parameter_Set_Overview_09-Apr-2025.pdf>`
 - :download:`Sync Parameter Overview <DPP3_Sync_Parameter_Overview_27-July-2023.pdf>`
 - :download:`Sync Mode UDP Packet Structure <Sync_Mode_UDP_Packet_Structure_6-Sept-2024.pdf>`
 

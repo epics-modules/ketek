@@ -45,7 +45,7 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_parameters.html">Configuration parameters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run_time_statistics.html">Run-time statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run_time_statistics.html">Run-time status and statistics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mca_mode.html">MCA mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sync_mode.html">Sync or MCA mapping mode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="diagnostic_traces.html">Diagnostic scope traces</a></li>
@@ -78,10 +78,10 @@
              
   <section id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h1>
-<p>This is an EPICS driver for the <a class="reference external" href="https://ketek.net">Ketek</a> AXAS 3.0 digital x-ray spectroscopy system.
+<p>This is an EPICS driver for the <a class="reference external" href="https://ketek.net">KETEK</a> digital x-ray spectroscopy systems equippped with KETEK digital pulse process DPP3.
 The source code is in the <a class="reference external" href="https://github.com/epics-modules/ketek">ketek_module</a> repository in the Github epics-modules project.
-These detectors are available in single channel (AXAS 3.0) and multichannel (ARRAY 3.0) versions.
-This module currently only supports the single channel version.</p>
+These detectors are available in single channel (AXAS-D 3.0 or VICO-DB 3.0) and multichannel (ARRAY) versions.
+This module currently only supports the single channel versions.</p>
 <p>The Ketek can collect data in 3 different modes:</p>
 <ul class="simple">
 <li><p>Single MCA spectrum.  It acquires a single MCA spectrum on all channels.</p></li>
@@ -96,14 +96,14 @@ to display the spectra and control the basic operation including Regions-of-Inte
 <p>The Ketek driver is derived from the base class <a class="reference external" href="https://areadetector.github.io/areaDetector/ADCore/NDArray.html#asynndarraydriver">asynNDArrayDriver</a>, which is part of the EPICS <a class="reference external" href="https://areadetector.github.io">areaDetector</a> package.
 The allows the Ketek driver to use all of the areaDetector plugins for file saving in sync mode,
 and for other purposes.
-The Ketek driver can be used on both Windows and Linux. A Windows machine is required
-to load new firmware using the vendor’s VICOScope sofware.  Otherwise the module can be used from either Linux or Windows over Ethernet.</p>
+The Ketek driver can be used on both Windows and Linux.
+New firmware can be uploaded using the vendor’s VICOUpdate tool which is part of the KETEK software installation package for Windows and Linux.</p>
 <p>This document does not attempt to give an explanation of the principles of operation of the Ketek, or a detailed explanation
 of the many configuration parameters for the digital pulse processing.  The user should consult the following documents for this information:</p>
 <ul class="simple">
 <li><p><a class="reference download internal" download="" href="_downloads/a9d1ee032ccf9940967a1a12a67decea/KETEK%20DPP3%20Manual%20rev._0.9.pdf"><code class="xref download docutils literal notranslate"><span class="pre">KETEK</span> <span class="pre">DPP3</span> <span class="pre">Manual</span></code></a></p></li>
 <li><p><a class="reference download internal" download="" href="_downloads/0e1c28bb7280e6952d97ce29f514b38a/DPP3_Basic_Communication_rev._1.0.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Basic</span> <span class="pre">Communication</span></code></a></p></li>
-<li><p><a class="reference download internal" download="" href="_downloads/9a707a111320cb45c5dfda7ae8ef8655/DPP3_Complete_Parameter_Set_Overview.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Complete</span> <span class="pre">Parameter</span> <span class="pre">Set</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="_downloads/985c9075959d06afed756c60d53f0dc9/DPP3_Complete_Parameter_Set_Overview_09-Apr-2025.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Complete</span> <span class="pre">Parameter</span> <span class="pre">Set</span></code></a></p></li>
 <li><p><a class="reference download internal" download="" href="_downloads/de7f3cdf4497632d9cc23eea72d4db14/DPP3_Sync_Parameter_Overview_27-July-2023.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Sync</span> <span class="pre">Parameter</span> <span class="pre">Overview</span></code></a></p></li>
 <li><p><a class="reference download internal" download="" href="_downloads/d7365a23619f5e5df09f26448a6dc53e/Sync_Mode_UDP_Packet_Structure_6-Sept-2024.pdf"><code class="xref download docutils literal notranslate"><span class="pre">Sync</span> <span class="pre">Mode</span> <span class="pre">UDP</span> <span class="pre">Packet</span> <span class="pre">Structure</span></code></a></p></li>
 </ul>
@@ -125,7 +125,7 @@ of the many configuration parameters for the digital pulse processing.  The user
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, Mark Rivers.
-      <span class="lastupdated">Last updated on 2025-July-11.
+      <span class="lastupdated">Last updated on 2025-July-18.
       </span></p>
   </div>
 
