@@ -172,8 +172,7 @@ typedef enum ketekParameters {
 
 /* Internal asyn driver parameters */
 #define KetekErasedString                   "KetekErased"
-#define KetekAcquiringString                "KetekAcquiring"  /* Internal use only !!! */
-#define KetekPollTimeString                 "KetekPollTime"
+#define KetekReadStatusString               "KetekReadStatus"
 
 /* Event and scope parameters */
 #define KetekEventTriggerSourceString       "KetekEventTriggerSource"
@@ -218,6 +217,7 @@ typedef enum ketekParameters {
 #define KetekDynResetThresholdString        "KetekDynResetThreshold"
 #define KetekDynResetDurationString         "KetekDynResetDuration"
 #define KetekBoardTemperatureString         "KetekBoardTemperature"
+#define KetekMCUReadyString                 "KetekMCUReady"
 #define KetekCollectModeString              "KetekCollectMode"
 #define KetekBytesPerBinString              "KetekBytesPerBin"
 
@@ -248,13 +248,10 @@ public:
 protected:
 
     /* General parameters */
-    #define FIRST_KETEK_PARAM KetekPortNameSelf
+    #define FIRST_KETEK_PARAM KetekErased
     /* Internal asyn driver parameters */
-    int KetekPortNameSelf;
-    int KetekDriverVersion;
-    int KetekModel;
-    int KetekFirmwareVersion;
     int KetekErased;               /** < Erased flag. (0=not erased; 1=erased) */
+    int KetekReadStatus;
 
     /* Event scope and rate parameters */
     int KetekEventTriggerSource;   /** < Source of the event or scope data int32 */
@@ -299,6 +296,7 @@ protected:
     int KetekDynResetThreshold;           /* float64,V */
     int KetekDynResetDuration;            /* float64,usec */
     int KetekBoardTemperature;            /* float64, C */
+    int KetekMCUReady;                    /* int32 */
     int KetekBytesPerBin;                 /* uint32 */
 
     /* Sync parameters */
