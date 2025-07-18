@@ -123,14 +123,14 @@ text {
 	"basic attribute" {
 		clr=0
 	}
-	textix="Ketek Control ($(P)$(R))"
+	textix="Ketek DPP3 ($(P)$(R))"
 	align="horiz. centered"
 }
 rectangle {
 	object {
-		x=120
+		x=65
 		y=383
-		width=120
+		width=230
 		height=21
 	}
 	"basic attribute" {
@@ -152,15 +152,15 @@ rectangle {
 }
 text {
 	object {
-		x=130
+		x=75
 		y=383
-		width=100
+		width=210
 		height=20
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="Statistics"
+	textix="Status and Statistics"
 	align="horiz. centered"
 }
 "text update" {

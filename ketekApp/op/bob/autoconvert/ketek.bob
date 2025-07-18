@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Saved on 2025-07-18 17:19:49 by epics-->
+<!--Saved on 2025-07-18 17:50:28 by epics-->
 <display version="2.0.0">
   <name>ketek</name>
   <x>173</x>
@@ -42,7 +42,7 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #13</name>
-    <text>Ketek Control ($(P)$(R))</text>
+    <text>Ketek DPP3 ($(P)$(R))</text>
     <y>5</y>
     <width>1090</width>
     <height>25</height>
@@ -58,9 +58,9 @@
   </widget>
   <widget type="rectangle" version="2.0.0">
     <name>rectangle #16</name>
-    <x>120</x>
+    <x>65</x>
     <y>383</y>
-    <width>120</width>
+    <width>230</width>
     <height>21</height>
     <line_color>
       <color red="218" green="218" blue="218">
@@ -90,9 +90,10 @@
   </widget>
   <widget type="label" version="2.0.0">
     <name>text #22</name>
-    <text>Statistics</text>
-    <x>130</x>
+    <text>Status and Statistics</text>
+    <x>75</x>
     <y>383</y>
+    <width>210</width>
     <font>
       <font family="Liberation Sans" style="REGULAR" size="16.0">
       </font>

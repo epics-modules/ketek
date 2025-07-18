@@ -197,8 +197,8 @@ $(pv_value)</tooltip>
     <transparent>false</transparent>
     <visible>true</visible>
     <widget_type>Rectangle</widget_type>
-    <width>120</width>
-    <x>120</x>
+    <width>230</width>
+    <x>65</x>
     <y>383</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.Rectangle" version="1.0.0">
@@ -3474,7 +3474,7 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_scrollbar>false</show_scrollbar>
-    <text>Ketek Control ($(P)$(R))</text>
+    <text>Ketek DPP3 ($(P)$(R))</text>
     <tooltip></tooltip>
     <transparent>true</transparent>
     <vertical_alignment>1</vertical_alignment>
@@ -3514,15 +3514,15 @@ $(pv_value)</tooltip>
     </scale_options>
     <scripts />
     <show_scrollbar>false</show_scrollbar>
-    <text>Statistics</text>
+    <text>Status and Statistics</text>
     <tooltip></tooltip>
     <transparent>true</transparent>
     <vertical_alignment>1</vertical_alignment>
     <visible>true</visible>
     <widget_type>Label</widget_type>
-    <width>100</width>
+    <width>210</width>
     <wrap_words>false</wrap_words>
-    <x>130</x>
+    <x>75</x>
     <y>383</y>
   </widget>
   <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
