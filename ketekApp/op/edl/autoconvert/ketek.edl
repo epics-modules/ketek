@@ -6,7 +6,7 @@ release 1
 x 173
 y 186
 w 1210
-h 710
+h 745
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-bold-r-10.0"
 btnFont "helvetica-medium-r-18.0"
@@ -23,6 +23,22 @@ showGrid
 snapToGrid
 gridSize 4
 endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 485
+y 65
+w 165
+h 19
+lineColor rgb 30720 30720 30720
+fill
+fillColor rgb 30720 30720 30720
+lineWidth 0
+endObjectProperties
 
 # (Rectangle)
 object activeRectangleClass
@@ -85,7 +101,7 @@ release 0
 x 5
 y 380
 w 349
-h 259
+h 284
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 endObjectProperties
@@ -329,11 +345,24 @@ value {
 }
 endObjectProperties
 
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 35
+w 350
+h 340
+
+beginGroup
+
 # (Embedded Window)
 object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 5
 y 35
@@ -351,6 +380,12 @@ displayFileName {
   0 "ADSetup.edl"
 }
 noScroll
+endObjectProperties
+
+endGroup
+
+visMin "A"
+visMax "1"
 endObjectProperties
 
 # (Rectangle)
@@ -403,19 +438,6 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 565
-w 315
-h 45
-
-beginGroup
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -432,7 +454,7 @@ font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 0 65535 0
 fgAlarm
-bgColor rgb 0 0 0
+bgColor rgb 30720 30720 30720
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -457,7 +479,7 @@ font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 0 65535 0
 fgAlarm
-bgColor rgb 0 0 0
+bgColor rgb 30720 30720 30720
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -504,24 +526,6 @@ value {
 }
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 140
-y 540
-w 195
-h 20
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -564,11 +568,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Text Monitor)
 object activeXTextDspClass:noedit
@@ -1216,8 +1215,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 820
-y 625
+x 394
+y 645
 w 350
 h 80
 
@@ -1229,8 +1228,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 820
-y 625
+x 394
+y 645
 w 350
 h 80
 fgColor rgb 0 0 0
@@ -1946,19 +1945,6 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 615
-w 296
-h 20
-
-beginGroup
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -1967,7 +1953,7 @@ minor 7
 release 0
 x 236
 y 615
-w 80
+w 100
 h 20
 controlPv "$(P)$(R)BoardTemperature"
 format "decimal"
@@ -2002,11 +1988,6 @@ value {
   "Board temperature (C)"
 }
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Group)
 object activeGroupClass
@@ -2464,19 +2445,6 @@ endGroup
 endObjectProperties
 
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 360
-y 35
-w 420
-h 80
-
-beginGroup
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -2526,19 +2494,6 @@ value {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 398
-y 65
-w 345
-h 45
-
-beginGroup
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -2563,29 +2518,6 @@ visMin 0
 visMax 1
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 546
-y 65
-w 48
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "center"
-fgColor rgb 10240 37632 5376
-bgColor index 3
-useDisplayBg
-value {
-  "Done"
-}
-visPv "CALC\\\{(A)\}($(P)$(M).ACQG)"
-visMin 0
-visMax 1
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -2603,29 +2535,6 @@ endGroup
 
 endObjectProperties
 
-
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 360
-y 285
-w 420
-h 240
-
-beginGroup
 
 # (Rectangle)
 object activeRectangleClass
@@ -2990,7 +2899,7 @@ font "helvetica-medium-r-14.0"
 fontAlign "left"
 fgColor rgb 0 65535 0
 fgAlarm
-bgColor rgb 51200 51200 51200
+bgColor rgb 30720 30720 30720
 limitsFromDb
 nullColor rgb 60928 46592 11008
 smartRefresh
@@ -3061,24 +2970,6 @@ newPos
 objType "controls"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 359
-y 530
-w 420
-h 110
-
-beginGroup
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -3092,19 +2983,6 @@ h 109
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 364
-y 564
-w 410
-h 70
-
-beginGroup
 
 # (Static Text)
 object activeXTextClass
@@ -3203,11 +3081,6 @@ value {
 }
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -3244,44 +3117,116 @@ value {
 }
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 20
-y 565
-w 315
-h 45
+x 820
+y 625
+w 350
+h 110
 
 beginGroup
 
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
+# (Embedded Window)
+object activePipClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
-x 140
-y 540
-w 195
+x 820
+y 625
+w 350
+h 110
+fgColor rgb 0 0 0
+bgColor rgb 65280 65280 65280
+topShadowColor rgb 65280 65280 65280
+botShadowColor rgb 0 0 0
+displaySource "file"
+file "ADAttrFile.edl"
+sizeOfs 5
+numDsps 1
+displayFileName {
+  0 "ADAttrFile.edl"
+}
+noScroll
+endObjectProperties
+
+endGroup
+
+visMin "A"
+visMax "1"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 236
+y 640
+w 100
 h 20
-
-beginGroup
-
-endGroup
-
+controlPv "$(P)$(R)MCUReady"
+format "string"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 30720 30720 30720
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 130
+y 640
+w 100
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "right"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "MCU ready"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 546
+y 65
+w 48
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor rgb 0 55296 0
+bgColor index 3
+useDisplayBg
+value {
+  "Done"
+}
+visPv "CALC\\\{(A)\}($(P)$(M).ACQG)"
+visMin 0
+visMax 1
+endObjectProperties
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -3436,23 +3381,6 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 20
-y 615
-w 296
-h 20
-
-beginGroup
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
 x 890
 y 570
 w 311
@@ -3601,30 +3529,6 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 360
-y 35
-w 420
-h 80
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 398
-y 65
-w 345
-h 45
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
 x 398
 y 90
 w 345
@@ -3736,28 +3640,6 @@ endGroup
 
 endObjectProperties
 
-
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 360
-y 285
-w 420
-h 240
-
-beginGroup
 
 # (Message Button)
 object activeMessageButtonClass
@@ -3883,35 +3765,6 @@ indicatorPv "$(P)$(R)ArrayCallbacks"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 359
-y 530
-w 420
-h 110
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 364
-y 564
-w 410
-h 70
-
-beginGroup
-
 # (Related Display)
 object relatedDisplayClass
 beginObjectProperties
@@ -4013,8 +3866,8 @@ bgColor rgb 29440 57088 65280
 inconsistentColor rgb 17920 17920 17920
 topShadowColor rgb 55808 55808 55808
 botShadowColor rgb 17920 17920 17920
-controlPv "$(P)$(M)Status.SCAN"
-indicatorPv "$(P)$(M)Status.SCAN"
+controlPv "$(P)$(R)ReadStatus.SCAN"
+indicatorPv "$(P)$(R)ReadStatus.SCAN"
 font "helvetica-medium-r-12.0"
 endObjectProperties
 
@@ -4037,14 +3890,4 @@ controlPv "$(P)$(R)SyncReadMCA.SCAN"
 indicatorPv "$(P)$(R)SyncReadMCA.SCAN"
 font "helvetica-medium-r-12.0"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-
-endGroup
-
-endObjectProperties
-
 
