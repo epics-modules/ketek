@@ -28,4 +28,5 @@ $(P)$(R)BytesPerBin
 $(P)$(R)SyncCycleTime
 $(P)$(R)SyncPoints
 $(P)$(R)SyncReadMCA.SCAN
+$(P)$(R)ReadStatus.SCAN
 file "NDArrayBase_settings.req", P=$(P), R=$(R)
