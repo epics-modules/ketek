@@ -1,6 +1,6 @@
 
 file {
-	name="/home/epics/devel/ketek/ketekApp/op/adl/ketek.adl"
+	name="/home/epics/devel/ketek-1-0/ketekApp/op/adl/ketek.adl"
 	version=030117
 }
 display {
@@ -8,7 +8,7 @@ display {
 		x=173
 		y=186
 		width=1210
-		height=710
+		height=745
 	}
 	clr=14
 	bclr=4
@@ -89,6 +89,21 @@ display {
 }
 rectangle {
 	object {
+		x=485
+		y=65
+		width=166
+		height=20
+	}
+	"basic attribute" {
+		clr=9
+	}
+	"dynamic attribute" {
+		calc="A"
+		chan="$(P)$(M).ACQG"
+	}
+}
+rectangle {
+	object {
 		x=0
 		y=5
 		width=1090
@@ -127,7 +142,7 @@ rectangle {
 		x=5
 		y=380
 		width=350
-		height=260
+		height=285
 	}
 	"basic attribute" {
 		clr=14
@@ -334,109 +349,87 @@ text {
 	textix="Configuration"
 	align="horiz. centered"
 }
-composite {
+"text update" {
+	object {
+		x=235
+		y=565
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).IDTIM"
+		clr=15
+		bclr=9
+	}
+	clrmod="alarm"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=235
+		y=590
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).DTIM"
+		clr=15
+		bclr=9
+	}
+	clrmod="alarm"
+	limits {
+	}
+}
+text {
 	object {
 		x=20
 		y=565
-		width=315
-		height=45
+		width=210
+		height=20
 	}
-	"composite name"=""
-	children {
-		"text update" {
-			object {
-				x=235
-				y=565
-				width=100
-				height=20
-			}
-			monitor {
-				chan="$(P)$(M).IDTIM"
-				clr=15
-				bclr=14
-			}
-			clrmod="alarm"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=235
-				y=590
-				width=100
-				height=20
-			}
-			monitor {
-				chan="$(P)$(M).DTIM"
-				clr=15
-				bclr=14
-			}
-			clrmod="alarm"
-			limits {
-			}
-		}
-		text {
-			object {
-				x=20
-				y=565
-				width=210
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Instant dead time (%)"
-		}
-		text {
-			object {
-				x=20
-				y=590
-				width=210
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Average dead time (%)"
-		}
+	"basic attribute" {
+		clr=14
 	}
+	textix="Instant dead time (%)"
 }
-composite {
+text {
+	object {
+		x=20
+		y=590
+		width=210
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Average dead time (%)"
+}
+text {
 	object {
 		x=140
 		y=540
-		width=195
+		width=90
 		height=20
 	}
-	"composite name"=""
-	children {
-		text {
-			object {
-				x=140
-				y=540
-				width=90
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Live time"
-		}
-		"text update" {
-			object {
-				x=235
-				y=540
-				width=100
-				height=20
-			}
-			monitor {
-				chan="$(P)$(M).ELTM"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Live time"
+}
+"text update" {
+	object {
+		x=235
+		y=540
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).ELTM"
+		clr=54
+		bclr=3
+	}
+	limits {
 	}
 }
 "text update" {
@@ -837,8 +830,8 @@ text {
 }
 composite {
 	object {
-		x=820
-		y=625
+		x=394
+		y=645
 		width=350
 		height=80
 	}
@@ -1333,44 +1326,33 @@ text {
 	textix="Energy offset (chans)"
 	align="horiz. centered"
 }
-composite {
+"text update" {
+	object {
+		x=236
+		y=615
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)BoardTemperature"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+text {
 	object {
 		x=20
 		y=615
-		width=296
+		width=210
 		height=20
 	}
-	"composite name"=""
-	children {
-		"text update" {
-			object {
-				x=236
-				y=615
-				width=80
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)BoardTemperature"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=20
-				y=615
-				width=210
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Board temperature (C)"
-			align="horiz. centered"
-		}
+	"basic attribute" {
+		clr=14
 	}
+	textix="Board temperature (C)"
+	align="horiz. centered"
 }
 composite {
 	object {
@@ -1709,264 +1691,78 @@ composite {
 		}
 	}
 }
-composite {
+rectangle {
+	object {
+		x=510
+		y=40
+		width=120
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+rectangle {
 	object {
 		x=360
 		y=35
 		width=420
 		height=80
 	}
-	"composite name"=""
-	children {
-		rectangle {
-			object {
-				x=510
-				y=40
-				width=120
-				height=21
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		rectangle {
-			object {
-				x=360
-				y=35
-				width=420
-				height=80
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-				width=1
-			}
-		}
-		text {
-			object {
-				x=535
-				y=40
-				width=70
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="Acquire"
-		}
-		composite {
-			object {
-				x=398
-				y=65
-				width=345
-				height=45
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=520
-						y=65
-						width=100
-						height=20
-					}
-					"basic attribute" {
-						clr=30
-					}
-					"dynamic attribute" {
-						vis="if not zero"
-						calc="A"
-						chan="$(P)$(M).ACQG"
-					}
-					textix="Collecting"
-					align="horiz. centered"
-				}
-				text {
-					object {
-						x=550
-						y=65
-						width=40
-						height=20
-					}
-					"basic attribute" {
-						clr=63
-					}
-					"dynamic attribute" {
-						vis="if zero"
-						calc="A"
-						chan="$(P)$(M).ACQG"
-					}
-					textix="Done"
-					align="horiz. centered"
-				}
-				composite {
-					object {
-						x=398
-						y=90
-						width=345
-						height=20
-					}
-					"composite name"=""
-					children {
-						"message button" {
-							object {
-								x=493
-								y=90
-								width=80
-								height=20
-							}
-							control {
-								chan="$(P)$(M)Start"
-								clr=14
-								bclr=51
-							}
-							label="Start"
-							press_msg="1"
-						}
-						"message button" {
-							object {
-								x=663
-								y=90
-								width=80
-								height=20
-							}
-							control {
-								chan="$(P)$(M)Stop"
-								clr=14
-								bclr=51
-							}
-							label="Stop"
-							press_msg="1"
-						}
-						"message button" {
-							object {
-								x=398
-								y=90
-								width=90
-								height=20
-							}
-							control {
-								chan="$(P)$(M)EraseStart"
-								clr=14
-								bclr=51
-							}
-							label="Erase/Start"
-							press_msg="1"
-						}
-						"message button" {
-							object {
-								x=578
-								y=90
-								width=80
-								height=20
-							}
-							control {
-								chan="$(P)$(M)Stop"
-								clr=14
-								bclr=51
-							}
-							label="Erase"
-							press_msg="1"
-						}
-					}
-				}
-			}
-		}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+		width=1
 	}
+}
+text {
+	object {
+		x=535
+		y=40
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Acquire"
+}
+text {
+	object {
+		x=520
+		y=65
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=30
+	}
+	"dynamic attribute" {
+		vis="if not zero"
+		calc="A"
+		chan="$(P)$(M).ACQG"
+	}
+	textix="Collecting"
+	align="horiz. centered"
 }
 composite {
 	object {
-		x=360
-		y=285
-		width=420
-		height=240
+		x=398
+		y=90
+		width=345
+		height=20
 	}
 	"composite name"=""
 	children {
-		rectangle {
-			object {
-				x=360
-				y=285
-				width=420
-				height=240
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-				width=1
-			}
-		}
-		rectangle {
-			object {
-				x=495
-				y=290
-				width=150
-				height=21
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		text {
-			object {
-				x=525
-				y=291
-				width=90
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="Sync Mode"
-		}
-		text {
-			object {
-				x=400
-				y=320
-				width=100
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Start/Stop"
-		}
-		text {
-			object {
-				x=380
-				y=345
-				width=120
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Sync enabled"
-		}
-		"text update" {
-			object {
-				x=505
-				y=345
-				width=110
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)SyncEnabled"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
 		"message button" {
 			object {
-				x=505
-				y=320
+				x=493
+				y=90
 				width=80
 				height=20
 			}
 			control {
-				chan="$(P)$(R)SyncAcquire"
+				chan="$(P)$(M)Start"
 				clr=14
 				bclr=51
 			}
@@ -1975,240 +1771,186 @@ composite {
 		}
 		"message button" {
 			object {
-				x=590
-				y=320
+				x=663
+				y=90
 				width=80
 				height=20
 			}
 			control {
-				chan="$(P)$(R)SyncAcquire"
+				chan="$(P)$(M)Stop"
 				clr=14
 				bclr=51
 			}
 			label="Stop"
-			press_msg="0"
+			press_msg="1"
 		}
-		composite {
+		"message button" {
 			object {
-				x=370
-				y=445
-				width=245
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=370
-						y=445
-						width=130
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Current point"
-				}
-				"text update" {
-					object {
-						x=505
-						y=445
-						width=110
-						height=20
-					}
-					monitor {
-						chan="$(P)$(R)SyncCurrentPoint"
-						clr=54
-						bclr=3
-					}
-					limits {
-					}
-				}
-			}
-		}
-		composite {
-			object {
-				x=420
-				y=420
-				width=310
-				height=20
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=420
-						y=420
-						width=80
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="# Points"
-				}
-				"text entry" {
-					object {
-						x=505
-						y=420
-						width=110
-						height=20
-					}
-					control {
-						chan="$(P)$(R)SyncPoints"
-						clr=14
-						bclr=51
-					}
-					limits {
-					}
-				}
-				"text update" {
-					object {
-						x=620
-						y=420
-						width=110
-						height=20
-					}
-					monitor {
-						chan="$(P)$(R)SyncPoints_RBV"
-						clr=54
-						bclr=3
-					}
-					limits {
-					}
-				}
-			}
-		}
-		text {
-			object {
-				x=410
-				y=395
+				x=398
+				y=90
 				width=90
 				height=20
 			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Real time"
-		}
-		"text entry" {
-			object {
-				x=505
-				y=395
-				width=110
-				height=20
-			}
 			control {
-				chan="$(P)$(R)SyncCycleTime"
+				chan="$(P)$(M)EraseStart"
 				clr=14
 				bclr=51
 			}
-			limits {
-			}
+			label="Erase/Start"
+			press_msg="1"
 		}
-		"text update" {
+		"message button" {
 			object {
-				x=620
-				y=395
-				width=110
+				x=578
+				y=90
+				width=80
 				height=20
 			}
-			monitor {
-				chan="$(P)$(R)SyncCycleTime_RBV"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
-		text {
-			object {
-				x=380
-				y=370
-				width=120
-				height=20
-			}
-			"basic attribute" {
+			control {
+				chan="$(P)$(M)Stop"
 				clr=14
+				bclr=51
 			}
-			textix="Sync running"
+			label="Erase"
+			press_msg="1"
 		}
-		"text update" {
-			object {
-				x=505
-				y=370
-				width=110
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)SyncRunning"
-				clr=54
-				bclr=3
-			}
-			clrmod="alarm"
-			format="string"
-			limits {
-			}
-		}
+	}
+}
+rectangle {
+	object {
+		x=360
+		y=285
+		width=420
+		height=240
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+		width=1
+	}
+}
+rectangle {
+	object {
+		x=495
+		y=290
+		width=150
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=525
+		y=291
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Sync Mode"
+}
+text {
+	object {
+		x=400
+		y=320
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Start/Stop"
+}
+text {
+	object {
+		x=380
+		y=345
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Sync enabled"
+}
+"text update" {
+	object {
+		x=505
+		y=345
+		width=110
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)SyncEnabled"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+"message button" {
+	object {
+		x=505
+		y=320
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SyncAcquire"
+		clr=14
+		bclr=51
+	}
+	label="Start"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=590
+		y=320
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SyncAcquire"
+		clr=14
+		bclr=51
+	}
+	label="Stop"
+	press_msg="0"
+}
+composite {
+	object {
+		x=370
+		y=445
+		width=245
+		height=20
+	}
+	"composite name"=""
+	children {
 		text {
 			object {
 				x=370
-				y=470
-				width=160
+				y=445
+				width=130
 				height=20
 			}
 			"basic attribute" {
 				clr=14
 			}
-			textix="Wait for plugins"
-		}
-		menu {
-			object {
-				x=535
-				y=470
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)WaitForPlugins"
-				clr=14
-				bclr=51
-			}
-		}
-		text {
-			object {
-				x=380
-				y=495
-				width=150
-				height=20
-			}
-			"basic attribute" {
-				clr=14
-			}
-			textix="Array callbacks"
-		}
-		menu {
-			object {
-				x=535
-				y=495
-				width=80
-				height=20
-			}
-			control {
-				chan="$(P)$(R)ArrayCallbacks"
-				clr=14
-				bclr=51
-			}
+			textix="Current point"
 		}
 		"text update" {
 			object {
-				x=620
-				y=495
-				width=80
+				x=505
+				y=445
+				width=110
 				height=20
 			}
 			monitor {
-				chan="$(P)$(R)ArrayCallbacks_RBV"
+				chan="$(P)$(R)SyncCurrentPoint"
 				clr=54
 				bclr=3
 			}
@@ -2219,193 +1961,418 @@ composite {
 }
 composite {
 	object {
+		x=420
+		y=420
+		width=310
+		height=20
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=420
+				y=420
+				width=80
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="# Points"
+		}
+		"text entry" {
+			object {
+				x=505
+				y=420
+				width=110
+				height=20
+			}
+			control {
+				chan="$(P)$(R)SyncPoints"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=620
+				y=420
+				width=110
+				height=20
+			}
+			monitor {
+				chan="$(P)$(R)SyncPoints_RBV"
+				clr=54
+				bclr=3
+			}
+			limits {
+			}
+		}
+	}
+}
+text {
+	object {
+		x=410
+		y=395
+		width=90
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Real time"
+}
+"text entry" {
+	object {
+		x=505
+		y=395
+		width=110
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SyncCycleTime"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=620
+		y=395
+		width=110
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)SyncCycleTime_RBV"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=380
+		y=370
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Sync running"
+}
+"text update" {
+	object {
+		x=505
+		y=370
+		width=110
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)SyncRunning"
+		clr=15
+		bclr=9
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=370
+		y=470
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Wait for plugins"
+}
+menu {
+	object {
+		x=535
+		y=470
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)WaitForPlugins"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=380
+		y=495
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Array callbacks"
+}
+menu {
+	object {
+		x=535
+		y=495
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ArrayCallbacks"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=620
+		y=495
+		width=80
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)ArrayCallbacks_RBV"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+rectangle {
+	object {
 		x=359
 		y=530
 		width=420
 		height=110
 	}
-	"composite name"=""
-	children {
-		rectangle {
-			object {
-				x=359
-				y=530
-				width=420
-				height=110
-			}
-			"basic attribute" {
-				clr=14
-				fill="outline"
-				width=1
-			}
-		}
-		composite {
-			object {
-				x=364
-				y=564
-				width=410
-				height=70
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=589
-						y=564
-						width=80
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="MCA plot"
-					align="horiz. centered"
-				}
-				text {
-					object {
-						x=619
-						y=589
-						width=50
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Scope"
-					align="horiz. centered"
-				}
-				"related display" {
-					object {
-						x=674
-						y=589
-						width=100
-						height=20
-					}
-					display[0] {
-						label="Scope trace display"
-						name="ketekTrace.adl"
-						args="P=$(P),R=$(R)"
-					}
-					clr=14
-					bclr=51
-					label="Scope plot"
-				}
-				menu {
-					object {
-						x=499
-						y=564
-						width=80
-						height=20
-					}
-					control {
-						chan="$(P)$(M)Read.SCAN"
-						clr=14
-						bclr=51
-					}
-				}
-				text {
-					object {
-						x=364
-						y=564
-						width=130
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Read MCA data"
-				}
-				"related display" {
-					object {
-						x=674
-						y=564
-						width=100
-						height=20
-					}
-					display[0] {
-						label="MCA Display"
-						name="mca.adl"
-						args="P=$(P),M=$(M)"
-					}
-					clr=14
-					bclr=51
-					label="MCA plot"
-				}
-				text {
-					object {
-						x=384
-						y=589
-						width=110
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Read status"
-				}
-				menu {
-					object {
-						x=499
-						y=589
-						width=80
-						height=20
-					}
-					control {
-						chan="$(P)$(M)Status.SCAN"
-						clr=14
-						bclr=51
-					}
-				}
-				text {
-					object {
-						x=364
-						y=614
-						width=130
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Read MCA sync"
-				}
-				menu {
-					object {
-						x=499
-						y=614
-						width=80
-						height=20
-					}
-					control {
-						chan="$(P)$(R)SyncReadMCA.SCAN"
-						clr=14
-						bclr=51
-					}
-				}
-			}
-		}
-		rectangle {
-			object {
-				x=479
-				y=535
-				width=180
-				height=21
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		text {
-			object {
-				x=484
-				y=536
-				width=170
-				height=20
-			}
-			"basic attribute" {
-				clr=54
-			}
-			textix="Updates and plots"
-			align="horiz. centered"
-		}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+		width=1
 	}
+}
+text {
+	object {
+		x=589
+		y=564
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="MCA plot"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=619
+		y=589
+		width=50
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scope"
+	align="horiz. centered"
+}
+"related display" {
+	object {
+		x=674
+		y=589
+		width=100
+		height=20
+	}
+	display[0] {
+		label="Scope trace display"
+		name="ketekTrace.adl"
+		args="P=$(P),R=$(R)"
+	}
+	clr=14
+	bclr=51
+	label="Scope plot"
+}
+menu {
+	object {
+		x=499
+		y=564
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(M)Read.SCAN"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=364
+		y=564
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Read MCA data"
+}
+"related display" {
+	object {
+		x=674
+		y=564
+		width=100
+		height=20
+	}
+	display[0] {
+		label="MCA Display"
+		name="mca.adl"
+		args="P=$(P),M=$(M)"
+	}
+	clr=14
+	bclr=51
+	label="MCA plot"
+}
+text {
+	object {
+		x=384
+		y=589
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Read status"
+}
+menu {
+	object {
+		x=499
+		y=589
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ReadStatus.SCAN"
+		clr=14
+		bclr=51
+	}
+}
+text {
+	object {
+		x=364
+		y=614
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Read MCA sync"
+}
+menu {
+	object {
+		x=499
+		y=614
+		width=80
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SyncReadMCA.SCAN"
+		clr=14
+		bclr=51
+	}
+}
+rectangle {
+	object {
+		x=479
+		y=535
+		width=180
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=484
+		y=536
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Updates and plots"
+	align="horiz. centered"
+}
+composite {
+	object {
+		x=820
+		y=625
+		width=350
+		height=110
+	}
+	"composite name"=""
+	"composite file"="ADAttrFile.adl"
+}
+"text update" {
+	object {
+		x=236
+		y=640
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)MCUReady"
+		clr=15
+		bclr=9
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=130
+		y=640
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="MCU ready"
+	align="horiz. right"
+}
+text {
+	object {
+		x=550
+		y=65
+		width=40
+		height=20
+	}
+	"basic attribute" {
+		clr=15
+	}
+	"dynamic attribute" {
+		vis="if zero"
+		calc="A"
+		chan="$(P)$(M).ACQG"
+	}
+	textix="Done"
+	align="horiz. centered"
 }
