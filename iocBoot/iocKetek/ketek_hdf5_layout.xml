@@ -1,0 +1,45 @@
+<?xml version="1.0" standalone="no" ?>
+<hdf5_layout>
+  <group name="exchange">
+    <dataset name="data" source="detector">
+      <attribute name="description" source="constant" value="MCA Data" type="string" />
+      <attribute name="units" source="constant" value="counts" type="string" />
+    </dataset>
+    <dataset name="RealTime"              source="ndattribute" ndattribute="RealTime"               when="OnFileWrite" />
+    <dataset name="LiveTime"              source="ndattribute" ndattribute="LiveTime"               when="OnFileWrite" />
+    <dataset name="InputCounts"           source="ndattribute" ndattribute="InputCounts"            when="OnFileWrite" />
+    <dataset name="OutputCount"           source="ndattribute" ndattribute="OutputCounts"           when="OnFileWrite" />
+    <dataset name="ICR"                   source="ndattribute" ndattribute="ICR"                    when="OnFileWrite" />
+    <dataset name="OCR"                   source="ndattribute" ndattribute="OCR"                    when="OnFileWrite" />
+  </group><!-- /exchange -->
+  
+  <group name="KetekParameters">
+    <dataset name="SyncCyleTime"          source="ndattribute" ndattribute="SyncCycleTime"          when="OnFileClose" />
+    <dataset name="SyncPoints"            source="ndattribute" ndattribute="SyncPoints"             when="OnFileClose" />
+    <dataset name="FastPeakingTime"       source="ndattribute" ndattribute="FastPeakingTime"        when="OnFileClose" />
+    <dataset name="FastGapTime"           source="ndattribute" ndattribute="FastGapTime"            when="OnFileClose" />
+    <dataset name="FastThreshold"         source="ndattribute" ndattribute="FastThreshold"          when="OnFileClose" />
+    <dataset name="FastMaxWidth"          source="ndattribute" ndattribute="FastMaxWidth"           when="OnFileClose" />
+    <dataset name="MediumPeakingTime"     source="ndattribute" ndattribute="MediumPeakingTime"      when="OnFileClose" />
+    <dataset name="MediumGapTime"         source="ndattribute" ndattribute="MediumGapTime"          when="OnFileClose" />
+    <dataset name="MediumThreshold"       source="ndattribute" ndattribute="MediumThreshold"        when="OnFileClose" />
+    <dataset name="MediumMaxWidth"        source="ndattribute" ndattribute="MediumMaxWidth"         when="OnFileClose" />
+    <dataset name="MediumFilterEnable"    source="ndattribute" ndattribute="MediumFilterEnable"     when="OnFileClose" />
+    <dataset name="SlowPeakingTime"       source="ndattribute" ndattribute="SlowPeakingTime"        when="OnFileClose" />
+    <dataset name="SlowGapTime"           source="ndattribute" ndattribute="SlowGapTime"            when="OnFileClose" />
+    <dataset name="ResetInhibitTime"      source="ndattribute" ndattribute="ResetInhibitTime"       when="OnFileClose" />
+    <dataset name="DynamicResetEnable"    source="ndattribute" ndattribute="DynamicResetEnable"     when="OnFileClose" />
+    <dataset name="DynamicResetThreshold" source="ndattribute" ndattribute="DynamicResetThreshold"  when="OnFileClose" />
+    <dataset name="DynamicResetDuration"  source="ndattribute" ndattribute="DynamicResetDuration"   when="OnFileClose" />
+    <dataset name="BaselineAverageLen"    source="ndattribute" ndattribute="BaselineAverageLen"     when="OnFileClose" />
+    <dataset name="BaselineTrim"          source="ndattribute" ndattribute="BaselineTrim"           when="OnFileClose" />
+    <dataset name="BaselineCorrEnable"    source="ndattribute" ndattribute="BaselineCorrEnable"     when="OnFileClose" />
+    <dataset name="EnergyGain"            source="ndattribute" ndattribute="EnergyGain"             when="OnFileClose" />
+    <dataset name="NumMCAChannels"        source="ndattribute" ndattribute="NumMCAChannels"         when="OnFileClose" />
+    <dataset name="BytesPerBin"           source="ndattribute" ndattribute="BytesPerBin"            when="OnFileClose" />
+  </group><!-- /KetekParameters -->
+
+  <group name="defaults" ndattr_default="true">
+  </group><!-- /defaults -->
+
+</hdf5_layout>
