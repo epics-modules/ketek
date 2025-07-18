@@ -91,6 +91,7 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
 
     /* Internal asyn driver parameters */
     createParam(KetekErasedString,                 asynParamInt32,   &KetekErased);
+    createParam(KetekReadStatusString,             asynParamInt32,   &KetekReadStatus);
 
     /* Diagnostic trace parameters */
     createParam(KetekEventTriggerSourceString,     asynParamInt32,        &KetekEventTriggerSource);
@@ -135,11 +136,12 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
     createParam(KetekDynResetThresholdString,           asynParamInt32,   &KetekDynResetThreshold);
     createParam(KetekDynResetDurationString,            asynParamFloat64, &KetekDynResetDuration);
     createParam(KetekBoardTemperatureString,            asynParamFloat64, &KetekBoardTemperature);
+    createParam(KetekMCUReadyString,                    asynParamInt32,   &KetekMCUReady);
     createParam(KetekBytesPerBinString,                 asynParamInt32,   &KetekBytesPerBin);
 
     /* Sync parameters */
     createParam(KetekSyncAcquireString,                 asynParamInt32,   &KetekSyncAcquire);
-    createParam(KetekSyncCycleTimeString,             asynParamFloat64,   &KetekSyncCycleTime);
+    createParam(KetekSyncCycleTimeString,               asynParamFloat64, &KetekSyncCycleTime);
     createParam(KetekSyncPointsString,                  asynParamInt32,   &KetekSyncPoints);
     createParam(KetekSyncCurrentPointString,            asynParamInt32,   &KetekSyncCurrentPoint);
     createParam(KetekSyncEnabledString,                 asynParamInt32,   &KetekSyncEnabled);
@@ -200,7 +202,7 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
     setIntegerParam(NDArrayCallbacks, 1);
 
     setStringParam(ADManufacturer, "KETEK");
-    setStringParam(ADModel, "AXAS-D 3.0");
+    setStringParam(ADModel, "DPP3 based system");
     setStringParam(NDDriverVersion, DRIVER_VERSION);
     epicsUInt16 fwMajor, fwMinor, fwPatch;
     status = readSingleParam(pFirmwareMajor, &fwMajor);
@@ -356,6 +358,13 @@ asynStatus Ketek::writeInt32( asynUser *pasynUser, epicsInt32 value)
         getIntegerParam(mcaAcquiring, &acquiring);
         /* If we are acquiring then read the statistics, else we use the cached values */
         if (acquiring) status = this->getAcquisitionStatistics();
+    }
+    else if (function == KetekReadStatus) {
+        epicsUInt16 iValue;
+        readSingleParam(pBoardTemperature, &iValue);
+        setDoubleParam(KetekBoardTemperature, iValue/16.0 - 273.15);
+        readSingleParam(pMCUStatus, &iValue);
+        setIntegerParam(KetekMCUReady, (iValue & 2) ? 1 : 0);
     }
     else if (function == KetekSyncAcquire) {
         if (value) {
@@ -658,9 +667,6 @@ asynStatus Ketek::getConfiguration()
 
     readSingleParam(pMCANumBins, &iValue);
     setIntegerParam(mcaNumChannels, 1<<iValue);
-
-    readSingleParam(pBoardTemperature, &iValue);
-    setDoubleParam(KetekBoardTemperature, iValue/16.0 - 273.15);
 
     readSingleParam(pMCABytesPerBin, &iValue);
     setIntegerParam(KetekBytesPerBin, iValue);
