@@ -75,6 +75,70 @@ The following is the MEDM screen NDFileHDF5.adl when the Ketek is saving sync mo
 .. figure:: ketek_sync_hdf5.png
     :align: center
 
+|
+
+The iocKetek directory contains the following files.
+
+- ``ketekAttributes.xml``  This file defines NDAttributes that will be attached to each NDArray in sync mode.  
+  These include all of the configuration parameters such as SyncCycleTime, SlowPeakingTime, etc.  
+  They also include the MCA record energy calibration coefficients.
+- ``ketek_hdf_layout.xml``  This file defines the location of the data and each of the attributes in the HDF5 file.
+
+This example puts the MCA data in ``/exchange/data``.  The counting statistics are put in /exchange/RealTime ``/exchange/LiveTime``, etc.
+The statistics are saved with OnFileWrite, so they are saved for each spectrum in the file.
+The configuration attributes defined in `ketekAttributes.xml` are saved in ``/KetekParameters``, and are saved with OnFileClose, so they
+are only saved once in each file, not for each spectrum.
+
+This is the output of ``h5dump --contents`` for an HDF5 file saved in syncMode::
+
+  (base) [epics@corvette ketek]$ h5dump --contents  test2_018.h5
+  HDF5 "test2_018.h5" {
+  FILE_CONTENTS {
+   group      /
+   group      /KetekParameters
+   dataset    /KetekParameters/BaselineAverageLen
+   dataset    /KetekParameters/BaselineCorrEnable
+   dataset    /KetekParameters/BaselineTrim
+   dataset    /KetekParameters/BytesPerBin
+   dataset    /KetekParameters/DynamicResetDuration
+   dataset    /KetekParameters/DynamicResetEnable
+   dataset    /KetekParameters/DynamicResetThreshold
+   dataset    /KetekParameters/EnergyCalOffset
+   dataset    /KetekParameters/EnergyCalSlope
+   dataset    /KetekParameters/EnergyGain
+   dataset    /KetekParameters/FastGapTime
+   dataset    /KetekParameters/FastMaxWidth
+   dataset    /KetekParameters/FastPeakingTime
+   dataset    /KetekParameters/FastThreshold
+   dataset    /KetekParameters/MediumFilterEnable
+   dataset    /KetekParameters/MediumGapTime
+   dataset    /KetekParameters/MediumMaxWidth
+   dataset    /KetekParameters/MediumPeakingTime
+   dataset    /KetekParameters/MediumThreshold
+   dataset    /KetekParameters/ResetInhibitTime
+   dataset    /KetekParameters/SlowGapTime
+   dataset    /KetekParameters/SlowPeakingTime
+   dataset    /KetekParameters/SyncCyleTime
+   dataset    /KetekParameters/SyncPoints
+   group      /defaults
+   dataset    /defaults/NDArrayEpicsTSSec
+   dataset    /defaults/NDArrayEpicsTSnSec
+   dataset    /defaults/NDArrayTimeStamp
+   dataset    /defaults/NDArrayUniqueId
+   dataset    /defaults/timestamp
+   group      /exchange
+   dataset    /exchange/ICR
+   dataset    /exchange/InputCounts
+   dataset    /exchange/LiveTime
+   dataset    /exchange/OCR
+   dataset    /exchange/OutputCount
+   dataset    /exchange/RealTime
+   dataset    /exchange/data
+   }
+  }
+
+These files can be modified as desired to save the data and metadata in different groups with different dataset names. The names of the files
+are set in the Attributes section of the ketek.adl and the XML File Name section of the NDFileHDF5.adl screen.
 
 The following is the MEDM screen mca.adl when the Ketek is collecting in sync mode and SyncReadMCA is processing the MCA record at 1 Hz.
 
@@ -101,18 +165,23 @@ The pulse frequency was increased until the sync mode acquisition no longer coll
 
 KETEK provided information on the maximum rate should be possible in each mode with 1 and 2 bytes/bin. This value is also listed in the table
 
+
+.. |br| raw:: html
+
+    <br>
+
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table:: Maximum cycle rate in Hz (spectra/second)
    :header-rows: 1
    :widths: auto
 
    * - MCA Channels
-     - BytesPerBin=1, KETEK specification
-     - BytesPerBin=1, measured
-     - BytesPerBin=2, KETEK specification
-     - BytesPerBin=2, measured
-     - BytesPerBin=3, KETEK specification
-     - BytesPerBin=3, measured
+     - BytesPerBin=1 |br| KETEK specification
+     - BytesPerBin=1 |br| measured
+     - BytesPerBin=2 |br| KETEK specification
+     - BytesPerBin=2 |br| measured
+     - BytesPerBin=3 |br| KETEK specification
+     - BytesPerBin=3 |br| measured
    * - 512
      - 2127
      - 1200
