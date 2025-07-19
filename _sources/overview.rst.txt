@@ -46,3 +46,27 @@ The following is the main MEDM screen ketek.adl. It provides control over all fe
 .. figure:: ketek.png
     :align: center
 
+There are records whose .SCAN fields control the update rates in different modes.
+
+.. cssclass:: table-bordered table-striped table-hover
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - EPICS record names
+     - Record types
+     - drvInfo string
+     - Description
+   * - mca1Read
+     - bo
+     - N.A.
+     - The rate to read the MCA spectrum in MCA mode.
+   * - ReadStatus
+     - bo
+     - KetekReadStatus
+     - The rate to read the MCA record status, the BoardTemperature, and the MCUReady status.
+   * - SyncReadMCA
+     - bo
+     - N.A.
+     - This rate to process the MCA record to display the sync mode spectra.  This is useful for monitoring
+       the MCA spectra during a sync mode acquisition.

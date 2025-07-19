@@ -85,7 +85,9 @@
 It is used to rapidly collect spectra in response to an external trigger signal that is provided to the TRIG input on the DPP3 based hardware.</p>
 <p>In sync mode the Ketek streams data to a UDP port on the IOC computer.  The IP address of the IOC and the UDP port to use are parameters
 to the KetekConfigure command in the startup script.</p>
-<p>The driver reads the spectra and metadata from the UDP port and copies it into NDArrays of dimensions [NumMCAChannels].
+<p>This driver inherits from the base class asynNDArrayDriver in areaDetector/ADCore.
+It implements the ArrayCallbacks and WaitForPlugins like most areaDetector drivers.
+The driver reads the spectra and metadata from the UDP port and copies it into NDArrays of dimensions [NumMCAChannels].
 The run-time statistics for each spectrum are copied into NDAttributes attached to each
 NDArray.  The data type of the NDArray depends on the value of the BytesPerBin configuration parameter.
 It will be NDUInt8, NDUInt16, or NDUInt32 for BytesPerBin = 1, 2, or 3.</p>
@@ -171,39 +173,58 @@ in the spectrum [512, 1024, 2048, 4096, 8192] and the number of BytesPerBin [1, 
 <p>The Ketek was triggered by an external programmable pulse generator.  The pulse duty cycle was 50%.
 The pulse generator was programmed to output 1000 pulses.</p>
 <p>The pulse frequency was increased until the sync mode acquisition no longer collected the requested number of pixels.</p>
+<p>KETEK provided information on the maximum rate should be possible in each mode with 1 and 2 bytes/bin. This value is also listed in the table</p>
 <table class="table-bordered table-striped table-hover docutils align-default" id="id1">
 <caption><span class="caption-text">Maximum cycle rate in Hz (spectra/second)</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>MCA Channels</p></th>
-<th class="head"><p>BytesPerBin=1</p></th>
-<th class="head"><p>BytesPerBin=2</p></th>
-<th class="head"><p>BytesPerBin=3</p></th>
+<th class="head"><p>BytesPerBin=1, KETEK specification</p></th>
+<th class="head"><p>BytesPerBin=1, measured</p></th>
+<th class="head"><p>BytesPerBin=2, KETEK specification</p></th>
+<th class="head"><p>BytesPerBin=2, measured</p></th>
+<th class="head"><p>BytesPerBin=3, KETEK specification</p></th>
+<th class="head"><p>BytesPerBin=3, measured</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>512</p></td>
+<td><p>2127</p></td>
 <td><p>1200</p></td>
+<td><p>1666</p></td>
 <td><p>1550</p></td>
+<td><p>N.A.</p></td>
 <td><p>1000</p></td>
 </tr>
 <tr class="row-odd"><td><p>1024</p></td>
+<td><p>1666</p></td>
 <td><p>900</p></td>
+<td><p>833</p></td>
 <td><p>500</p></td>
+<td><p>N.A.</p></td>
 <td><p>400</p></td>
 </tr>
 <tr class="row-even"><td><p>2048</p></td>
+<td><p>833</p></td>
 <td><p>500</p></td>
+<td><p>454</p></td>
 <td><p>350</p></td>
+<td><p>N.A.</p></td>
 <td><p>300</p></td>
 </tr>
 <tr class="row-odd"><td><p>4096</p></td>
+<td><p>454</p></td>
 <td><p>350</p></td>
+<td><p>232</p></td>
 <td><p>225</p></td>
+<td><p>N.A.</p></td>
 <td><p>160</p></td>
 </tr>
 <tr class="row-even"><td><p>8192</p></td>
+<td><p>232</p></td>
 <td><p>225</p></td>
+<td><p>119</p></td>
 <td><p>120</p></td>
+<td><p>N.A.</p></td>
 <td><p>120</p></td>
 </tr>
 </tbody>
@@ -223,7 +244,7 @@ The pulse generator was programmed to output 1000 pulses.</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, Mark Rivers.
-      <span class="lastupdated">Last updated on 2025-July-18.
+      <span class="lastupdated">Last updated on 2025-July-19.
       </span></p>
   </div>
 

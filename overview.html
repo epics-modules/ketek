@@ -111,6 +111,34 @@ of the many configuration parameters for the digital pulse processing.  The user
 <figure class="align-center">
 <img alt="_images/ketek.png" src="_images/ketek.png" />
 </figure>
+<p>There are records whose .SCAN fields control the update rates in different modes.</p>
+<table class="table-bordered table-striped table-hover docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>EPICS record names</p></th>
+<th class="head"><p>Record types</p></th>
+<th class="head"><p>drvInfo string</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mca1Read</p></td>
+<td><p>bo</p></td>
+<td><p>N.A.</p></td>
+<td><p>The rate to read the MCA spectrum in MCA mode.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ReadStatus</p></td>
+<td><p>bo</p></td>
+<td><p>KetekReadStatus</p></td>
+<td><p>The rate to read the MCA record status, the BoardTemperature, and the MCUReady status.</p></td>
+</tr>
+<tr class="row-even"><td><p>SyncReadMCA</p></td>
+<td><p>bo</p></td>
+<td><p>N.A.</p></td>
+<td><p>This rate to process the MCA record to display the sync mode spectra.  This is useful for monitoring
+the MCA spectra during a sync mode acquisition.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 
 
@@ -125,7 +153,7 @@ of the many configuration parameters for the digital pulse processing.  The user
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, Mark Rivers.
-      <span class="lastupdated">Last updated on 2025-July-18.
+      <span class="lastupdated">Last updated on 2025-July-19.
       </span></p>
   </div>
 
