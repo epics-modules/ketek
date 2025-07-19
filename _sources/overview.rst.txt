@@ -46,7 +46,9 @@ The following is the main MEDM screen ketek.adl. It provides control over all fe
 .. figure:: ketek.png
     :align: center
 
-There are records whose .SCAN fields control the update rates in different modes.
+|
+
+These are the records whose .SCAN fields control the update rates in different modes.
 
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table::
