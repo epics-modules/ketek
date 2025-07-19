@@ -37,6 +37,8 @@
     <dataset name="EnergyGain"            source="ndattribute" ndattribute="EnergyGain"             when="OnFileClose" />
     <dataset name="NumMCAChannels"        source="ndattribute" ndattribute="NumMCAChannels"         when="OnFileClose" />
     <dataset name="BytesPerBin"           source="ndattribute" ndattribute="BytesPerBin"            when="OnFileClose" />
+    <dataset name="EnergyCalOffset"       source="ndattribute" ndattribute="EnergyCalOffset"        when="OnFileClose" />
+    <dataset name="EnergyCalSlope"        source="ndattribute" ndattribute="EnergyCalSlope"         when="OnFileClose" />
   </group><!-- /KetekParameters -->
 
   <group name="defaults" ndattr_default="true">

@@ -4,27 +4,29 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../ADCore/XML_schema/NDAttributes.xsd"
     >
-    <Attribute name="SyncCycleTime"         type="PARAM"    source="KetekSyncCycleTime"         datatype="DOUBLE"  description="Sync cycle time"/>
-    <Attribute name="SyncPoints"            type="PARAM"    source="KetekSyncPoints"            datatype="INT"     description="Sync number of points"/>
-    <Attribute name="FastPeakingTime"       type="PARAM"    source="KetekFastPeakingTime"       datatype="DOUBLE"  description="Fast peaking time"/>
-    <Attribute name="FastGapTime"           type="PARAM"    source="KetekFastGapTime"           datatype="DOUBLE"  description="Fast gap time"/>
-    <Attribute name="FastThreshold"         type="PARAM"    source="KetekFastFilterThreshold"   datatype="DOUBLE"  description="Fast threshold"/>
-    <Attribute name="FastMaxWidth"          type="PARAM"    source="KetekFastFilterMaxWidth"    datatype="DOUBLE"  description="Fast max width"/>
-    <Attribute name="MediumPeakingTime"     type="PARAM"    source="KetekMediumPeakingTime"     datatype="DOUBLE"  description="Medium peaking time"/>
-    <Attribute name="MediumGapTime"         type="PARAM"    source="KetekMediumGapTime"         datatype="DOUBLE"  description="Medium gap time"/>
-    <Attribute name="MediumThreshold"       type="PARAM"    source="KetekMediumFilterThreshold" datatype="DOUBLE"  description="Medium threshold"/>
-    <Attribute name="MediumMaxWidth"        type="PARAM"    source="KetekMediumFilterMaxWidth"  datatype="DOUBLE"  description="Medium max width"/>
-    <Attribute name="MediumFilterEnable"    type="PARAM"    source="KetekMediumFilterEnable"    datatype="INT"     description="Medium filter enable"/>
-    <Attribute name="SlowPeakingTime"       type="PARAM"    source="KetekSlowPeakingTime"       datatype="DOUBLE"  description="Slow peaking time"/>
-    <Attribute name="SlowGapTime"           type="PARAM"    source="KetekSlowGapTime"           datatype="DOUBLE"  description="Slow gap time"/>
-    <Attribute name="ResetInhibitTime"      type="PARAM"    source="KetekResetInhibitTime"      datatype="DOUBLE"  description="Reset inhibit time"/>
-    <Attribute name="DynamicResetEnable"    type="PARAM"    source="KetekDynResetEnable"        datatype="INT"     description="Dynamic reset enable"/>
-    <Attribute name="DynamicResetThreshold" type="PARAM"    source="KetekDynResetThreshold"     datatype="INT"     description="Dynamic threshold enable"/>
-    <Attribute name="DynamicResetDuration"  type="PARAM"    source="KetekDynResetDuration"      datatype="DOUBLE"  description="Dynamic reset duration"/>
-    <Attribute name="BaselineAverageLen"    type="PARAM"    source="KetekBaselineAverageLen"    datatype="INT"     description="Baseline average length"/>
-    <Attribute name="BaselineTrim"          type="PARAM"    source="KetekBaselineTrim"          datatype="INT"     description="Baseline trim"/>
-    <Attribute name="BaselineCorrEnable"    type="PARAM"    source="KetekBaselineCorrEnable"    datatype="INT"     description="Baseline correction enable"/>
-    <Attribute name="EnergyGain"            type="PARAM"    source="KetekEnergyGain"            datatype="DOUBLE"  description="Energy gain"/>
-    <Attribute name="BytesPerBin"           type="PARAM"    source="KetekBytesPerBin"           datatype="INT"     description="Bytes per bin"/>
+    <Attribute name="SyncCycleTime"         type="PARAM"    source="KetekSyncCycleTime"         datatype="DOUBLE"     description="Sync cycle time"/>
+    <Attribute name="SyncPoints"            type="PARAM"    source="KetekSyncPoints"            datatype="INT"        description="Sync number of points"/>
+    <Attribute name="FastPeakingTime"       type="PARAM"    source="KetekFastPeakingTime"       datatype="DOUBLE"     description="Fast peaking time"/>
+    <Attribute name="FastGapTime"           type="PARAM"    source="KetekFastGapTime"           datatype="DOUBLE"     description="Fast gap time"/>
+    <Attribute name="FastThreshold"         type="PARAM"    source="KetekFastFilterThreshold"   datatype="DOUBLE"     description="Fast threshold"/>
+    <Attribute name="FastMaxWidth"          type="PARAM"    source="KetekFastFilterMaxWidth"    datatype="DOUBLE"     description="Fast max width"/>
+    <Attribute name="MediumPeakingTime"     type="PARAM"    source="KetekMediumPeakingTime"     datatype="DOUBLE"     description="Medium peaking time"/>
+    <Attribute name="MediumGapTime"         type="PARAM"    source="KetekMediumGapTime"         datatype="DOUBLE"     description="Medium gap time"/>
+    <Attribute name="MediumThreshold"       type="PARAM"    source="KetekMediumFilterThreshold" datatype="DOUBLE"     description="Medium threshold"/>
+    <Attribute name="MediumMaxWidth"        type="PARAM"    source="KetekMediumFilterMaxWidth"  datatype="DOUBLE"     description="Medium max width"/>
+    <Attribute name="MediumFilterEnable"    type="PARAM"    source="KetekMediumFilterEnable"    datatype="INT"        description="Medium filter enable"/>
+    <Attribute name="SlowPeakingTime"       type="PARAM"    source="KetekSlowPeakingTime"       datatype="DOUBLE"     description="Slow peaking time"/>
+    <Attribute name="SlowGapTime"           type="PARAM"    source="KetekSlowGapTime"           datatype="DOUBLE"     description="Slow gap time"/>
+    <Attribute name="ResetInhibitTime"      type="PARAM"    source="KetekResetInhibitTime"      datatype="DOUBLE"     description="Reset inhibit time"/>
+    <Attribute name="DynamicResetEnable"    type="PARAM"    source="KetekDynResetEnable"        datatype="INT"        description="Dynamic reset enable"/>
+    <Attribute name="DynamicResetThreshold" type="PARAM"    source="KetekDynResetThreshold"     datatype="INT"        description="Dynamic threshold enable"/>
+    <Attribute name="DynamicResetDuration"  type="PARAM"    source="KetekDynResetDuration"      datatype="DOUBLE"     description="Dynamic reset duration"/>
+    <Attribute name="BaselineAverageLen"    type="PARAM"    source="KetekBaselineAverageLen"    datatype="INT"        description="Baseline average length"/>
+    <Attribute name="BaselineTrim"          type="PARAM"    source="KetekBaselineTrim"          datatype="INT"        description="Baseline trim"/>
+    <Attribute name="BaselineCorrEnable"    type="PARAM"    source="KetekBaselineCorrEnable"    datatype="INT"        description="Baseline correction enable"/>
+    <Attribute name="EnergyGain"            type="PARAM"    source="KetekEnergyGain"            datatype="DOUBLE"     description="Energy gain"/>
+    <Attribute name="BytesPerBin"           type="PARAM"    source="KetekBytesPerBin"           datatype="INT"        description="Bytes per bin"/>
+    <Attribute name="EnergyCalOffset"       type="EPICS_PV" source="$(P)$(M).CALO"              dbrtype="DBR_NATIVE"  description="Energy calibration offset"/>
+    <Attribute name="EnergyCalSlope"        type="EPICS_PV" source="$(P)$(M).CALS"              dbrtype="DBR_NATIVE"  description="Energy calibration slope"/>
 </Attributes>
 
