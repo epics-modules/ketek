@@ -1252,19 +1252,6 @@ visMin "A"
 visMax "1"
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 360
-y 120
-w 420
-h 160
-
-beginGroup
-
 # (Rectangle)
 object activeRectangleClass
 beginObjectProperties
@@ -1279,20 +1266,6 @@ lineColor rgb 55808 55808 55808
 fill
 fillColor rgb 55808 55808 55808
 lineWidth 0
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 360
-y 120
-w 419
-h 159
-lineColor rgb 0 0 0
-fillColor rgb 0 0 0
 endObjectProperties
 
 # (Static Text)
@@ -1650,11 +1623,6 @@ fastUpdate
 newPos
 objType "controls"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 
 # (Group)
 object activeGroupClass
@@ -2470,7 +2438,7 @@ release 0
 x 360
 y 35
 w 419
-h 79
+h 244
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 endObjectProperties
@@ -2481,16 +2449,17 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 535
+x 526
 y 40
-w 70
+w 89
 h 20
 font "helvetica-medium-r-14.0"
+fontAlign "center"
 fgColor rgb 2560 0 47104
 bgColor index 3
 useDisplayBg
 value {
-  "Acquire"
+  "MCA Mode"
 }
 endObjectProperties
 
@@ -3113,7 +3082,7 @@ fgColor rgb 2560 0 47104
 bgColor index 3
 useDisplayBg
 value {
-  "Updates and plots"
+  "Updates and Plots"
 }
 endObjectProperties
 
@@ -3250,18 +3219,6 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 360
-y 120
-w 420
-h 160
-
-beginGroup
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
 x 378
 y 155
 w 130
@@ -3293,11 +3250,6 @@ controlPv "$(P)$(R)PresetMode"
 indicatorPv "$(P)$(R)PresetMode"
 font "helvetica-medium-r-12.0"
 endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties

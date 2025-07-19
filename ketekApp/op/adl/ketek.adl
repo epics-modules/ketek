@@ -838,271 +838,247 @@ composite {
 	"composite name"=""
 	"composite file"="ADPlugins.adl"
 }
+rectangle {
+	object {
+		x=510
+		y=125
+		width=120
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=535
+		y=126
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Presets"
+}
 composite {
 	object {
-		x=360
-		y=120
-		width=420
-		height=160
+		x=378
+		y=155
+		width=130
+		height=120
 	}
 	"composite name"=""
 	children {
-		rectangle {
+		text {
 			object {
-				x=510
-				y=125
-				width=120
-				height=21
-			}
-			"basic attribute" {
-				clr=2
-			}
-		}
-		rectangle {
-			object {
-				x=360
-				y=120
-				width=420
-				height=160
+				x=398
+				y=155
+				width=110
+				height=20
 			}
 			"basic attribute" {
 				clr=14
-				fill="outline"
-				width=1
 			}
+			textix="Preset mode"
 		}
 		text {
 			object {
-				x=535
-				y=126
-				width=70
+				x=418
+				y=180
+				width=90
 				height=20
 			}
 			"basic attribute" {
-				clr=54
+				clr=14
 			}
-			textix="Presets"
+			textix="Real time"
 		}
-		composite {
+		text {
+			object {
+				x=418
+				y=205
+				width=90
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Live time"
+		}
+		text {
+			object {
+				x=388
+				y=230
+				width=120
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Input counts"
+		}
+		text {
 			object {
 				x=378
-				y=155
+				y=255
 				width=130
-				height=120
-			}
-			"composite name"=""
-			children {
-				text {
-					object {
-						x=398
-						y=155
-						width=110
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Preset mode"
-				}
-				text {
-					object {
-						x=418
-						y=180
-						width=90
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Real time"
-				}
-				text {
-					object {
-						x=418
-						y=205
-						width=90
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Live time"
-				}
-				text {
-					object {
-						x=388
-						y=230
-						width=120
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Input counts"
-				}
-				text {
-					object {
-						x=378
-						y=255
-						width=130
-						height=20
-					}
-					"basic attribute" {
-						clr=14
-					}
-					textix="Output counts"
-				}
-			}
-		}
-		"text entry" {
-			object {
-				x=513
-				y=180
-				width=110
 				height=20
 			}
-			control {
-				chan="$(P)$(M).PRTM"
+			"basic attribute" {
 				clr=14
-				bclr=51
 			}
-			limits {
-			}
+			textix="Output counts"
 		}
-		menu {
-			object {
-				x=513
-				y=155
-				width=110
-				height=20
-			}
-			control {
-				chan="$(P)$(R)PresetMode"
-				clr=14
-				bclr=51
-			}
-		}
-		"text entry" {
-			object {
-				x=513
-				y=205
-				width=110
-				height=20
-			}
-			control {
-				chan="$(P)$(M).PLTM"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=513
-				y=230
-				width=110
-				height=20
-			}
-			control {
-				chan="$(P)$(R)PresetInputCounts"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text entry" {
-			object {
-				x=513
-				y=255
-				width=110
-				height=20
-			}
-			control {
-				chan="$(P)$(R)PresetOutputCounts"
-				clr=14
-				bclr=51
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=628
-				y=155
-				width=140
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)PresetMode_RBV"
-				clr=54
-				bclr=3
-			}
-			format="string"
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=628
-				y=180
-				width=140
-				height=20
-			}
-			monitor {
-				chan="$(P)$(M).PRTM"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=628
-				y=205
-				width=140
-				height=20
-			}
-			monitor {
-				chan="$(P)$(M).PLTM"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=628
-				y=230
-				width=140
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)PresetInputCounts_RBV"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
-		"text update" {
-			object {
-				x=628
-				y=255
-				width=140
-				height=20
-			}
-			monitor {
-				chan="$(P)$(R)PresetOutputCounts_RBV"
-				clr=54
-				bclr=3
-			}
-			limits {
-			}
-		}
+	}
+}
+"text entry" {
+	object {
+		x=513
+		y=180
+		width=110
+		height=20
+	}
+	control {
+		chan="$(P)$(M).PRTM"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+menu {
+	object {
+		x=513
+		y=155
+		width=110
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PresetMode"
+		clr=14
+		bclr=51
+	}
+}
+"text entry" {
+	object {
+		x=513
+		y=205
+		width=110
+		height=20
+	}
+	control {
+		chan="$(P)$(M).PLTM"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=513
+		y=230
+		width=110
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PresetInputCounts"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=513
+		y=255
+		width=110
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PresetOutputCounts"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=628
+		y=155
+		width=140
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)PresetMode_RBV"
+		clr=54
+		bclr=3
+	}
+	format="string"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=628
+		y=180
+		width=140
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).PRTM"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=628
+		y=205
+		width=140
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).PLTM"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=628
+		y=230
+		width=140
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)PresetInputCounts_RBV"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=628
+		y=255
+		width=140
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)PresetOutputCounts_RBV"
+		clr=54
+		bclr=3
+	}
+	limits {
 	}
 }
 composite {
@@ -1707,7 +1683,7 @@ rectangle {
 		x=360
 		y=35
 		width=420
-		height=80
+		height=245
 	}
 	"basic attribute" {
 		clr=14
@@ -1717,15 +1693,16 @@ rectangle {
 }
 text {
 	object {
-		x=535
+		x=530
 		y=40
-		width=70
+		width=80
 		height=20
 	}
 	"basic attribute" {
 		clr=54
 	}
-	textix="Acquire"
+	textix="MCA Mode"
+	align="horiz. centered"
 }
 text {
 	object {
@@ -2315,7 +2292,7 @@ text {
 	"basic attribute" {
 		clr=54
 	}
-	textix="Updates and plots"
+	textix="Updates and Plots"
 	align="horiz. centered"
 }
 composite {
