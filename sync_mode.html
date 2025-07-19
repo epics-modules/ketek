@@ -153,6 +153,70 @@ the MCA spectra during a sync mode acquisition.</p></td>
 <figure class="align-center">
 <img alt="_images/ketek_sync_hdf5.png" src="_images/ketek_sync_hdf5.png" />
 </figure>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>The iocKetek directory contains the following files.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ketekAttributes.xml</span></code>  This file defines NDAttributes that will be attached to each NDArray in sync mode.
+These include all of the configuration parameters such as SyncCycleTime, SlowPeakingTime, etc.
+They also include the MCA record energy calibration coefficients.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ketek_hdf_layout.xml</span></code>  This file defines the location of the data and each of the attributes in the HDF5 file.</p></li>
+</ul>
+<p>This example puts the MCA data in <code class="docutils literal notranslate"><span class="pre">/exchange/data</span></code>.  The counting statistics are put in /exchange/RealTime <code class="docutils literal notranslate"><span class="pre">/exchange/LiveTime</span></code>, etc.
+The statistics are saved with OnFileWrite, so they are saved for each spectrum in the file.
+The configuration attributes defined in <cite>ketekAttributes.xml</cite> are saved in <code class="docutils literal notranslate"><span class="pre">/KetekParameters</span></code>, and are saved with OnFileClose, so they
+are only saved once in each file, not for each spectrum.</p>
+<p>This is the output of <code class="docutils literal notranslate"><span class="pre">h5dump</span> <span class="pre">--contents</span></code> for an HDF5 file saved in syncMode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(base) [epics@corvette ketek]$ h5dump --contents  test2_018.h5
+HDF5 &quot;test2_018.h5&quot; {
+FILE_CONTENTS {
+ group      /
+ group      /KetekParameters
+ dataset    /KetekParameters/BaselineAverageLen
+ dataset    /KetekParameters/BaselineCorrEnable
+ dataset    /KetekParameters/BaselineTrim
+ dataset    /KetekParameters/BytesPerBin
+ dataset    /KetekParameters/DynamicResetDuration
+ dataset    /KetekParameters/DynamicResetEnable
+ dataset    /KetekParameters/DynamicResetThreshold
+ dataset    /KetekParameters/EnergyCalOffset
+ dataset    /KetekParameters/EnergyCalSlope
+ dataset    /KetekParameters/EnergyGain
+ dataset    /KetekParameters/FastGapTime
+ dataset    /KetekParameters/FastMaxWidth
+ dataset    /KetekParameters/FastPeakingTime
+ dataset    /KetekParameters/FastThreshold
+ dataset    /KetekParameters/MediumFilterEnable
+ dataset    /KetekParameters/MediumGapTime
+ dataset    /KetekParameters/MediumMaxWidth
+ dataset    /KetekParameters/MediumPeakingTime
+ dataset    /KetekParameters/MediumThreshold
+ dataset    /KetekParameters/ResetInhibitTime
+ dataset    /KetekParameters/SlowGapTime
+ dataset    /KetekParameters/SlowPeakingTime
+ dataset    /KetekParameters/SyncCyleTime
+ dataset    /KetekParameters/SyncPoints
+ group      /defaults
+ dataset    /defaults/NDArrayEpicsTSSec
+ dataset    /defaults/NDArrayEpicsTSnSec
+ dataset    /defaults/NDArrayTimeStamp
+ dataset    /defaults/NDArrayUniqueId
+ dataset    /defaults/timestamp
+ group      /exchange
+ dataset    /exchange/ICR
+ dataset    /exchange/InputCounts
+ dataset    /exchange/LiveTime
+ dataset    /exchange/OCR
+ dataset    /exchange/OutputCount
+ dataset    /exchange/RealTime
+ dataset    /exchange/data
+ }
+}
+</pre></div>
+</div>
+<p>These files can be modified as desired to save the data and metadata in different groups with different dataset names. The names of the files
+are set in the Attributes section of the ketek.adl and the XML File Name section of the NDFileHDF5.adl screen.</p>
 <p>The following is the MEDM screen mca.adl when the Ketek is collecting in sync mode and SyncReadMCA is processing the MCA record at 1 Hz.</p>
 <figure class="align-center">
 <img alt="_images/ketek_sync_mca.png" src="_images/ketek_sync_mca.png" />
@@ -178,12 +242,12 @@ The pulse generator was programmed to output 1000 pulses.</p>
 <caption><span class="caption-text">Maximum cycle rate in Hz (spectra/second)</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p>MCA Channels</p></th>
-<th class="head"><p>BytesPerBin=1, KETEK specification</p></th>
-<th class="head"><p>BytesPerBin=1, measured</p></th>
-<th class="head"><p>BytesPerBin=2, KETEK specification</p></th>
-<th class="head"><p>BytesPerBin=2, measured</p></th>
-<th class="head"><p>BytesPerBin=3, KETEK specification</p></th>
-<th class="head"><p>BytesPerBin=3, measured</p></th>
+<th class="head"><p>BytesPerBin=1 <br> KETEK specification</p></th>
+<th class="head"><p>BytesPerBin=1 <br> measured</p></th>
+<th class="head"><p>BytesPerBin=2 <br> KETEK specification</p></th>
+<th class="head"><p>BytesPerBin=2 <br> measured</p></th>
+<th class="head"><p>BytesPerBin=3 <br> KETEK specification</p></th>
+<th class="head"><p>BytesPerBin=3 <br> measured</p></th>
 </tr>
 </thead>
 <tbody>
