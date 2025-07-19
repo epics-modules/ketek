@@ -5,7 +5,9 @@ It is used to rapidly collect spectra in response to an external trigger signal 
 
 In sync mode the Ketek streams data to a UDP port on the IOC computer.  The IP address of the IOC and the UDP port to use are parameters
 to the KetekConfigure command in the startup script.
-   
+
+This driver inherits from the base class asynNDArrayDriver in areaDetector/ADCore.
+It implements the ArrayCallbacks and WaitForPlugins like most areaDetector drivers.
 The driver reads the spectra and metadata from the UDP port and copies it into NDArrays of dimensions [NumMCAChannels]. 
 The run-time statistics for each spectrum are copied into NDAttributes attached to each
 NDArray.  The data type of the NDArray depends on the value of the BytesPerBin configuration parameter.
@@ -16,6 +18,7 @@ This is done by setting SyncReadMCA.SCAN to a periodic scan rate.
 
 The NDArrays can be used by any of the standard areaDetector plugins.  For example, they can be streamed
 to HDF5, netCDF, or TIFF files.
+
 
 These are the records for Sync/MCA Mapping Mode.  They are contained in ketek.template.
 
@@ -96,32 +99,52 @@ The pulse generator was programmed to output 1000 pulses.
 
 The pulse frequency was increased until the sync mode acquisition no longer collected the requested number of pixels.
 
+KETEK provided information on the maximum rate should be possible in each mode with 1 and 2 bytes/bin. This value is also listed in the table
+
 .. cssclass:: table-bordered table-striped table-hover
 .. list-table:: Maximum cycle rate in Hz (spectra/second)
    :header-rows: 1
    :widths: auto
 
    * - MCA Channels
-     - BytesPerBin=1
-     - BytesPerBin=2
-     - BytesPerBin=3
+     - BytesPerBin=1, KETEK specification
+     - BytesPerBin=1, measured
+     - BytesPerBin=2, KETEK specification
+     - BytesPerBin=2, measured
+     - BytesPerBin=3, KETEK specification
+     - BytesPerBin=3, measured
    * - 512
+     - 2127
      - 1200
+     - 1666
      - 1550
+     - N.A.
      - 1000
    * - 1024
+     - 1666
      - 900
+     - 833
      - 500
+     - N.A.
      - 400
    * - 2048
+     - 833
      - 500
+     - 454
      - 350
+     - N.A.
      - 300
    * - 4096
+     - 454
      - 350
+     - 232
      - 225
+     - N.A.
      - 160
    * - 8192
+     - 232
      - 225
+     - 119
      - 120
+     - N.A.
      - 120
