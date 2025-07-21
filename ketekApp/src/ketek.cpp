@@ -519,7 +519,13 @@ asynStatus Ketek::setConfiguration()
 
     getDoubleParam(KetekSlowPeakingTime, &dValue);
     iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
-    if (iValue < 2) iValue = 2;
+    if (iValue <= 3) iValue = 2;
+    else if (iValue <= 5) iValue = 4;
+    else if (iValue <= 7) iValue = 6;
+    else if (iValue <= 10) iValue = 8;
+    else if (iValue <= 14) iValue = 12;
+    else if (iValue <= 16) iValue = 16;
+    else iValue = (iValue + 8)/16 * 16;
     if (iValue > 1008) iValue = 1008;
     writeSingleParam(pSlowPeakingTime, iValue);
 
