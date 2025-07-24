@@ -11,7 +11,7 @@ Overview
 
 This is an EPICS driver for the KETEK_ digital x-ray spectroscopy systems equippped with KETEK digital pulse process DPP3.
 The source code is in the ketek_module_ repository in the Github epics-modules project.
-These detectors are available in single channel (AXAS-D 3.0 or VICO-DB 3.0) and multichannel (ARRAY) versions.
+These detectors are available in single channel (AXAS-D 3.0 or VICO-DV 3.0) and multichannel (ARRAY) versions.
 This module currently only supports the single channel versions.
 
 The Ketek can collect data in 3 different modes:
