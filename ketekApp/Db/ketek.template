@@ -135,6 +135,14 @@ record(longin,"$(P)$(R)InputCounts") {
     field(SCAN, "I/O Intr")
 }
 
+record(ai,"$(P)$(R)FastLiveTime") {
+    field(DESC,"Fast filter live time")
+    field(PREC,"2")
+    field(DTYP, "asynFloat64")
+    field(INP,"@asyn($(PORT),0)KetekFastLiveTime")
+    field(SCAN, "I/O Intr")
+}
+
 record(longin,"$(P)$(R)OutputCounts") {
     field(DESC,"Output counts")
     field(DTYP, "asynInt32")
