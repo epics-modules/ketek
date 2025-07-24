@@ -108,6 +108,7 @@ Ketek::Ketek(const char *portName, const char *ipPortName, const char* hostIPAdd
     createParam(KetekOutputCountRateString,        asynParamFloat64, &KetekOutputCountRate);
     createParam(KetekInputCountsString,            asynParamInt32,   &KetekInputCounts);
     createParam(KetekOutputCountsString,           asynParamInt32,   &KetekOutputCounts);
+    createParam(KetekFastLiveTimeString,           asynParamFloat64, &KetekFastLiveTime);
 
     /* Preset parameters */
     createParam(KetekPresetInputCountsString,      asynParamInt32,   &KetekPresetInputCounts);
@@ -721,7 +722,7 @@ asynStatus Ketek::setEventScope()
 
 asynStatus Ketek::getAcquisitionStatistics()
 {
-    double realTime, liveTime, icr, ocr;
+    double realTime, fastLiveTime, slowLiveTime, icr, ocr;
     int inputCounts, outputCounts;
     int erased;
     int active;
@@ -748,26 +749,29 @@ asynStatus Ketek::getAcquisitionStatistics()
         sendRcvMsg(&req, (char *)allStats, sizeof(allStats), 1.0);  // 1 second timeout should be fine
         active       = ntohs(allStats[0].data);
         realTime     = (ntohs(allStats[1].data)  + ntohs(allStats[2].data)*65536.)*KETEK_ELAPSED_TIME_UNITS;
-        liveTime     = (ntohs(allStats[3].data)  + ntohs(allStats[4].data)*65536.)*KETEK_ELAPSED_TIME_UNITS;
+        fastLiveTime = (ntohs(allStats[3].data)  + ntohs(allStats[4].data)*65536.)*KETEK_ELAPSED_TIME_UNITS;
         outputCounts = (ntohs(allStats[5].data)  + ntohs(allStats[6].data)*65536.);
         inputCounts  = (ntohs(allStats[7].data)  + ntohs(allStats[8].data)*65536.);
         ocr          = (ntohs(allStats[9].data)  + ntohs(allStats[10].data)*65536.);
         icr          = (ntohs(allStats[11].data) + ntohs(allStats[12].data)*65536.);
 
+        slowLiveTime = (realTime * outputCounts)/inputCounts;
         setIntegerParam(mcaAcquiring,         active);
         setDoubleParam( mcaElapsedRealTime,   realTime); 
-        setDoubleParam( mcaElapsedLiveTime,   liveTime);
+        setDoubleParam( mcaElapsedLiveTime,   slowLiveTime);
         setIntegerParam(KetekOutputCounts,    outputCounts);
         setIntegerParam(KetekInputCounts,     inputCounts);
         setDoubleParam( KetekOutputCountRate, ocr);
         setDoubleParam( KetekInputCountRate,  icr);
+        setDoubleParam( KetekFastLiveTime,    fastLiveTime);
 
 
         asynPrint(pasynUserSelf, ASYN_TRACEIO_DRIVER,
             "%s::%s\n"
             "              active=%d\n"
             "           real time=%f\n"
-            "           live time=%f\n"
+            "      fast live time=%f\n"
+            "      slow live time=%f\n"
             "       output counts=%d\n"
             "        input counts=%d\n"
             "    input count rate=%f\n"
@@ -775,7 +779,8 @@ asynStatus Ketek::getAcquisitionStatistics()
             driverName, functionName,
             active,
             realTime,
-            liveTime,
+            fastLiveTime,
+            slowLiveTime,
             outputCounts,
             inputCounts,
             ocr,
@@ -952,7 +957,7 @@ void Ketek::acquisitionTask()
     int mcaBytesInBuffer;
     epicsUInt8 *pRawIn;
     epicsUInt8 *pRawOut;
-    epicsFloat64 realTime, liveTime, outputCounts, inputCounts, ocr, icr;
+    epicsFloat64 realTime, fastLiveTime, slowLiveTime, outputCounts, inputCounts, ocr, icr;
     epicsFloat64 boardTemp;
     //epicsFloat64 pollTime, sleepTime;
     size_t nRead;
@@ -1018,11 +1023,12 @@ void Ketek::acquisitionTask()
         numBins = 1<<numBins;
         bytesPerBin         = extractSyncParam(140, 21);
         realTime     = extractDoubleSyncParam(72, 6) * KETEK_ELAPSED_TIME_UNITS;
-        liveTime     = extractDoubleSyncParam(80, 8) * KETEK_ELAPSED_TIME_UNITS;
+        fastLiveTime = extractDoubleSyncParam(80, 8) * KETEK_ELAPSED_TIME_UNITS;
         outputCounts = extractDoubleSyncParam(88, 10);
         inputCounts  = extractDoubleSyncParam(96, 12);
         ocr          = extractDoubleSyncParam(104, 14);
         icr          = extractDoubleSyncParam(112, 16);
+        slowLiveTime = realTime * outputCounts / inputCounts;
 
         mcaRawOffset = 144;
         mcaBytesInBuffer = nRead - mcaRawOffset;
@@ -1091,7 +1097,8 @@ void Ketek::acquisitionTask()
                     break;
             }
             pArray->pAttributeList->add("RealTime",     "Real time",         NDAttrFloat64, &realTime);
-            pArray->pAttributeList->add("LiveTime",     "Live time",         NDAttrFloat64, &liveTime);
+            pArray->pAttributeList->add("FastLiveTime", "Live time (fast)",  NDAttrFloat64, &fastLiveTime);
+            pArray->pAttributeList->add("SlowLiveTime", "Live time (slow)",  NDAttrFloat64, &slowLiveTime);
             pArray->pAttributeList->add("InputCounts",  "Input counts",      NDAttrFloat64, &inputCounts);
             pArray->pAttributeList->add("OutputCounts", "Output counts",     NDAttrFloat64, &outputCounts);
             pArray->pAttributeList->add("ICR",          "Input count rate",  NDAttrFloat64, &icr);
@@ -1128,7 +1135,8 @@ void Ketek::acquisitionTask()
             }
         }
         setDoubleParam(mcaElapsedRealTime,   realTime);
-        setDoubleParam(mcaElapsedLiveTime,   liveTime);
+        setDoubleParam(mcaElapsedLiveTime,   slowLiveTime);
+        setDoubleParam(KetekFastLiveTime,    fastLiveTime);
         setIntegerParam(KetekInputCounts,    (int)inputCounts);
         setIntegerParam(KetekOutputCounts,   (int)outputCounts);
         setDoubleParam(KetekInputCountRate,  icr);
