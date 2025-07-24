@@ -189,6 +189,7 @@ typedef enum ketekParameters {
 #define KetekOutputCountRateString          "KetekOutputCountRate"
 #define KetekInputCountsString              "KetekInputCounts"
 #define KetekOutputCountsString             "KetekOutputCounts"
+#define KetekFastLiveTimeString             "KetekFastLiveTime"
 
 /* Preset parameters */
 #define KetekPresetInputCountsString        "KetekPresetInputCounts"
@@ -268,6 +269,7 @@ protected:
     int KetekOutputCountRate;     /* float64 */
     int KetekInputCounts;         /* uint32 */
     int KetekOutputCounts;        /* uint32 */
+    int KetekFastLiveTime;        /* float64 */
 
     /* Preset parameters */
     int KetekPresetInputCounts;   /** < Preset input counts int32 */
