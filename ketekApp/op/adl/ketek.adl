@@ -142,7 +142,7 @@ rectangle {
 		x=5
 		y=380
 		width=350
-		height=285
+		height=310
 	}
 	"basic attribute" {
 		clr=14
@@ -348,89 +348,6 @@ text {
 	}
 	textix="Configuration"
 	align="horiz. centered"
-}
-"text update" {
-	object {
-		x=235
-		y=565
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(M).IDTIM"
-		clr=15
-		bclr=9
-	}
-	clrmod="alarm"
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=235
-		y=590
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(M).DTIM"
-		clr=15
-		bclr=9
-	}
-	clrmod="alarm"
-	limits {
-	}
-}
-text {
-	object {
-		x=20
-		y=565
-		width=210
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Instant dead time (%)"
-}
-text {
-	object {
-		x=20
-		y=590
-		width=210
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Average dead time (%)"
-}
-text {
-	object {
-		x=140
-		y=540
-		width=90
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Live time"
-}
-"text update" {
-	object {
-		x=235
-		y=540
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(M).ELTM"
-		clr=54
-		bclr=3
-	}
-	limits {
-	}
 }
 "text update" {
 	object {
@@ -1300,34 +1217,6 @@ text {
 		clr=14
 	}
 	textix="Energy offset (chans)"
-	align="horiz. centered"
-}
-"text update" {
-	object {
-		x=236
-		y=615
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)BoardTemperature"
-		clr=54
-		bclr=3
-	}
-	limits {
-	}
-}
-text {
-	object {
-		x=20
-		y=615
-		width=210
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Board temperature (C)"
 	align="horiz. centered"
 }
 composite {
@@ -2305,36 +2194,6 @@ composite {
 	"composite name"=""
 	"composite file"="ADAttrFile.adl"
 }
-"text update" {
-	object {
-		x=236
-		y=640
-		width=100
-		height=20
-	}
-	monitor {
-		chan="$(P)$(R)MCUReady"
-		clr=15
-		bclr=9
-	}
-	clrmod="alarm"
-	format="string"
-	limits {
-	}
-}
-text {
-	object {
-		x=130
-		y=640
-		width=100
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="MCU ready"
-	align="horiz. right"
-}
 text {
 	object {
 		x=550
@@ -2352,4 +2211,172 @@ text {
 	}
 	textix="Done"
 	align="horiz. centered"
+}
+"text update" {
+	object {
+		x=235
+		y=590
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).IDTIM"
+		clr=15
+		bclr=9
+	}
+	clrmod="alarm"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=235
+		y=615
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).DTIM"
+		clr=15
+		bclr=9
+	}
+	clrmod="alarm"
+	limits {
+	}
+}
+text {
+	object {
+		x=20
+		y=590
+		width=210
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Instant dead time (%)"
+}
+text {
+	object {
+		x=20
+		y=615
+		width=210
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Average dead time (%)"
+}
+"text update" {
+	object {
+		x=236
+		y=640
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)BoardTemperature"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=20
+		y=640
+		width=210
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Board temperature (C)"
+	align="horiz. centered"
+}
+"text update" {
+	object {
+		x=236
+		y=665
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)MCUReady"
+		clr=15
+		bclr=9
+	}
+	clrmod="alarm"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=130
+		y=665
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="MCU ready"
+	align="horiz. right"
+}
+text {
+	object {
+		x=70
+		y=540
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Live time (fast)"
+}
+"text update" {
+	object {
+		x=235
+		y=540
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(R)FastLiveTime"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=70
+		y=565
+		width=160
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Live time (slow)"
+}
+"text update" {
+	object {
+		x=235
+		y=565
+		width=100
+		height=20
+	}
+	monitor {
+		chan="$(P)$(M).ELTM"
+		clr=54
+		bclr=3
+	}
+	limits {
+	}
 }

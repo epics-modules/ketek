@@ -101,7 +101,7 @@ release 0
 x 5
 y 380
 w 349
-h 284
+h 309
 lineColor rgb 0 0 0
 fillColor rgb 0 0 0
 endObjectProperties
@@ -436,137 +436,6 @@ useDisplayBg
 value {
   "Configuration"
 }
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 235
-y 565
-w 100
-h 20
-controlPv "$(P)$(M).IDTIM"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 0 65535 0
-fgAlarm
-bgColor rgb 30720 30720 30720
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 235
-y 590
-w 100
-h 20
-controlPv "$(P)$(M).DTIM"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 0 65535 0
-fgAlarm
-bgColor rgb 30720 30720 30720
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 20
-y 565
-w 210
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Instant dead time (%)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 20
-y 590
-w 210
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Average dead time (%)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 140
-y 540
-w 90
-h 20
-font "helvetica-medium-r-14.0"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Live time"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 235
-y 540
-w 100
-h 20
-controlPv "$(P)$(M).ELTM"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 51200 51200 51200
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
 endObjectProperties
 
 # (Text Monitor)
@@ -1913,50 +1782,6 @@ value {
 }
 endObjectProperties
 
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 236
-y 615
-w 100
-h 20
-controlPv "$(P)$(R)BoardTemperature"
-format "decimal"
-font "helvetica-medium-r-14.0"
-fontAlign "left"
-fgColor rgb 2560 0 47104
-bgColor rgb 51200 51200 51200
-limitsFromDb
-nullColor rgb 60928 46592 11008
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 1
-x 20
-y 615
-w 210
-h 20
-font "helvetica-medium-r-14.0"
-fontAlign "center"
-fgColor rgb 0 0 0
-bgColor index 3
-useDisplayBg
-value {
-  "Board temperature (C)"
-}
-endObjectProperties
-
 # (Group)
 object activeGroupClass
 beginObjectProperties
@@ -3129,6 +2954,117 @@ visMin "A"
 visMax "1"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 546
+y 65
+w 48
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor rgb 0 55296 0
+bgColor index 3
+useDisplayBg
+value {
+  "Done"
+}
+visPv "CALC\\\{(A)\}($(P)$(M).ACQG)"
+visMin 0
+visMax 1
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 235
+y 590
+w 100
+h 20
+controlPv "$(P)$(M).IDTIM"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 30720 30720 30720
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 235
+y 615
+w 100
+h 20
+controlPv "$(P)$(M).DTIM"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 0 65535 0
+fgAlarm
+bgColor rgb 30720 30720 30720
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 20
+y 590
+w 210
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Instant dead time (%)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 20
+y 615
+w 210
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Average dead time (%)"
+}
+endObjectProperties
+
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -3137,6 +3073,50 @@ minor 7
 release 0
 x 236
 y 640
+w 100
+h 20
+controlPv "$(P)$(R)BoardTemperature"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 51200 51200 51200
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 20
+y 640
+w 210
+h 20
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Board temperature (C)"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 236
+y 665
 w 100
 h 20
 controlPv "$(P)$(R)MCUReady"
@@ -3161,7 +3141,7 @@ major 4
 minor 1
 release 1
 x 130
-y 640
+y 665
 w 100
 h 20
 font "helvetica-medium-r-14.0"
@@ -3180,21 +3160,84 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 546
-y 65
-w 48
+x 70
+y 540
+w 160
 h 20
 font "helvetica-medium-r-14.0"
-fontAlign "center"
-fgColor rgb 0 55296 0
+fgColor rgb 0 0 0
 bgColor index 3
 useDisplayBg
 value {
-  "Done"
+  "Live time (fast)"
 }
-visPv "CALC\\\{(A)\}($(P)$(M).ACQG)"
-visMin 0
-visMax 1
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 235
+y 540
+w 100
+h 20
+controlPv "$(P)$(R)FastLiveTime"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 51200 51200 51200
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 70
+y 565
+w 160
+h 20
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor index 3
+useDisplayBg
+value {
+  "Live time (slow)"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 235
+y 565
+w 100
+h 20
+controlPv "$(P)$(M).ELTM"
+format "decimal"
+font "helvetica-medium-r-14.0"
+fontAlign "left"
+fgColor rgb 2560 0 47104
+bgColor rgb 51200 51200 51200
+limitsFromDb
+nullColor rgb 60928 46592 11008
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
 endObjectProperties
 # (Group)
 object activeGroupClass
