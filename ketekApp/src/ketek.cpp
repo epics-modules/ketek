@@ -489,10 +489,10 @@ asynStatus Ketek::setPresets()
 
     switch(presetMode) {
         case KetekPresetRealTime:
-            writeStopValue(presetReal / KETEK_ELAPSED_TIME_UNITS);
+            writeStopValue((epicsUInt32)(presetReal / KETEK_ELAPSED_TIME_UNITS));
             break;
         case KetekPresetLiveTime:
-            writeStopValue(presetLive / KETEK_ELAPSED_TIME_UNITS);
+            writeStopValue((epicsUInt32)(presetLive / KETEK_ELAPSED_TIME_UNITS));
             break;
         case KetekPresetInputCts:
             writeStopValue(presetInputCounts);
@@ -513,13 +513,13 @@ asynStatus Ketek::setConfiguration()
     //static const char *functionName = "setConfiguration";
 
     getDoubleParam(KetekFastPeakingTime, &dValue);
-    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    iValue = (int)round(dValue * KETEK_USEC_TO_FILTER_UNITS);
     if (iValue < 2) iValue = 2;
     if (iValue > 40) iValue = 40;
     writeSingleParam(pFastPeakingTime, iValue);
 
     getDoubleParam(KetekSlowPeakingTime, &dValue);
-    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    iValue = (int)round(dValue * KETEK_USEC_TO_FILTER_UNITS);
     if (iValue <= 3) iValue = 2;
     else if (iValue <= 5) iValue = 4;
     else if (iValue <= 7) iValue = 6;
@@ -531,19 +531,19 @@ asynStatus Ketek::setConfiguration()
     writeSingleParam(pSlowPeakingTime, iValue);
 
     getDoubleParam(KetekSlowGapTime, &dValue);
-    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    iValue = (int)round(dValue * KETEK_USEC_TO_FILTER_UNITS);
     if (iValue < 2) iValue = 2;
     if (iValue > 127) iValue = 127;
     writeSingleParam(pSlowGapTime, iValue);
 
     getDoubleParam(KetekFastFilterThreshold, &dValue);
-    iValue = round(dValue);
+    iValue = (int)round(dValue);
     if (iValue < 0) iValue = 0;
     if (iValue > 16384) iValue = 16384;
     writeSingleParam(pFastTrigThreshold, iValue);
 
     getDoubleParam(KetekMediumFilterThreshold, &dValue);
-    iValue = round(dValue);
+    iValue = (int)round(dValue);
     if (iValue < 0) iValue = 0;
     if (iValue > 16384) iValue = 16384;
     writeSingleParam(pMediumTrigThreshold, iValue);
@@ -552,15 +552,15 @@ asynStatus Ketek::setConfiguration()
     writeSingleParam(pMediumTriggerEnable, iValue);
 
     getDoubleParam(KetekFastFilterMaxWidth, &dValue);
-    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    iValue = (int)round(dValue * KETEK_USEC_TO_FILTER_UNITS);
     writeSingleParam(pFastMaxWidth, iValue);
 
     getDoubleParam(KetekMediumFilterMaxWidth, &dValue);
-    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    iValue = (int)round(dValue * KETEK_USEC_TO_FILTER_UNITS);
     writeSingleParam(pMediumMaxWidth, iValue);
 
     getDoubleParam(KetekResetInhibitTime, &dValue);
-    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    iValue = (int)round(dValue * KETEK_USEC_TO_FILTER_UNITS);
     writeSingleParam(pResetInhibitTime, iValue);
 
     getIntegerParam(KetekBaselineAverageLen, &iValue);
@@ -573,11 +573,11 @@ asynStatus Ketek::setConfiguration()
     writeSingleParam(pBaselineCorrEnable, iValue);
 
     getDoubleParam(KetekEnergyGain, &dValue);
-    iValue = round(dValue * 16383/100.);  // Convert from % to value
+    iValue = (int)round(dValue * 16383/100.);  // Convert from % to value
     writeSingleParam(pDigitalEnergyGain, iValue);
 
     getDoubleParam(KetekEnergyOffset, &dValue);
-    iValue = round(dValue/256*32768 + 32768);
+    iValue = (int)round(dValue/256*32768 + 32768);
     writeSingleParam(pDigitalEnergyOffset, iValue);
 
     getIntegerParam(mcaNumChannels, &iValue);
@@ -596,7 +596,7 @@ asynStatus Ketek::setConfiguration()
     writeSingleParam(pDynResetThreshold, iValue);
 
     getDoubleParam(KetekDynResetDuration, &dValue);
-    iValue = round(dValue * KETEK_USEC_TO_FILTER_UNITS);
+    iValue = (int)round(dValue * KETEK_USEC_TO_FILTER_UNITS);
     writeSingleParam(pDynResetDuration, iValue);
 
     getConfiguration();
@@ -706,7 +706,7 @@ asynStatus Ketek::setEventScope()
     writeSingleParam(pEventTriggerSource,  triggerSource);
     writeSingleParam(pEventTriggerValue,   triggerValue);
     writeSingleParam(pScopeTriggerTimeout, scopeTriggerTimeout);
-    iValue = round(scopeInterval*KETEK_USEC_TO_EVENT_UNITS);
+    iValue = (int)round(scopeInterval*KETEK_USEC_TO_EVENT_UNITS);
     if (iValue < 1) iValue = 1;
     if (iValue > 65535) iValue = 65535;
     scopeInterval = iValue / KETEK_USEC_TO_EVENT_UNITS;
@@ -750,8 +750,8 @@ asynStatus Ketek::getAcquisitionStatistics()
         active       = ntohs(allStats[0].data);
         realTime     = (ntohs(allStats[1].data)  + ntohs(allStats[2].data)*65536.)*KETEK_ELAPSED_TIME_UNITS;
         fastLiveTime = (ntohs(allStats[3].data)  + ntohs(allStats[4].data)*65536.)*KETEK_ELAPSED_TIME_UNITS;
-        outputCounts = (ntohs(allStats[5].data)  + ntohs(allStats[6].data)*65536.);
-        inputCounts  = (ntohs(allStats[7].data)  + ntohs(allStats[8].data)*65536.);
+        outputCounts = (int)(ntohs(allStats[5].data)  + ntohs(allStats[6].data)*65536.);
+        inputCounts  = (int)(ntohs(allStats[7].data)  + ntohs(allStats[8].data)*65536.);
         ocr          = (ntohs(allStats[9].data)  + ntohs(allStats[10].data)*65536.);
         icr          = (ntohs(allStats[11].data) + ntohs(allStats[12].data)*65536.);
 
@@ -884,7 +884,7 @@ asynStatus Ketek::startSyncAcquire()
 
     // Sync cycle time
     getDoubleParam(KetekSyncCycleTime, &syncCycleTime);
-    int itemp = round(syncCycleTime / KETEK_ELAPSED_TIME_UNITS);
+    int itemp = (int)round(syncCycleTime / KETEK_ELAPSED_TIME_UNITS);
     status = writeSingleParam(pSyncCycleTimeLow, itemp & 0x0000FFFF);
     status = writeSingleParam(pSyncCycleTimeHigh, (itemp & 0xFFFF0000) >> 16);
 
@@ -1031,7 +1031,7 @@ void Ketek::acquisitionTask()
         slowLiveTime = realTime * outputCounts / inputCounts;
 
         mcaRawOffset = 144;
-        mcaBytesInBuffer = nRead - mcaRawOffset;
+        mcaBytesInBuffer = (int)nRead - mcaRawOffset;
         pRawIn = syncMsgBuffer_ + mcaRawOffset;
         pRawOut = syncRawMCABuffer_;
         memcpy(pRawOut, pRawIn, mcaBytesInBuffer);
@@ -1060,7 +1060,7 @@ void Ketek::acquisitionTask()
                 goto skip;
             }
             mcaRawOffset = 24;
-            mcaBytesInBuffer = nRead - mcaRawOffset;
+            mcaBytesInBuffer = (int)nRead - mcaRawOffset;
             pRawIn = syncMsgBuffer_ + mcaRawOffset;
             memcpy(pRawOut, pRawIn, mcaBytesInBuffer);
             pRawOut += mcaBytesInBuffer;
