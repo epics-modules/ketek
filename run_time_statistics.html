@@ -97,34 +97,43 @@
 <tr class="row-odd"><td><p>mca1.ELTM</p></td>
 <td><p>mca</p></td>
 <td><p>MCA_ELAPSED_LIVE</p></td>
-<td><p>The elapsed live time in seconds.</p></td>
+<td><p>The elapsed “slow” live time in seconds.  This is defined as (RealTime * OutputCounts / InputCounts).
+It is effectively the live time of the slow filter.</p></td>
 </tr>
-<tr class="row-even"><td><p>InputCountRate</p></td>
+<tr class="row-even"><td><p>FastLiveTime</p></td>
+<td><p>ai</p></td>
+<td><p>KetekFastLiveTime</p></td>
+<td><p>The elapsed “fast” live time.  This is reported by the DPP3 system,
+and is defined as “the time in seconds in which the pulse detection was active during the spectrum run
+(pulse detection filter below trigger threshold and no reset detected)”.
+It is effectively the live time of the fast filter.</p></td>
+</tr>
+<tr class="row-odd"><td><p>InputCountRate</p></td>
 <td><p>ai</p></td>
 <td><p>KetekInputCountRate</p></td>
 <td><p>The input count rate in Hz.</p></td>
 </tr>
-<tr class="row-odd"><td><p>OutputCountRate</p></td>
+<tr class="row-even"><td><p>OutputCountRate</p></td>
 <td><p>ai</p></td>
 <td><p>KetekOutputCountRate</p></td>
 <td><p>The output count rate in Hz.</p></td>
 </tr>
-<tr class="row-even"><td><p>InputCounts</p></td>
+<tr class="row-odd"><td><p>InputCounts</p></td>
 <td><p>longin</p></td>
 <td><p>KetekInputCounts</p></td>
 <td><p>The number of fast events received.</p></td>
 </tr>
-<tr class="row-odd"><td><p>OutputCounts</p></td>
+<tr class="row-even"><td><p>OutputCounts</p></td>
 <td><p>longin</p></td>
 <td><p>KetekOutputCounts</p></td>
 <td><p>The number of counts in the MCA spectrum.</p></td>
 </tr>
-<tr class="row-even"><td><p>BoardTemperature</p></td>
+<tr class="row-odd"><td><p>BoardTemperature</p></td>
 <td><p>ai</p></td>
 <td><p>KetekBoardTemperature</p></td>
 <td><p>The temperature of the DPP3 board.</p></td>
 </tr>
-<tr class="row-odd"><td><p>MCUReady</p></td>
+<tr class="row-even"><td><p>MCUReady</p></td>
 <td><p>bi</p></td>
 <td><p>KetekMCUReady</p></td>
 <td><p>The status of the MCU, “Ready” or “Not ready.
@@ -146,7 +155,7 @@ It will be “Not ready” for up to 1 minute after a powering on.</p></td>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2025, Mark Rivers.
-      <span class="lastupdated">Last updated on 2025-July-24.
+      <span class="lastupdated">Last updated on 2025-July-25.
       </span></p>
   </div>
 

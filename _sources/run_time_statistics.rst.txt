@@ -20,7 +20,15 @@ These parameters are contained in ketek.template.
    * - mca1.ELTM
      - mca
      - MCA_ELAPSED_LIVE
-     - The elapsed live time in seconds.
+     - The elapsed "slow" live time in seconds.  This is defined as (RealTime * OutputCounts / InputCounts).
+       It is effectively the live time of the slow filter.
+   * - FastLiveTime
+     - ai
+     - KetekFastLiveTime
+     - The elapsed "fast" live time.  This is reported by the DPP3 system,
+       and is defined as "the time in seconds in which the pulse detection was active during the spectrum run
+       (pulse detection filter below trigger threshold and no reset detected)".
+       It is effectively the live time of the fast filter.
    * - InputCountRate
      - ai
      - KetekInputCountRate

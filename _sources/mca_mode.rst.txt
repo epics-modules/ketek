@@ -25,7 +25,7 @@ The following parameters are in ketek.template control the preset mode.
    * - mca1.PLTM
      - mca
      - MCA_PRESET_LIVE
-     - The preset live time.
+     - The preset live time.  This is the fast filter live time, not the slow filter live time.
    * - PresetInputCounts, PresetInputCounts_RBV
      - longout, longin
      - KetekPresetInputCounts
