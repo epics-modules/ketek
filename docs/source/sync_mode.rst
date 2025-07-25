@@ -69,6 +69,7 @@ The following is the MEDM screen ketek.adl when the Ketek is collecting in sync 
 .. figure:: ketek_sync_mode.png
     :align: center
 
+|
 
 The following is the MEDM screen NDFileHDF5.adl when the Ketek is saving sync mode data to an HDF5 file.
 
