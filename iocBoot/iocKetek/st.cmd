@@ -19,7 +19,7 @@ epicsEnvSet("KETEK_IP_PORT", "3141")
 epicsEnvSet("KETEK_IP_PROTOCOL", "UDP")
 # The host IP address, used for sync mode UDP connection from Ketek
 epicsEnvSet("HOST_IP_ADDRESS", "10.54.160.174")
-#epicsEnvSet("HOST_IP_ADDRESS", "164.54.160.82")
+#epicsEnvSet("HOST_IP_ADDRESS", "164.54.160.227")
 # The host UDP port, used for sync mode UDP connection from Ketek
 epicsEnvSet("HOST_UDP_PORT", "3142")
 
