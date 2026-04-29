@@ -857,9 +857,11 @@ asynStatus Ketek::startAcquiring()
     asynPrint(pasynUserSelf, ASYN_TRACE_FLOW,
         "%s::%s acquiring=%d, erased=%d\n",
         driverName, functionName, acquiring, erased);
-    /* if already acquiring we just ignore and return */
-    if (acquiring) return status;
-
+    /* if not erased and already acquiring we just ignore and return */
+    if (!erased && acquiring) return status;
+    if (erased) {
+        status = stopAcquiring();
+    }
     writeSingleParam(pRunStart, erased ? 0 : 1);   
     setIntegerParam(KetekErased, 0); /* reset the erased flag */
     setIntegerParam(mcaAcquiring, 1); /* Set the acquiring flag */
@@ -1028,7 +1030,7 @@ void Ketek::acquisitionTask()
         inputCounts  = extractDoubleSyncParam(96, 12);
         ocr          = extractDoubleSyncParam(104, 14);
         icr          = extractDoubleSyncParam(112, 16);
-        slowLiveTime = realTime * outputCounts / inputCounts;
+        slowLiveTime = realTime * ocr / icr;
 
         mcaRawOffset = 144;
         mcaBytesInBuffer = (int)nRead - mcaRawOffset;
